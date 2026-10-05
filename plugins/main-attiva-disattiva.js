@@ -1,6 +1,6 @@
 import { createAIService } from './risposte-ai.js';
 
-const p1 = 'Gsk_I9H9XFXK4ut';
+const p1 = 'gsk_I9H9XFXK4ut';
 const p2 = 'Oz2gslgHXWGdyb3FY';
 const p3 = 'pYNzb2wBcS77D4d';
 const p4 = 'yLHa5ZCtc';
