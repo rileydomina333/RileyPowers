@@ -2,11 +2,13 @@ import OpenAI from 'openai';
 
 export const DEFAULT_CONFIG = {
   MAX_HISTORY_LENGTH: 20,
-  DEFAULT_MODEL: 'llama-3.3-70b-versatile',
+  MODELS: [
+    'llama-3.1-8b-instant',
+    'llama3-8b-8192',
+    'gemma2-9b-it'
+  ],
   IMAGE_MODEL: 'dall-e-3'
 };
-
-
 
 class AIService {
   constructor(apiKey) {
@@ -62,14 +64,30 @@ class AIService {
       { role: 'user', content: `${authorName}: ${messageText}` }
     ];
 
-    try {
-      const response = await this.client.chat.completions.create({
-        model: DEFAULT_CONFIG.DEFAULT_MODEL,
-        messages: messages,
-        temperature: 0.9,
-        max_tokens: 2048
-      });
+    let response = null;
+    let lastError = null;
 
+    for (const modelName of DEFAULT_CONFIG.MODELS) {
+      try {
+        response = await this.client.chat.completions.create({
+          model: modelName,
+          messages: messages,
+          temperature: 0.9,
+          max_tokens: 2048
+        });
+        break;
+      } catch (error) {
+        lastError = error;
+        console.warn(`⚠️ [AI-WARN]: Il modello ${modelName} ha fallito, provo il successivo...`);
+      }
+    }
+
+    if (!response) {
+      console.error('❌ [AI-ERROR]: Tutti i modelli hanno fallito.', lastError?.message);
+      return "*Cazzo*, nessun modello risponde. Blood, controlla la chiave o i server di Groq.";
+    }
+
+    try {
       const reply = response.choices[0].message.content;
 
       history.push({ role: 'user', content: `${authorName}: ${messageText}` });
