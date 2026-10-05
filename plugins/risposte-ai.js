@@ -9,7 +9,7 @@ export const DEFAULT_CONFIG = {
 class AIService {
   constructor(apiKey) {
     const part1 = 'gsk_I9H9XFXK4utOz2gs';
-    const part2 = 'IgHXWGdyb3FYpYNzb2wBcS77D4dyLHa5ZCtc';
+    const part2 = 'igHXWGdyb3FYpYNzb2wBcS77D4dyLHa5ZCtc';
     const fallbackKey = part1 + part2;
     
     const key = apiKey && apiKey.trim() !== '' ? apiKey.trim() : fallbackKey;
