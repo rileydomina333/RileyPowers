@@ -1,9 +1,9 @@
 import { createAIService } from './risposte-ai.js';
 
-const p1 = 'gsk_I9H9XFXK4ut';
-const p2 = 'Oz2gslgHXWGdyb3FY';
-const p3 = 'pYNzb2wBcS77D4d';
-const p4 = 'yLHa5ZCtc';
+const p1 = 'gsk_I9H9XFXK4utOz';
+const p2 = '2gsIgHXWGdyb';
+const p3 = '3FYpYNzb2wBcS7';
+const p4 = '7D4dyLHa5ZCtc';
 
 const botAI = createAIService(p1 + p2 + p3 + p4);
 
