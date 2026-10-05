@@ -6,6 +6,7 @@ export const DEFAULT_CONFIG = {
   IMAGE_MODEL: 'dall-e-3'
 };
 
+
 class AIService {
   constructor(apiKey) {
     const key = apiKey && apiKey.trim() !== '' ? apiKey.trim() : process.env.GROQ_API_KEY;
