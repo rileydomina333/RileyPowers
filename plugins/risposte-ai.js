@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 
 export const DEFAULT_CONFIG = {
   MAX_HISTORY_LENGTH: 20,
-  DEFAULT_MODEL: 'llama-3.3-70b-versatile',
+  DEFAULT_MODEL: 'llama-3.1-8b-instant',
   IMAGE_MODEL: 'dall-e-3'
 };
 
