@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 
 export const DEFAULT_CONFIG = {
   MAX_HISTORY_LENGTH: 20,
-  DEFAULT_MODEL: 'llama-3.3-70b-versatile',
+  DEFAULT_MODEL: 'openai/gpt-oss-20b',
   IMAGE_MODEL: 'dall-e-3'
 };
 
@@ -20,12 +20,10 @@ class AIService {
   async generateReply({ messageText, authorName, chatId }) {
     if (!messageText) return null;
 
-    // Gestione generazione immagini
     if (messageText.toLowerCase().includes("genera immagine") || messageText.toLowerCase().includes("crea immagine")) {
       return await this.generateImage(messageText);
     }
 
-    // Identificazione speciale per il Creatore (Blood / Papà Digitale)
     const isDad = authorName === "+39 370 133 0693";
 
     const identityContext = isDad 
@@ -65,7 +63,7 @@ class AIService {
         model: DEFAULT_CONFIG.DEFAULT_MODEL,
         messages: messages,
         temperature: 0.9,
-        presence_penalty: 0.6
+        max_completion_tokens: 2048
       });
 
       const reply = response.choices[0].message.content;
