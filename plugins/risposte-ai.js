@@ -2,10 +2,9 @@ import OpenAI from 'openai';
 
 export const DEFAULT_CONFIG = {
   MAX_HISTORY_LENGTH: 20,
-  DEFAULT_MODEL: 'llama-3.1-8b-instant',
+  DEFAULT_MODEL: 'llama3-8b-8192',
   IMAGE_MODEL: 'dall-e-3'
 };
-
 
 class AIService {
   constructor(apiKey) {
