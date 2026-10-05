@@ -9,6 +9,7 @@ export const DEFAULT_CONFIG = {
 class AIService {
   constructor(apiKey) {
     const key = apiKey && apiKey.trim() !== '' ? apiKey.trim() : process.env.GROQ_API_KEY;
+    
     this.client = new OpenAI({
       apiKey: key,
       baseURL: "https://api.groq.com/openai/v1" 
