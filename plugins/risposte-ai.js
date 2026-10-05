@@ -3,9 +3,9 @@ import OpenAI from 'openai';
 export const DEFAULT_CONFIG = {
   MAX_HISTORY_LENGTH: 20,
   MODELS: [
+    'llama-3.3-70b-versatile',
     'llama-3.1-8b-instant',
-    'llama3-8b-8192',
-    'gemma2-9b-it'
+    'openai/gpt-oss-20b'
   ],
   IMAGE_MODEL: 'dall-e-3'
 };
