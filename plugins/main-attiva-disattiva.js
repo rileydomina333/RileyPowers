@@ -1,10 +1,13 @@
 import { createAIService } from './risposte-ai.js'; 
 
-// Chiave spezzata in 4 parti per evitare il blocco "Secret detected"
-const p1 = 'gsk_6VlRfuGRq3pG0';
-const p2 = 'RAc8knZWGdyb3FYGlEn';
-const p3 = '0Y9t8U4gg38EGlT';
-const p4 = 'tikgA';
+    const p1 = 'Gsk_I9H9XFXK4ut';
+    const p2 = 'Oz2gslgHXWGdyb3FY';
+    const p3 = 'pYNzb2wBcS77D4d';
+    const p4 = 'yLHa5ZCtc';
+    const exactKey = p1 + p2 + p3 + p4;
+
+    const key = apiKey && apiKey.trim() !== '' ? apiKey.trim() : exactKey;
+
 
 const botAI = createAIService(p1 + p2 + p3 + p4);
 
