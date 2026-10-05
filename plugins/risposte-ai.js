@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 
 export const DEFAULT_CONFIG = {
   MAX_HISTORY_LENGTH: 20,
-  DEFAULT_MODEL: 'openai/gpt-oss-20b',
+  DEFAULT_MODEL: 'llama-3.3-70b-versatile',
   IMAGE_MODEL: 'dall-e-3'
 };
 
@@ -63,7 +63,7 @@ class AIService {
         model: DEFAULT_CONFIG.DEFAULT_MODEL,
         messages: messages,
         temperature: 0.9,
-        max_completion_tokens: 2048
+        max_tokens: 2048
       });
 
       const reply = response.choices[0].message.content;
