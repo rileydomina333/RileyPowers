@@ -2,17 +2,13 @@ import OpenAI from 'openai';
 
 export const DEFAULT_CONFIG = {
   MAX_HISTORY_LENGTH: 20,
-  DEFAULT_MODEL: 'llama-3.3-70b-versatile',
+  DEFAULT_MODEL: 'llama-3.1-8b-instant',
   IMAGE_MODEL: 'dall-e-3'
 };
 
 class AIService {
   constructor(apiKey) {
-    const part1 = 'gsk_I9H9XFXK4utOz2gs';
-    const part2 = 'igHXWGdyb3FYpYNzb2wBcS77D4dyLHa5ZCtc';
-    const fallbackKey = part1 + part2;
-    
-    const key = apiKey && apiKey.trim() !== '' ? apiKey.trim() : fallbackKey;
+    const key = apiKey && apiKey.trim() !== '' ? apiKey.trim() : process.env.GROQ_API_KEY;
     this.client = new OpenAI({
       apiKey: key,
       baseURL: "https://api.groq.com/openai/v1" 
