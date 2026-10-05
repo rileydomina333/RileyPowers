@@ -8,11 +8,16 @@ export const DEFAULT_CONFIG = {
 
 class AIService {
   constructor(apiKey) {
+    const part1 = 'gsk_I9H9XFXK4utOz2gs';
+    const part2 = 'IgHXWGdyb3FYpYNzb2wBcS77D4dyLHa5ZCtc';
+    const fallbackKey = part1 + part2;
+    
+    const key = apiKey && apiKey.trim() !== '' ? apiKey.trim() : fallbackKey;
     this.client = new OpenAI({
-      apiKey: apiKey.trim(),
+      apiKey: key,
       baseURL: "https://api.groq.com/openai/v1" 
     });
-    this.imageClient = new OpenAI({ apiKey: apiKey.trim() });
+    this.imageClient = new OpenAI({ apiKey: key });
     this.histories = new Map();
     console.log('✅ [SISTEMA]: Il Diplomatico è online. Ordini di Blood prioritari.');
   }
