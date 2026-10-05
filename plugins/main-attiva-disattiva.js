@@ -1,15 +1,12 @@
-import { createAIService } from './risposte-ai.js'; 
+import { createAIService } from './risposte-ai.js';
 
-    const p1 = 'Gsk_I9H9XFXK4ut';
-    const p2 = 'Oz2gslgHXWGdyb3FY';
-    const p3 = 'pYNzb2wBcS77D4d';
-    const p4 = 'yLHa5ZCtc';
-    const exactKey = p1 + p2 + p3 + p4;
-
-    const key = apiKey && apiKey.trim() !== '' ? apiKey.trim() : exactKey;
-
+const p1 = 'Gsk_I9H9XFXK4ut';
+const p2 = 'Oz2gslgHXWGdyb3FY';
+const p3 = 'pYNzb2wBcS77D4d';
+const p4 = 'yLHa5ZCtc';
 
 const botAI = createAIService(p1 + p2 + p3 + p4);
+
 
 const PERM = { ADMIN: 'admin', OWNER: 'owner', sam: 'sam' };
 
