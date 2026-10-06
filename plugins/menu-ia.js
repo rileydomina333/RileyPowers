@@ -10,14 +10,14 @@ const emojicategoria = {
 }
 
 let tags = {
-  'iatesto': '⚡ 𝙱𝙻𝙳 𝙸𝙰 𝚃𝙴𝚂𝚃𝙾 ⚡',
-  'iaaudio': '⚡ 𝙱𝙻𝙳 𝙸𝙰 𝙰𝚄𝙳𝙸𝙾 ⚡',
-  'iaimmagini': '⚡ 𝙱𝙻𝙳 𝙸𝙰 𝙸𝙼𝙼𝙰𝙶𝙸𝙽𝙸 ⚡'
+  'iatesto': '⚡ ʀʟʏ 𝙸𝙰 𝚃𝙴𝚂𝚃𝙾 ⚡',
+  'iaaudio': '⚡ ʀʟʏ 𝙸𝙰 𝙰𝚄𝙳𝙸𝙾 ⚡',
+  'iaimmagini': '⚡ ʀʟʏ 𝙸𝙰 𝙸𝙼𝙼𝙰𝙶𝙸𝙽𝙸 ⚡'
 }
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐁 𝐋 𝐃  •  𝐈 𝐀 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘  •  𝐈 𝐀 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ 🏆 𝙻𝚒𝚟𝚎𝚕𝚕𝚘 ⭔ %level
@@ -81,8 +81,8 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
       contextInfo: {
         mentionedJid: [m.sender],
         forwardedNewsletterMessageInfo: {
-          newsletterJid: '120363232743845068@newsletter',
-          newsletterName: "✧ 𝙱𝙻𝙳-𝙱𝙾𝚃 𝙸format𝙸format ✧"
+          newsletterJid: '',
+          newsletterName: "✧ ʀʟʏ-𝙱𝙾𝚃 𝙸format𝙸format ✧"
         }
       }
     }, { quoted: m })
