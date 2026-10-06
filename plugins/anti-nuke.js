@@ -74,7 +74,7 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
   const text = `
   ⋆｡˚『 ╭ \`ANTINUKE ATTIVO\` ╯ 』˚｡⋆
 ╭
-┃ 🚨 \`Stato:\` *Blood ha messo il preservativo*
+┃ 🚨 \`Stato:\` *Riley ha messo il preservativo*
 ┃
 ┃ 『 👤 』 \`Autore:\` @${sender.split('@')[0]}
 ┃ 『 🚫 』 \`Azione:\` *${action}* NON autorizzata
@@ -94,7 +94,7 @@ handler.before = async function (m, { conn, participants, isBotAdmin }) {
         title: 'SISTEMA DI SICUREZZA OWNER',
         body: 'Protezione Proprietari Attiva',
         thumbnailUrl: 'https://qu.ax/TfUj.jpg',
-        sourceUrl: 'BLOODANTINUKE',
+        sourceUrl: 'RILEYANTINUKE',
         mediaType: 1,
         renderLargerThumbnail: true
       }
