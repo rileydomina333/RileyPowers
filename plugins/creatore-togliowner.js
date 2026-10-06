@@ -61,9 +61,9 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     }
 }
 
-handler.help = ['togliowner @user']
+handler.help = ['degrada @user']
 handler.tags = ['creatore']
-handler.command = /^(togliowner|removeowner|delowner)$/i
+handler.command = /^(togliowner|removeowner|delowner|degrada)$/i
 handler.creatorebot = true
 handler.rowner = true 
 handler.mods = false
