@@ -78,7 +78,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
 
   } catch (e) {
     console.error(e)
-    conn.reply(m.chat, '❌ Error in Download Module: Check if WA_1791285295586.jpeg exist.', m)
+    conn.reply(m.chat, '❌ Error in Download Module: Check if WA_1791285295586.jpeg exists.', m)
   }
 }
 
