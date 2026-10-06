@@ -24,12 +24,12 @@ const handler = async (m, { conn }) => {
             ${nomeDelBot}
 ╰━━━━━━•✦•━━━━━━╯
 
-◈ 𝖴ptim𝖾: \`${uptime}\`
-◈ 𝖫𝖺𝗍𝖾𝗇𝗓𝖺: \`${speed} ms\`
+◈ Attività: \`${uptime}\`
+◈ Velocità: \`${speed} ms\`
 ◈ 𝖠𝗏𝗏𝗂𝗈: \`${avvio}\`
 
 ╭━━━━━━•✦•━━━━━━╮
-   𝖮𝗐𝗇𝖾𝗋: *BLOOD*
+   𝖮𝗐𝗇𝖾𝗋: *RILEY*
    𝖲𝗍𝖺𝗍𝗈: _Online_
 ╰━━━━━━•✦•━━━━━━╯`.trim();
 
