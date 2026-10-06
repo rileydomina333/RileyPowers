@@ -16,7 +16,7 @@ var handler = async (m, { conn }) => {
 - \`Euro:\` *+${oneTimeReward.euro}*
 - \`EXP:\` *+${oneTimeReward.exp}*
 <<<<<<< HEAD
-\n> \`𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓\``, m);
+\n> \`𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓\``, m);
 =======
 \n> \`BLD-BOT\``, m);
 >>>>>>> 937a2eb2f873caf51fb280f0269b0825e3e7b1eb
