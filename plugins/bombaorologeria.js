@@ -123,7 +123,7 @@ async function esplosione(chatId, conn, m) {
     await conn.sendMessage(chatId, { 
         text: finale, 
         mentions: [b.vittima, ...b.passaggi],
-        footer: '𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓',
+        footer: '𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓',
         interactiveButtons: playAgainButtons()
     });
 
