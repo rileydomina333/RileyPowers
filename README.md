@@ -34,8 +34,8 @@ pkg install git nodejs -y
 
 2. Clone del Bot:
    
-   git clone https://github.com/RileyPowers/Riley-Powers-Bot.git
-cd Riley-Powers-Bot
+   git clone https://github.com/rileydomina333/RileyPowers.git
+cd RileyPowers
 
 3. Avvio:
    
@@ -78,7 +78,7 @@ pm2 startup
 <p align="center">
   <img src="https://readme-typing-svg.herokuapp.com?font=Orbitron&size=30&pause=500&color=0066FF&center=true&vCenter=true&width=700&height=80&lines=STAFF;CONTATTI" alt="Staff" />
 </p>* Founder & Sviluppatore: Riley
-* Supporto WhatsApp: "+39 370 133 0693" (https://wa.me/393701330693)
+* Supporto WhatsApp: "+39 392 949 1354" (https://wa.me/+393929491354)
 * Community: "UNISCITI AL CANALE" (https://whatsapp.com/channel/0029VbCIFecBadmZCxG8ug0W)
 
 <p align="center">
@@ -86,5 +86,5 @@ pm2 startup
 </p><p align="center">
   <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%">
 </p><p align="center">
-  <b>© 2026 RILEY POWERS BOT • Sviluppato by Riley</b>
+  <b>© RILEY POWERS BOT • Sviluppato by Riley</b>
 </p>
