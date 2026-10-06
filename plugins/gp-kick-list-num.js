@@ -8,7 +8,7 @@ const handler = async (m, { conn, args, groupMetadata, participants, usedPrefix,
       errorMsg += `*📝 Esempio:*\n`
       errorMsg += `└─⭓ ${usedPrefix + command} 39\n\n`
 <<<<<<< HEAD
-      errorMsg += `> 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓`
+      errorMsg += `> 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓`
 =======
       errorMsg += `> BLD-BOT`
 >>>>>>> 937a2eb2f873caf51fb280f0269b0825e3e7b1eb
@@ -131,7 +131,7 @@ const handler = async (m, { conn, args, groupMetadata, participants, usedPrefix,
         msg += `*⚡ Admin:* ${allWithPrefix.filter(p => adminJids.includes(p.id)).length}\n`
         msg += `*👤 Utenti:* ${kickableUsers.length}\n\n`
 <<<<<<< HEAD
-        msg += `> 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓`
+        msg += `> 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓`
 =======
         msg += `> BLD-BOT`
 >>>>>>> 937a2eb2f873caf51fb280f0269b0825e3e7b1eb
@@ -167,9 +167,9 @@ const handler = async (m, { conn, args, groupMetadata, participants, usedPrefix,
           msg += `└─⭓ Totale con +${prefix}: ${allWithPrefix.length}\n`
           msg += `└─⭓ Kickabili: 0\n\n`
 <<<<<<< HEAD
-          msg += `> 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓`
+          msg += `> 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓`
 =======
-          msg += `> BLD-BOT`
+          msg += `> RLY-BOT`
 >>>>>>> 937a2eb2f873caf51fb280f0269b0825e3e7b1eb
           
           return conn.reply(m.chat, msg, m, { 
@@ -246,9 +246,9 @@ const handler = async (m, { conn, args, groupMetadata, participants, usedPrefix,
         report += `└─⭓ Protetti: ${protectedCount}\n`
         report += `└─⭓ Totale +${prefix}: ${allWithPrefix.length}\n\n`
 <<<<<<< HEAD
-        report += `> 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓`
+        report += `> 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓`
 =======
-        report += `> BLD-BOT`
+        report += `> RLY-BOT`
 >>>>>>> 937a2eb2f873caf51fb280f0269b0825e3e7b1eb
 
         const allMentions = [...kicked, ...failed, ...allWithPrefix.filter(p => !kickableUsers.includes(p.id)).map(p => p.id)]
