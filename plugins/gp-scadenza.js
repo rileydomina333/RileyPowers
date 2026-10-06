@@ -4,9 +4,9 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
         errorMsg += `│ 『⚠️』 \`Questo comando funziona solo nei gruppi!\`\n`
         errorMsg += `*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*\n\n`
 <<<<<<< HEAD
-        errorMsg += `> 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓`
+        errorMsg += `> 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓`
 =======
-        errorMsg += `> BLD-BOT`
+        errorMsg += `> RLY-BOT`
 >>>>>>> 937a2eb2f873caf51fb280f0269b0825e3e7b1eb
         return m.reply(errorMsg)
     }
@@ -23,7 +23,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 *╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
 <<<<<<< HEAD
-> 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓`)
+> 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓`)
 =======
 > BLD-BOT`)
 >>>>>>> 937a2eb2f873caf51fb280f0269b0825e3e7b1eb
@@ -41,9 +41,9 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 *╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
 <<<<<<< HEAD
-> 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓`)
+> 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓`)
 =======
-> BLD-BOT`)
+> RLY-BOT`)
 >>>>>>> 937a2eb2f873caf51fb280f0269b0825e3e7b1eb
             await conn.sendMessage(m.chat, { delete: m.key })
             return await conn.groupLeave(m.chat)
@@ -71,9 +71,9 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
         }
 
 <<<<<<< HEAD
-        message += `\n*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*\n\n> 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓`
+        message += `\n*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*\n\n> 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓`
 =======
-        message += `\n*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*\n\n> BLD-BOT`
+        message += `\n*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*\n\n> RLY-BOT`
 >>>>>>> 937a2eb2f873caf51fb280f0269b0825e3e7b1eb
 
         return conn.sendMessage(m.chat, {
