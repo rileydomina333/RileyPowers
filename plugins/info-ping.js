@@ -21,7 +21,6 @@ const handler = async (m, { conn }) => {
 
   const info = `╭━━━━━━•✦•━━━━━━╮
               ✨ ᴘɪɴɢ ✨
-            ${nomeDelBot}
 ╰━━━━━━•✦•━━━━━━╯
 
 ◈ Attività: \`${uptime}\`
