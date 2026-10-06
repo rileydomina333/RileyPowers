@@ -5,11 +5,11 @@ import moment from 'moment-timezone'
 import os from 'os'
 
 // --- PERCORSO IMMAGINE ---
-const localImg = join(process.cwd(), 'menu-euro.jpeg');
+const localImg = join(process.cwd(), 'WA_1791285295586.jpeg');
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐁 𝐋 𝐃  •  𝐄 𝐂 𝐎 𝐍 𝐎 𝐌 𝐘 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘  •  𝐄 𝐂 𝐎 𝐍 𝐎 𝐌 𝐘 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ 💳 𝚂𝚊𝚕𝚍𝚘 ⭔ %eris 𝙴𝚛𝚒𝚜
@@ -25,7 +25,7 @@ const defaultMenu = {
 
 let handler = async (m, { conn, usedPrefix: _p, __dirname, args, command}) => {
   let tags = {
-    'euro': '⚡ 𝙱𝙻𝙳 𝙳𝙰𝚃𝙰𝙱𝙰𝚂𝙴 𝙴𝚄𝚁𝙾 ⚡'
+    'euro': '⚡ 𝙳𝙰𝚃𝙰𝙱𝙰𝚂𝙴 𝙴𝚄𝚁𝙾 ⚡'
   }
 
   try {
@@ -77,8 +77,8 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname, args, command}) => {
       contextInfo: {
         mentionedJid: [m.sender],
         forwardedNewsletterMessageInfo: {
-          newsletterJid: '120363232743845068@newsletter',
-          newsletterName: "✧ 𝙱𝙻𝙳-𝙱𝙾𝚃 𝙴𝙲𝙾𝙽𝙾𝙼𝚈 ✧"
+          newsletterJid: '',
+          newsletterName: "✧ ʀʟʏ-𝙱𝙾𝚃 𝙴𝙲𝙾𝙽𝙾𝙼𝚈 ✧"
         }
       }
     }, { quoted: m })
