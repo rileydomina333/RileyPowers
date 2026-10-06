@@ -3,11 +3,11 @@ import { join } from 'path'
 import { xpRange } from '../lib/levelling.js'
 import moment from 'moment-timezone'
 
-const localImg = join(process.cwd(), 'menu-giochi.jpeg'); 
+const localImg = join(process.cwd(), 'WA_1791285295586.jpeg'); 
 
 const defaultMenu = {
   before: `
-⚡  〔 𝐁 𝐋 𝐃  •  𝐆 𝐀 𝐌 𝐄 𝐒 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘  •  𝐆 𝐀 𝐌 𝐄 𝐒 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ 🏆 𝙻𝚒𝚟𝚎𝚕𝚕𝚘 ⭔ %level
@@ -22,7 +22,7 @@ const defaultMenu = {
 }
 
 let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
-  let tags = { 'giochi': '⚡ 𝙱𝙻𝙳 𝙶𝙰𝙼𝙴 𝙲𝙴𝙽𝚃𝙴𝚁 ⚡' }
+  let tags = { 'giochi': '⚡ ʀʟʏ 𝙶𝙰𝙼𝙴 𝙲𝙴𝙽𝚃𝙴𝚁 ⚡' }
 
   try {
     await conn.sendPresenceUpdate('composing', m.chat)
@@ -84,7 +84,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
 
   } catch (e) {
     console.error(e)
-    conn.reply(m.chat, `❌ Errore: Il file 'menu-giochi.jpeg' non è stato trovato nella cartella principale.`, m)
+    conn.reply(m.chat, `❌ Errore: Il file 'WA_1791285295586.jpeg' non è stato trovato nella cartella principale.`, m)
   }
 }
 
