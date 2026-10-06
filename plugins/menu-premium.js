@@ -2,11 +2,11 @@ import { xpRange } from '../lib/levelling.js'
 import { join } from 'path'
 
 // --- PERCORSO IMMAGINE ---
-const localImg = join(process.cwd(), 'menu-premium.jpeg');
+const localImg = join(process.cwd(), 'WA_1791285295586.jpeg');
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐁 𝐋 𝐃  •  𝐏 𝐑 𝐄 𝐌 𝐈 𝐔 𝐌 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘  •  𝐏 𝐑 𝐄 𝐌 𝐈 𝐔 𝐌 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ 🏆 𝚁𝚊𝚗𝚔 ⭔ %role
@@ -16,12 +16,12 @@ const defaultMenu = {
   header: '\n〔 %category 〕',
   body: '┃ ⌲ %emoji %cmd',
   footer: '',
-  testoFine: `\n_BLD-BOT EXCLUSIVE SYSTEM_`
+  testoFine: `\n_RLY-BOT EXCLUSIVE SYSTEM_`
 }
 
 let handler = async (m, { conn, usedPrefix: _p }) => {
   let tags = {
-    'prem': '⚡ 𝙱𝙻𝙳 𝙴𝙻𝙸𝚃𝙴 𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻 ⚡'
+    'prem': '⚡ 𝙴𝙻𝙸𝚃𝙴 𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻 ⚡'
   }
 
   try {
@@ -70,14 +70,14 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
         mentionedJid: [m.sender],
         forwardedNewsletterMessageInfo: {
           newsletterJid: '120363232743845068@newsletter',
-          newsletterName: "✧ 𝙱𝙻𝙳-𝙱𝙾𝚃 𝙿𝚁𝙴𝙼𝙸𝚄𝙼 ✧"
+          newsletterName: "✧ 𝐑 𝐋 𝐘 •  𝐁 𝐎 𝐓 𝙿𝚁𝙴𝙼𝙸𝚄𝙼 ✧"
         }
       }
     }, { quoted: m })
 
   } catch (e) {
     console.error(e)
-    conn.reply(m.chat, '❌ Errore nel caricamento del modulo Premium. Verifica menu-premium.jpeg.', m)
+    conn.reply(m.chat, '❌ Errore nel caricamento del modulo Premium. Verifica IMG-20261005-WA0143.jpg.', m)
   }
 }
 
