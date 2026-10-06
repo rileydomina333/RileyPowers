@@ -22,9 +22,9 @@ const handler = async (m, { conn, args, groupMetadata, participants, usedPrefix,
       errorMsg += `*📝 Esempio:*\n`
       errorMsg += `└─⭓ ${usedPrefix + command} 39\n\n`
 <<<<<<< HEAD
-      errorMsg += `> 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓`
+      errorMsg += `> 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓`
 =======
-      errorMsg += `> BLD-BOT`
+      errorMsg += `> RLY-BOT`
 >>>>>>> 937a2eb2f873caf51fb280f0269b0825e3e7b1eb
       return m.reply(errorMsg)
     }
