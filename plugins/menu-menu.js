@@ -8,8 +8,8 @@ const emojicategoria = {
 }
 
 let tags = {
-  main: '⚡ 𝙱𝙻𝙳 𝙼𝙰𝙸𝙽 𝚂𝚈𝚂𝚃𝙴𝙼 ⚡',
-  info: '⚡ 𝙱𝙻𝙳 𝙸𝙽𝙵𝙾 𝙱𝙰𝚂𝙴 ⚡'
+  main: '⚡ ʀʟʏ 𝙼𝙰𝙸𝙽 𝚂𝚈𝚂𝚃𝙴𝙼 ⚡',
+  info: '⚡ ʀʟʏ 𝙸𝙽𝙵𝙾 𝙱𝙰𝚂𝙴 ⚡'
 }
 
 const defaultMenu = {
