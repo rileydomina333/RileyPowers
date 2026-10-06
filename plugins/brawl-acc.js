@@ -59,7 +59,7 @@ db.data = db.data || { users: {} };
       `◈ 🥊 *Vittorie Solo:* ${p.soloVictories.toLocaleString()}\n` +
       `◈ 👥 *Vittorie Duo:* ${p.duoVictories.toLocaleString()}\n` +
       (p.club?.name ? `◈ 🏰 *Club:* ${p.club.name}\n` : `◈ 🏰 *Club:* Nessuno\n`) +
-      `\n_𝐁𝐋𝐎𝐎𝐃 𝐁𝐎𝐓_`;
+      `\n_𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓_`;
 
     await conn.sendMessage(m.chat, { react: { text: "✅", key: m.key } });
     return m.reply(msg);
