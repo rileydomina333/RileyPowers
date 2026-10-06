@@ -1,6 +1,6 @@
 import { createCanvas } from 'canvas'
 
-const footer = '𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓'
+const footer = '𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓'
 
 let handler = async (m, { conn, command, args, usedPrefix }) => {
     let who = m.sender
