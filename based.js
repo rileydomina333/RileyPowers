@@ -132,11 +132,10 @@ const question = (t) => {
 let opzione;
 if (!methodCodeQR && !methodCode && !fs.existsSync(`./${authFile}/creds.json`)) {
     do {
-        // NUOVA PALETTE: CYBER BLUE & PURPLE
-        const color1 = chalk.hex('#00D2FF'); // Cyan
-        const color2 = chalk.hex('#3A7BD5'); // Blue
-        const color3 = chalk.hex('#6A11CB'); // Deep Purple
-        const color4 = chalk.hex('#2575FC'); // Bright Blue
+        const color1 = chalk.hex('#00D2FF');
+        const color2 = chalk.hex('#3A7BD5');
+        const color3 = chalk.hex('#6A11CB');
+        const color4 = chalk.hex('#2575FC');
         const softText = chalk.hex('#AED6F1');
 
         const a = color1('╭━━━━━━━━━━━━━• ✧˚💎 𝖇𝖑𝖔𝖔𝖉𝖇𝖔𝖙 💠˚✧ •━━━━━━━━━━━━━');
@@ -156,24 +155,19 @@ if (!methodCodeQR && !methodCode && !fs.existsSync(`./${authFile}/creds.json`)) 
         opzione = await question(`\n
 ${a}
 
-          ${sm}
-${linea}
+          ${sm}${linea}
 
-${qr}
-${codice}
+${qr}${codice}
 
-${linea}
-${istruzioni.join('\n')}
+${linea}${istruzioni.join('\n')}
 
-${b}
-${prompt}`);
+${b}${prompt}`);
 
         if (!/^[1-2]$/.test(opzione)) {
             console.log(`\n${chalk.bgRed.white.bold(' ✖ INPUT NON VALIDO ')}
 
 ${chalk.hex('#34495E')('   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')}
-${chalk.hex('#FF5E62').bold('⚠️  Sono ammessi solo i numeri')} ${chalk.bold.cyan('1')} ${chalk.hex('#FF5E62').bold('o')} ${chalk.bold.cyan('2')}
-${chalk.hex('#FF9966')('┌─⭓ Nessuna lettera o simbolo')}
+${chalk.hex('#FF5E62').bold('⚠️  Sono ammessi solo i numeri')} ${chalk.bold.cyan('1')}${chalk.hex('#FF5E62').bold('o')} ${chalk.bold.cyan('2')}${chalk.hex('#FF9966')('┌─⭓ Nessuna lettera o simbolo')}
 ${chalk.hex('#FF9966')('└─⭓ Copia il numero dell\'opzione desiderata e incollalo')}
 ${chalk.cyan.italic('\n✧ Suggerimento: Se hai dubbi, scrivi al creatore +393701330693')}
 `);
@@ -186,7 +180,7 @@ const filterStrings = [
     "Q2xvc2luZyBvcGVuIHNlc3Npb24=",
     "RmFpbGVkIHRvIGRlY3J5cHQ=",
     "U2Vzc2lvbiBlcnJvcg==",
-    "RXJyb3I6IEJhZCBNQUM=",
+    "RXJyb3I6IEJhdkBNQUM=",
     "RGVjcnlwdGVkIG1lc3NhZ2U="
 ];
 console.info = () => {};
@@ -199,8 +193,13 @@ const logger = pino({
 });
 global.jidCache = new NodeCache({ stdTTL: 600, useClones: false });
 global.store = makeInMemoryStore({ logger });
+
+// Versione fissa richiesta
+const version = [2, 3000, 1049411806];
+
 const connectionOptions = {
     logger: logger,
+    version: version, // <-- Versione fissa aggiunta qui
     mobile: MethodMobile,
     browser: opzione === '1' ? Browsers.windows('Chrome') : methodCodeQR ? Browsers.windows('Chrome') : Browsers.macOS('Safari'),
     auth: {
@@ -383,7 +382,7 @@ async function connectionUpdate(update) {
             }
             process.exit(1);
         } else if (reason !== DisconnectReason.restartRequired && reason !== DisconnectReason.connectionClosed && !global.connectionMessagesPrinted.unknown) {
-            console.log(chalk.bold.redBright(`\n⚠️ DISCONNESSIONE SCONOSCIUTA: ${reason || '???'} >> ${connection || '???'}`));
+            console.log(chalk.bold.redBright(`\n⚠️ DISCONNESSIONE SCONOSCIUTA: ${reason \vert{}\vert{} '???'} >> ${connection || '???'}`));
             global.connectionMessagesPrinted.unknown = true;
         }
     }
@@ -417,6 +416,7 @@ async function connectSubBots() {
                     const { state: subState, saveCreds: subSaveCreds } = await useMultiFileAuthState(subAuthFile);
                     const subConn = makeWASocket({
                         ...connectionOptions,
+                        version: version, // Anche per i sub-bot
                         auth: {
                             creds: subState.creds,
                             keys: makeCacheableSignalKeyStore(subState.keys, logger),
@@ -619,11 +619,11 @@ function purgeSession(sessionDir, cleanPreKeys = false) {
             }
         });
 
-        let message = chalk.bold.hex('#00D2FF')(`\n╭⭑⭒━━━✦❘༻ 💠 SESSIONE 💠 ༺❘✦━━━⭒⭑\n┃  ✅ ${deletedCount} file eliminati da ${sessionDir}`);
+        let message = chalk.bold.hex('#00D2FF')(`\n╭⭑⭒━━━✦❘༻ 💠 SESSIONE 💠 ༺❘✦━━━⭒⭑\n┃  ✅ ${deletedCount} file eliminati da${sessionDir}`);
         if (preKeyDeletedCount > 0) {
             message += `\n┃  🔑 ${preKeyDeletedCount} chiavi obsolete rimosse`;
         }
-        message += `\n╰⭑⭒━━━✦❘༻☾⋆⁺₊🗑️ 𝖇𝖑𝖔𝖔𝖉𝖇𝖔𝖙 ♻️₊⁺⋆☽༺❘✦━━━⭒⭑`;
+        message += `\n╰⭑⭒━━━✦❘༻☾⋆⁺₊🗑️ 𝖇𝖑𝖔𝖔𝖉𝖇𝖔𝖙 ♻️️₊⁺⋆☽༺❘✦━━━⭒⭑`;
 
         if (deletedCount > 0) {
             console.log(message);
