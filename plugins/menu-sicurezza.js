@@ -3,7 +3,7 @@ import { join } from 'path'
 
 let handler = async (m, { conn, usedPrefix: _p, command, args, isOwner, isAdmin }) => {
   const userName = m.pushName || 'Utente'
-  const localImg = join(process.cwd(), 'menu-sicurezza.jpeg')
+  const localImg = join(process.cwd(), 'WA_1791285295586.jpeg')
 
   global.db.data.chats[m.chat] = global.db.data.chats[m.chat] || {}
   global.db.data.settings[conn.user.jid] = global.db.data.settings[conn.user.jid] || {}
@@ -37,7 +37,7 @@ let handler = async (m, { conn, usedPrefix: _p, command, args, isOwner, isAdmin 
 
   if (!args.length || /menu|help/i.test(args[0])) {
     let text = `
-⚡  〔 𝐁 𝐋 𝐃  •  𝐒 𝐄 𝐂 𝐔 𝐑 𝐈 𝐓 𝐘 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘  •  𝐒 𝐄 𝐂 𝐔 𝐑 𝐈 𝐓 𝐘 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ 📡 𝚂𝚝𝚊𝚝𝚞𝚜 ⭔ 𝙾𝚗𝚕𝚒𝚗𝚎
@@ -46,13 +46,13 @@ let handler = async (m, { conn, usedPrefix: _p, command, args, isOwner, isAdmin 
 ┃ ⌲ Attiva: ${_p}attiva <nome>
 ┃ ⌲ Disattiva: ${_p}disattiva <nome>
 
-〔 🛡️ 𝙱𝙻𝙳 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 〕
+〔 🛡️ ʀʟʏ 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 〕
 ${securityFeatures.map(f => `┃ ⌲ ${f.name} ( comando: ${toTypewriter(f.key)} )`).join('\n')}
 
-〔 🤖 𝙱𝙻𝙳 𝙰𝚄𝚃𝙾𝙼𝙰𝚉𝙸𝙾𝙽𝙴 〕
+〔 🤖 ʀʟʏ 𝙰𝚄𝚃𝙾𝙼𝙰𝚉𝙸𝙾𝙽𝙴 〕
 ${automationFeatures.map(f => `┃ ⌲ ${f.name} ( comando: ${toTypewriter(f.key)} )`).join('\n')}
 
-_Powered by BLD-BOT Interface_`
+_Powered by RLY-BOT Interface_`
 
     let userJid = m.sender.split('@')[0]
     let formattedText = text.replace(/%user/g, userJid)
