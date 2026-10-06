@@ -7,7 +7,7 @@ import os from 'os'
 const defaultMenu = {
   before: `
 ┎━━━━━━━━━━━━━━━━━━━┑
-┃   ✧  𝐁𝐋𝐃 - 𝐒𝐄𝐀𝐑𝐂𝐇  ✧    ┃
+┃   ✧  𝐑 𝐋 𝐘 - 𝐒𝐄𝐀𝐑𝐂𝐇  ✧    ┃
 ┖━━━━━━━━━━━━━━━━━━━┙
 ┌───────────────────┐
   👤 𝚄𝚜𝚎𝚛: %name
@@ -20,7 +20,7 @@ const defaultMenu = {
   header: '┍━━━〔 %category 〕━━━┑',
   body: '┇ 🔎  *%cmd*',
   footer: '┕━━━━━──ׄ──ׅ──ׄ──━━━━━┙\n',
-  after: `_ʙʟᴅ-ʙᴏᴛ ɪɴᴛᴇʟʟɪɢᴇɴᴄᴇ sʏsᴛᴇᴍ_`
+  after: `_ʀʟʏ-ʙᴏᴛ ɪɴᴛᴇʟʟɪɢᴇɴᴄᴇ sʏsᴛᴇᴍ_`
 }
 
 let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
@@ -71,8 +71,8 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
       contextInfo: {
         mentionedJid: [m.sender],
         forwardedNewsletterMessageInfo: {
-          newsletterJid: '120363232743845068@newsletter',
-          newsletterName: "✧ 𝙱𝙻𝙳-𝙱𝙾𝚃 𝚂𝙴𝙰𝚁𝙲𝙷 𝚂𝚈𝚂𝚃𝙴𝙼 ✧"
+          newsletterJid: '',
+          newsletterName: "✧ ʀʟʏ-𝙱𝙾𝚃 𝚂𝙴𝙰𝚁𝙲𝙷 𝚂𝚈𝚂𝚃𝙴𝙼 ✧"
         }
       }
     }, { quoted: m })
