@@ -30,11 +30,11 @@ export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isSam }) {
       },
     }).catch(() => {})
 
-  // Messaggio estetico in stile 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓
+  // Messaggio estetico in stile 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓
   const header = `⋆｡˚『 ╭ \`ANTIMEDIA SYSTEM\` ╯ 』˚｡⋆`
   const text = `${header}
 ╭
-┃ 🛡️ \`Stato:\` *Protocollo Blood Attivo*
+┃ 🛡️ \`Stato:\` *Protocollo Riley Attivo*
 ┃
 ┃ 『 👤 』 \`Target:\` @${m.sender.split('@')[0]}
 ┃ 『 🖼️ 』 \`Rilevato:\` *Media Permanente*
@@ -49,7 +49,7 @@ export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isSam }) {
       mentions: [m.sender],
       contextInfo: {
         externalAdReply: {
-          title: 'BLOOD SECURITY',
+          title: 'RILEY SECURITY',
           body: 'Restrizione media attiva',
           thumbnailUrl: 'https://qu.ax/TfUj.jpg',
           mediaType: 1
