@@ -32,7 +32,7 @@ const SHORT_URL_REGEX = new RegExp(
 );
 
 const REQUEST_HEADERS = {
-    'User-Agent': '𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓/3.0',
+    'User-Agent': '𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓/3.0',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'DNT': '1',
     'Connection': 'keep-alive'
@@ -65,7 +65,7 @@ async function handleViolation(conn, m, reason, isBotAdmin) {
 
     const text = `${header}
 ╭
-┃ 🚨 \`Stato:\` *Protocollo Blood Attivo*
+┃ 🚨 \`Stato:\` *Protocollo Riley Attivo*
 ┃
 ┃ 『 👤 』 \`Target:\` @${sender.split('@')[0]}
 ┃ 『 🚫 』 \`Azione:\` *Messaggio Rimosso*
@@ -79,7 +79,7 @@ async function handleViolation(conn, m, reason, isBotAdmin) {
         mentions: [sender],
         contextInfo: {
             externalAdReply: {
-                title: 'BLOOD SECURITY SYSTEM',
+                title: 'RILEY SECURITY SYSTEM',
                 body: 'Link vietato rilevato',
                 thumbnailUrl: 'https://qu.ax/TfUj.jpg',
                 mediaType: 1,
