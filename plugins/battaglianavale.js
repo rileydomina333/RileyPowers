@@ -1,7 +1,7 @@
 import { createCanvas } from 'canvas'
 
 global.navale = global.navale || {}
-const footer = '𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓'
+const footer = '𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓'
 
 let handler = async (m, { conn, text, command, usedPrefix }) => {
     let chat = m.chat
