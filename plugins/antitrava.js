@@ -41,13 +41,13 @@ export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isSam }) {
         const userTag = m.sender.split('@')[0];
         const reason = isTooLong ? 'Eccessiva lunghezza (Trava)' : 'Caratteri Zalgo/Crash rilevati';
         
-        // Messaggio estetico 𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓
+        // Messaggio estetico 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓
         const header = `⋆｡˚『 ╭ \`ANTITRAVA SYSTEM\` ╯ 』˚｡⋆`;
         const footer = `╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒`;
 
         const textMsg = `${header}
 ╭
-┃ 🛡️ \`Stato:\` *Protocollo Blood Attivo*
+┃ 🛡️ \`Stato:\` *Protocollo Riley Attivo*
 ┃
 ┃ 『 👤 』 \`Target:\` @${userTag}
 ┃ 『 ⚠️ 』 \`Rilevato:\` *Tentativo di Crash*
@@ -63,7 +63,7 @@ export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isSam }) {
             mentions: [m.sender],
             contextInfo: {
                 externalAdReply: {
-                    title: 'BLOOD CRASH PROTECTION',
+                    title: 'RILEY CRASH PROTECTION',
                     body: 'Minaccia neutralizzata',
                     thumbnailUrl: 'https://qu.ax/TfUj.jpg',
                     mediaType: 1,
