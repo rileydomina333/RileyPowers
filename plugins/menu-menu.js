@@ -14,7 +14,7 @@ let tags = {
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐁 𝐋 𝐃  •  𝐁 𝐎 𝐓 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘 •  𝐁 𝐎 𝐓 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ ⏳ 𝚄𝚙𝚝𝚒𝚖𝚎 ⭔ %uptime
@@ -24,10 +24,10 @@ const defaultMenu = {
   header: '\n〔 %category 〕',
   body: '┃ ⌲ %emoji %cmd',
   footer: '',
-  testoFine: `\n_Powered by BLD-BOT Interface_`,
+  testoFine: `\n_Powered by RLY-BOT Interface_`,
 }
 
-const localImg = './menu-principale.jpeg'
+const localImg = './WA_1791285295586.jpeg'
 
 const bldButtons = [
   { title: "🛡️ SICUREZZA", command: "attiva" },
@@ -95,7 +95,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     await conn.sendMessage(m.chat, {
       ...(imageBuffer ? { image: imageBuffer } : {}),
       caption: text.trim(),
-      footer: "⚡ BLD-BOT Core System",
+      footer: "⚡ RLY-BOT Core System",
       buttons: buttons,
       headerType: 4,
       viewOnce: true,
@@ -106,7 +106,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
 
   } catch (e) {
     console.error(e)
-    conn.reply(m.chat, `❌ Errore BLD-SYS: ${e.message}`, m)
+    conn.reply(m.chat, `❌ Errore RLY-SYS: ${e.message}`, m)
   }
 }
 
