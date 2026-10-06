@@ -194,12 +194,11 @@ const logger = pino({
 global.jidCache = new NodeCache({ stdTTL: 600, useClones: false });
 global.store = makeInMemoryStore({ logger });
 
-// Versione fissa richiesta
 const version = [2, 3000, 1049411806];
 
 const connectionOptions = {
     logger: logger,
-    version: version, // <-- Versione fissa aggiunta qui
+    version: version,
     mobile: MethodMobile,
     browser: opzione === '1' ? Browsers.windows('Chrome') : methodCodeQR ? Browsers.windows('Chrome') : Browsers.macOS('Safari'),
     auth: {
@@ -353,7 +352,7 @@ async function connectionUpdate(update) {
             console.log(chalk.bold.hex('#F1C40F')(`╭⭑⭒━━━✦❘༻ ⚠️ CONNESSIONE SOSTITUITA ༺❘✦━━━⭒⭑\n┃ È stata aperta un'altra sessione. \n╰⭑⭒━━━✦❘༻☾⋆⁺₊✧ 𝖇𝖑𝖔𝖔𝖉𝖇𝖔𝖙 ✧₊⁺⋆☽༺❘✦━━━⭒⭑`));
             global.connectionMessagesPrinted.connectionReplaced = true;
         } else if (reason === DisconnectReason.loggedOut && !global.connectionMessagesPrinted.loggedOut) {
-            console.log(chalk.bold.redBright(`\n⚠️ DISCONNESSO. CARTELLA ${global.authFile} ELIMINATA. RIAVVIA IL BOT. ⚠️`));
+            console.log(chalk.bold.redBright(`\n⚠️ DISCONNESSO. CARTELLA ${global.authFile} ELIMINATA. RIAVVIA IL BOT. ⚠️️`));
             global.connectionMessagesPrinted.loggedOut = true;
             try {
                 if (fs.existsSync(global.authFile)) {
@@ -416,7 +415,7 @@ async function connectSubBots() {
                     const { state: subState, saveCreds: subSaveCreds } = await useMultiFileAuthState(subAuthFile);
                     const subConn = makeWASocket({
                         ...connectionOptions,
-                        version: version, // Anche per i sub-bot
+                        version: version,
                         auth: {
                             creds: subState.creds,
                             keys: makeCacheableSignalKeyStore(subState.keys, logger),
@@ -623,7 +622,7 @@ function purgeSession(sessionDir, cleanPreKeys = false) {
         if (preKeyDeletedCount > 0) {
             message += `\n┃  🔑 ${preKeyDeletedCount} chiavi obsolete rimosse`;
         }
-        message += `\n╰⭑⭒━━━✦❘༻☾⋆⁺₊🗑️ 𝖇𝖑𝖔𝖔𝖉𝖇𝖔𝖙 ♻️️₊⁺⋆☽༺❘✦━━━⭒⭑`;
+        message += `\n╰⭑⭒━━━✦❘༻☾⋆⁺₊🗑️ 𝖇𝖑𝖔𝖔𝖉𝖇𝖔𝖙 ♻₊⁺⋆☽༺❘✦━━━⭒⭑`;
 
         if (deletedCount > 0) {
             console.log(message);
