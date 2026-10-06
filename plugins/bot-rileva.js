@@ -9,7 +9,7 @@ export async function before(m, { conn, groupMetadata }) {
       const participant = groupMetadata.participants.find(p => p.id && (p.id.split('@')[0] === lidNumber));
       if (participant) sender = participant.id;
   }
-  
+
   let param0 = m.messageStubParameters?.[0];
   if (param0 && typeof param0 === 'string' && param0.endsWith('@lid')) {
       const lidNumber = param0.split('@')[0].replace(/:\d+$/, '');
@@ -40,7 +40,7 @@ export async function before(m, { conn, groupMetadata }) {
       ppBuffer = Buffer.alloc(0);
     }
   }
-  const nomegp = groupMetadata.subject || '𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓';
+  const nomegp = groupMetadata.subject || 'vare ✧ bot';
   const am = {
     21: 'NOME GRUPPO MODIFICATO',
     22: 'IMMAGINE GRUPPO MODIFICATA',
