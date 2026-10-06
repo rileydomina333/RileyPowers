@@ -18,7 +18,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   if (command === "play") {
 
-    if (!text) return m.reply("🤖 *BLD-bot* • 🎧 Scrivi il titolo di una canzone!")
+    if (!text) return m.reply("🤖 *𝐑𝐋𝐘•𝐁𝐎𝐓* • 🎧 Scrivi il titolo di una canzone!")
 
     let search = await yts(text)
     let video = search.videos[0]
@@ -50,7 +50,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   if (command === "play_audio") {
 
-    let infoMsg = `🎧 *BLD-bot* • Scarico l'audio di:\n_${video.title}_`
+    let infoMsg = `🎧 *𝐑𝐋𝐘-𝐁𝐎𝐓* • Scarico l'audio di:\n_${video.title}_`
     await m.reply(infoMsg)
 
     let file = `./tmp_${Date.now()}.mp3`
@@ -97,7 +97,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     if (video.seconds > 480)
       return m.reply("❌ Il video supera il limite massimo di 8 minuti.")
 
-    await m.reply("🎥 *BLD-bot* • Elaborazione e download del video in corso...")
+    await m.reply("🎥 *𝐑𝐋𝐘-𝐁𝐎𝐓* • Elaborazione e download del video in corso...")
 
     const ts  = Date.now()
     const raw = path.join(os.tmpdir(), `vid_raw_${ts}.mp4`)
@@ -131,7 +131,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       await conn.sendMessage(m.chat, {
         video: fs.readFileSync(out),
         mimetype: 'video/mp4',
-        caption: `🎬 *BLD-bot* • ${video.title}`
+        caption: `🎬 *𝐑𝐋𝐘-𝐁𝐎𝐓* • ${video.title}`
       }, { quoted: m })
 
       fs.unlinkSync(out)
