@@ -1,7 +1,7 @@
 import { xpRange } from '../lib/levelling.js'
 import { join } from 'path'
 
-const localImg = join(process.cwd(), 'menu-ia.jpeg');
+const localImg = join(process.cwd(), 'WA_1791285295586.jpeg');
 
 const emojicategoria = {
   iatesto: '📝',
