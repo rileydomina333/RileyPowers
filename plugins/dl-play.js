@@ -320,7 +320,7 @@ let handler = async (
         if (cmd === 'play') {
             const caption =
                 `┏━━━━━━━━━━━━━━━━━━━┓\n` +
-                `   🎧 *𝙋𝙇𝘼𝙔 𝑹𝑰𝑳𝑬𝒀-𝑩𝑶𝑻* 🎧\n` +
+                `   🎧 *𝙋𝙇𝘼𝙔 𝐑𝐈𝐋𝐄𝐘 𝐁𝐎𝐓* 🎧\n` +
                 `┗━━━━━━━━━━━━━━━━━━━┛\n\n` +
                 `◈ 📌 *Titolo:* ${title}\n` +
                 `◈ ⏱️ *Durata:* ${duration || 'Sconosciuta'}\n\n` +
@@ -356,7 +356,7 @@ let handler = async (
                         },
                         caption,
                         footer:
-                            '𝑵𝑰𝑮𝑮𝑨-𝑩𝑶𝑻',
+                            '𝐑𝐈𝐋𝐄𝐘 𝐁𝐎𝐓',
                         buttons,
                         headerType: 4
                     },
