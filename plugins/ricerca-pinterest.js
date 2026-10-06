@@ -60,7 +60,7 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
 『 👤 』 *Autore:* ${res.author}
 ━━━━━━━━━━━━━━━━━━━━
 
-˗ˏˋ𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓ˎˊ˗`.trim();
+˗ˏˋ𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓ˎˊ˗`.trim();
 
     // Invio con bottone "Altra Foto"
     await conn.sendMessage(m.chat, {
