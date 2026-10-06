@@ -6,7 +6,7 @@ let handler = async (m, { conn }) => {
     return conn.sendMessage(m.chat, { text: `*⟡ ACCESSO NEGATO ⟡*\n\n💠 *Usa questo comando solo dal numero del bot*` }, { quoted: m })
   }
 
-  const sessionFolder = "./sessioni/"
+  const sessionFolder = "./session/"
   if (!existsSync(sessionFolder)) {
     return conn.sendMessage(m.chat, { text: `*⟡ CARTELLA NON TROVATA ⟡*\n\n💠 *La cartella./sessioni/ non esiste*` }, { quoted: m })
   }
