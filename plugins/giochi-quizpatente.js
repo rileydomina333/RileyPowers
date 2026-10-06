@@ -146,7 +146,7 @@ handler.before = async (m, { conn }) => {
 
   const nextButtonMessage = {
     text: caption,
-    footer: '𝐁𝐋𝐎𝐎𝐃-𝐁𝐎𝐓',
+    footer: '𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓',
     buttons: nextButtons,
     headerType: 1
   }
