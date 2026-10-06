@@ -53,12 +53,12 @@ let handler = async (m, { conn, usedPrefix, command, args, isOwner, isAdmin, isS
     if (feat.perm === PERM.ADMIN && !isAdmin && !isOwner && !isSam) return m.reply('『 ❌ 』 Accesso negato.');
     const target = feat.store === 'bot' ? botSettings : chat;
     target[feat.key] = isEnable;
-    return m.reply(`*〘 📡 BLD-SYSTEM 〙*\n\nModulo: ${feat.name}\nStato: *${isEnable ? 'ATTIVATO 🟢' : 'DISATTIVATO 🔴'}*`);
+    return m.reply(`*〘 📡 RLY-SYSTEM 〙*\n\nModulo: ${feat.name}\nStato: *${isEnable ? 'ATTIVATO 🟢' : 'DISATTIVATO 🔴'}*`);
   }
 
   if (['enable', 'disable', 'attiva', 'disattiva'].includes(command?.toLowerCase())) {
     const getStatus = (f) => (f.store === 'bot' ? botSettings[f.key] : chat[f.key]) ? '🟢' : '🔴';
-    let menu = `┎━━━━━━━━━━━━━━━━━━━━┑\n┃   ✧  *𝐁𝐋𝐃 - 𝐌𝐀𝐒𝐓𝐄𝐑 𝐂𝐎𝐍𝐓𝐑𝐎𝐋* ✧   ┃\n┖━━━━━━━━━━━━━━━━━━━━┙\n\n`;
+    let menu = `┎━━━━━━━━━━━━━━━━━━━━┑\n┃   ✧  *𝐑𝐋𝐘 - 𝐌𝐀𝐒𝐓𝐄𝐑 𝐂𝐎𝐍𝐓𝐑𝐎𝐋* ✧   ┃\n┖━━━━━━━━━━━━━━━━━━━━┙\n\n`;
     featureRegistry.forEach(f => {
         menu += `┇ ${getStatus(f)} ${f.name}\n┇ _${f.desc}_\n┇ ➤ *${usedPrefix}${command} ${f.key}*\n┇\n`;
     });
