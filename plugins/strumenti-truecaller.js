@@ -1,90 +1,211 @@
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-    if (!text) return m.reply(`*Uso:* ${usedPrefix + command} <numero>\n\n*Esempio:* ${usedPrefix + command} +393471234567`)
+    if (!text) {
+        return m.reply(
+            `╭─〔 📞 NUMINFO 〕\n` +
+            `│ Uso: ${usedPrefix + command} <numero>\n` +
+            `│ Esempio: ${usedPrefix + command} +393471234567\n` +
+            `╰───────────────`
+        )
+    }
 
-    let numero = text.replace(/[^0-9+]/g, '')
-    if (!numero.startsWith('+')) return m.reply('Metti il prefisso. Es: +39, +1, MANNAGGIA!')
+    let numero = text.replace(/[^\d+]/g, '')
 
-    // Database prefissi Paesi principali
+    if (!numero.startsWith('+')) {
+        return m.reply(
+            `❌ *Prefisso internazionale mancante!*\n\n` +
+            `Esempio: *+39 347 1234567*`
+        )
+    }
+
+    // Database prefissi Paesi
     const paesi = {
-        '+39': 'Italia', '+1': 'USA/Canada', '+44': 'Regno Unito', '+33': 'Francia',
-        '+49': 'Germania', '+34': 'Spagna', '+41': 'Svizzera', '+43': 'Austria',
-        '+32': 'Belgio', '+31': 'Olanda', '+351': 'Portogallo', '+30': 'Grecia',
-        '+7': 'Russia/Kazakistan', '+86': 'Cina', '+81': 'Giappone', '+91': 'India',
-        '+55': 'Brasile', '+52': 'Messico', '+54': 'Argentina', '+61': 'Australia'
+        '+39': 'Italia',
+        '+1': 'USA / Canada',
+        '+44': 'Regno Unito',
+        '+33': 'Francia',
+        '+49': 'Germania',
+        '+34': 'Spagna',
+        '+41': 'Svizzera',
+        '+43': 'Austria',
+        '+32': 'Belgio',
+        '+31': 'Olanda',
+        '+351': 'Portogallo',
+        '+30': 'Grecia',
+        '+7': 'Russia / Kazakistan',
+        '+86': 'Cina',
+        '+81': 'Giappone',
+        '+91': 'India',
+        '+55': 'Brasile',
+        '+52': 'Messico',
+        '+54': 'Argentina',
+        '+61': 'Australia'
     }
 
-    // Prefissi mobili italiani. Aggiornati al 2026
+    // Prefissi mobili italiani
     const mobiliITA = {
-        'TIM': ['+39328','+39329','+39330','+39331','+39333','+39334','+39335','+39336','+39337','+39338','+39339','+39360','+39366'],
-        'Vodafone': ['+39340','+39341','+39342','+39343','+39344','+39345','+39346','+39347','+39348','+39349'],
-        'WindTre': ['+39320','+39322','+39323','+39324','+39325','+39327','+39380','+39388','+39389','+39390','+39391','+39392','+39393'],
-        'Iliad': ['+39351','+39352','+39353','+39354','+39355','+39356','+39357'],
-        'PosteMobile': ['+39371','+39372','+39373','+39374','+39375','+39376','+39377','+39378'],
-        'Ho Mobile': ['+39370','+39379'],
-        'Kena': ['+39350'],
-        'Very Mobile': ['+39319']
+        'TIM': [
+            '+39328', '+39329', '+39330', '+39331',
+            '+39333', '+39334', '+39335', '+39336',
+            '+39337', '+39338', '+39339', '+39360',
+            '+39366'
+        ],
+
+        'Vodafone': [
+            '+39340', '+39341', '+39342', '+39343',
+            '+39344', '+39345', '+39346', '+39347',
+            '+39348', '+39349'
+        ],
+
+        'WindTre': [
+            '+39320', '+39322', '+39323', '+39324',
+            '+39325', '+39327', '+39380', '+39388',
+            '+39389', '+39390', '+39391', '+39392',
+            '+39393'
+        ],
+
+        'Iliad': [
+            '+39351', '+39352', '+39353', '+39354',
+            '+39355', '+39356', '+39357'
+        ],
+
+        'PosteMobile': [
+            '+39371', '+39372', '+39373', '+39374',
+            '+39375', '+39376', '+39377', '+39378'
+        ],
+
+        'Ho Mobile': [
+            '+39370', '+39379'
+        ],
+
+        'Kena': [
+            '+39350'
+        ],
+
+        'Very Mobile': [
+            '+39319'
+        ]
     }
 
-    // Prefissi fissi Italia per regione
+    // Prefissi telefonia fissa italiana
     const fissiITA = {
-        '+3902': 'Milano', '+3906': 'Roma', '+39011': 'Torino', '+39051': 'Bologna',
-        '+39055': 'Firenze', '+39081': 'Napoli', '+39091': 'Palermo', '+39010': 'Genova',
-        '+39049': 'Padova', '+39040': 'Trieste', '+39070': 'Cagliari', '+39080': 'Bari'
+        '+3902': 'Milano',
+        '+3906': 'Roma',
+        '+39011': 'Torino',
+        '+39051': 'Bologna',
+        '+39055': 'Firenze',
+        '+39081': 'Napoli',
+        '+39091': 'Palermo',
+        '+39010': 'Genova',
+        '+39049': 'Padova',
+        '+39040': 'Trieste',
+        '+39070': 'Cagliari',
+        '+39080': 'Bari'
     }
 
-    let info = `*ANALISI NUMERO: ${numero}*\n\n`
-    let trovato = false
+    // Trova Paese
+    let paese = null
+    let prefissoPaese = null
 
-    // 1. Controllo Paese
-    for (let pref in paesi) {
+    // Prima i prefissi più lunghi
+    const prefissiOrdinati = Object.keys(paesi)
+        .sort((a, b) => b.length - a.length)
+
+    for (const pref of prefissiOrdinati) {
         if (numero.startsWith(pref)) {
-            info += `*Paese:* ${paesi}\n`
-            trovato = true
+            prefissoPaese = pref
+            paese = paesi[pref]
             break
         }
     }
-    if (!trovato) return m.reply('Prefisso paese non riconosciuto.')
 
-    // 2. Se è Italia, dettaglio operatore/zona
+    if (!paese) {
+        return m.reply(
+            `❌ *Prefisso internazionale non riconosciuto.*\n\n` +
+            `Numero analizzato: ${numero}`
+        )
+    }
+
+    let tipo = 'Sconosciuto'
+    let operatore = 'Non identificato'
+    let zona = null
+
+    // Analisi numeri italiani
     if (numero.startsWith('+39')) {
-        let opTrovato = false
-        // Check mobile
-        for (let [op, prefs] of Object.entries(mobiliITA)) {
-            if (prefs.some(p => numero.startsWith(p))) {
-                info += `*Tipo:* Mobile\n*Operatore:* ${op}\n`
-                opTrovato = true
+
+        // Mobile
+        for (const [op, prefs] of Object.entries(mobiliITA)) {
+            if (prefs.some(pref => numero.startsWith(pref))) {
+                tipo = 'Mobile'
+                operatore = op
                 break
             }
         }
-        // Check fisso se non è mobile
-        if (!opTrovato) {
-            for (let [pref, citta] of Object.entries(fissiITA)) {
+
+        // Fisso
+        if (tipo === 'Sconosciuto') {
+            const prefissiFissi = Object.keys(fissiITA)
+                .sort((a, b) => b.length - a.length)
+
+            for (const pref of prefissiFissi) {
                 if (numero.startsWith(pref)) {
-                    info += `*Tipo:* Fisso\n*Zona:* ${citta}\n`
-                    opTrovato = true
+                    tipo = 'Fisso'
+                    zona = fissiITA[pref]
+                    operatore = 'Rete fissa'
                     break
                 }
             }
         }
-        if (!opTrovato) info += `*Tipo:* Fisso/Mobile generico\n`
+
+        // Numero italiano non riconosciuto
+        if (tipo === 'Sconosciuto') {
+            tipo = 'Fisso / Mobile'
+        }
     }
 
-    // 3. Link utili pubblici - non violano privacy
-    let soloNumeri = numero.replace('+', '')
-    info += `\n*Link utili:*\n`
-    info += `WhatsApp: wa.me/${soloNumeri}\n`
-    info += `Telegram: t.me/+${soloNumeri}\n`
-    info += `_Link whatsapp/telegram._\n\n`
+    // Validazione lunghezza
+    const soloNumeri = numero.replace(/\D/g, '')
+    const lunghezza = soloNumeri.length
 
-    // 4. Check formato
-    let lunghezza = numero.replace('+', '').length
-    if (numero.startsWith('+39') && lunghezza !== 12) {
-        info += `⚠️ *Attenzione:* Numero italiano deve avere 12 cifre con +39. Questo ne ha ${lunghezza}.\n\n`
+    let validita = '✅ Formato valido'
+
+    if (numero.startsWith('+39')) {
+        if (lunghezza !== 12) {
+            validita =
+                `⚠️ Formato sospetto (${lunghezza} cifre, ` +
+                `attese 12 per un numero italiano)`
+        }
     }
 
-    info += `_𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓_`
+    // Link
+    const numeroLink = numero.replace(/\+/g, '')
 
-    m.reply(info)
+    let info =
+        `╭━━〔 📞 NUMINFO 〕━━╮\n` +
+        `┃\n` +
+        `┃ 📱 *Numero:* ${numero}\n` +
+        `┃ 🌍 *Paese:* ${paese}\n` +
+        `┃ 🔢 *Prefisso:* ${prefissoPaese}\n` +
+        `┃ 📡 *Tipo:* ${tipo}\n` +
+        `┃ 🏢 *Operatore:* ${operatore}\n`
+
+    if (zona) {
+        info += `┃ 📍 *Zona:* ${zona}\n`
+    }
+
+    info +=
+        `┃ 📏 *Lunghezza:* ${lunghezza} cifre\n` +
+        `┃ ${validita}\n` +
+        `┃\n` +
+        `╰━━━━━━━━━━━━━━━━━━╯\n\n` +
+
+        `🔗 *Link pubblici*\n` +
+        `├─ WhatsApp: wa.me/${numeroLink}\n` +
+        `└─ Telegram: t.me/+${numeroLink}\n\n` +
+
+        `_⚠️ Le informazioni sono basate esclusivamente su prefissi e dati pubblici._\n` +
+        `_𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓_`
+
+    return m.reply(info)
 }
 
 handler.help = ['truecaller <numero>']
