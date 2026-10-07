@@ -32,7 +32,7 @@ const CONFIG = {
         `┃ *${gruppo}*!\n` +
         `┃\n` +
         `┃ ❤️ Buona permanenza!\n` +
-        `┃ 📖 Ricordati di rispettare le regole.\n` +
+        `┃ 📖 Ricordati di un fari u fagnu!.\n` +
         `┃\n` +
         `╰━━━━━━━━━━━━━━━━━━╯`,
 
@@ -43,7 +43,7 @@ const CONFIG = {
         `┃ *${gruppo}*.\n` +
         `┃\n` +
         `┃ tanto faceva schifo.\n` +
-        `┃ 🖕 va iaccati\n` +
+        `┃ 🖕 va iaccati!\n` +
         `┃\n` +
         `╰━━━━━━━━━━━━━━━━━━╯`
 }
