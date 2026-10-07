@@ -1,6 +1,5 @@
 const handler = async (m, { conn }) => {
     try {
-        // Recupero info gruppo
         const metadata = await conn.groupMetadata(m.chat);
         const groupName = metadata.subject;
         const inviteCode = await conn.groupInviteCode(m.chat);
@@ -11,36 +10,30 @@ const handler = async (m, { conn }) => {
         try {
             ppUrl = await conn.profilePictureUrl(m.chat, 'image');
         } catch {
-            // Immagine di fallback se il gruppo non ha foto
-            ppUrl = 'https://i.ibb.co/3Fh9V6p/avatar-group-default.png';
+            ppUrl = 'https://ibb.co';
         }
 
-        // Testo formattato in modo pulito e leggibile
-        const messageText = `
-        『 🔗 』 *LINK GRUPPO*
+        const messageText = `> ⛓️‍💥 *LINK GENERATO CON SUCCESSO*\n\n` +
+                            `*〢 𝖨𝖭𝖥𝖮𝖱𝖬𝖠𝖹𝖨𝖮𝖭𝖨 𝖦𝖱𝖴𝖯𝖯𝖮*\n` +
+                            `  » *Nome:* ${groupName}\n` +
+                            `  » *Utenti all'interno:* ${memberCount}\n\n` +
+                            `*〢 𝖢𝖮𝖭𝖭𝖤𝖲𝖲𝖨𝖮𝖭𝖤 𝖣𝖨𝖱𝖤𝖳𝖳𝖠*\n` +
+                            `  ${linkgruppo}\n\n` +
+                            `＿\n` +
+                            `⌗ Richiesta elaborata per @${m.sender.split('@')[0]}`;
 
-*Nome:* ${groupName}
-*Membri:* ${memberCount}
-
-*Link:*
-${linkgruppo}
-
-_Tieni premuto sul link per copiarlo o clicca per condividerlo._`.trim();
-
-        // Invio messaggio compatibile con tutti i dispositivi (iPhone/Android/Web)
         await conn.sendMessage(
             m.chat,
             {
                 image: { url: ppUrl },
                 caption: messageText,
-                mentions: [m.sender] // Opzionale: menziona chi ha chiesto il link
+                mentions: [m.sender]
             },
             { quoted: m }
         );
 
     } catch (error) {
-        console.error('Errore invio messaggio link:', error);
-        // Fallback ultra-semplice in caso di errore critico
+        console.error(error);
         m.reply('❌ Errore nel recupero del link. Assicurati che il bot sia amministratore.');
     }
 };
