@@ -1,7 +1,7 @@
 let handler = async (m, { conn, text, usedPrefix, command }) => {
     if (!text) {
         return m.reply(
-            `╭─〔 📞 NUMINFO 〕\n` +
+            `╭─〔 📞 TRUECALLER 〕\n` +
             `│ Uso: ${usedPrefix + command} <numero>\n` +
             `│ Esempio: ${usedPrefix + command} +393471234567\n` +
             `╰───────────────`
@@ -202,7 +202,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         `├─ WhatsApp: wa.me/${numeroLink}\n` +
         `└─ Telegram: t.me/+${numeroLink}\n\n` +
 
-        `_⚠️ Le informazioni sono basate esclusivamente su prefissi e dati pubblici._\n` +
         `_𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓_`
 
     return m.reply(info)
