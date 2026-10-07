@@ -26,7 +26,7 @@ const CONFIG = {
     messaggioBenvenuto: (nome, gruppo) =>
         `╭━━〔 🎉 BENVENUTO 〕━━╮\n` +
         `┃\n` +
-        `┃ 👋 Benvenuto/a @*${groupName}*!\n` +
+        `┃ 👋 Benvenuto/a @${nome}!\n` +
         `┃\n` +
         `┃ 🎊 Sei entrato/a nel gruppo\n` +
         `┃ *${gruppo}*!\n` +
@@ -40,7 +40,7 @@ const CONFIG = {
         `╭━━〔 👋 ADDIO 〕━━╮\n` +
         `┃\n` +
         `┃ 👋 @${nome} ha lasciato\n` +
-        `┃ *${groupName}*.\n` +
+        `┃ *${gruppo}*.\n` +
         `┃\n` +
         `┃ tanto faceva schifo.\n` +
         `┃ 🖕 va iaccati\n` +
