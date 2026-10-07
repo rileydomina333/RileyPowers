@@ -42,8 +42,8 @@ const CONFIG = {
         `┃ 👋 @${nome} ha lasciato\n` +
         `┃ *${gruppo}*.\n` +
         `┃\n` +
-        `┃ Ci dispiace vederti andare.\n` +
-        `┃ ❤️ Buona fortuna e a presto!\n` +
+        `┃ tanto faceva schifo.\n` +
+        `┃ 🖕 va iaccati\n` +
         `┃\n` +
         `╰━━━━━━━━━━━━━━━━━━╯`
 }
