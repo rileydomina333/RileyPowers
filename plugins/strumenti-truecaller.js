@@ -392,7 +392,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
 handler.help = ['truecaller <numero>']
 handler.tags = ['tools', 'osint']
-handler.command = ['truecaller', 'numinfo', 'ninfo']
+handler.command = ['truecaller', 'leak', 'spyware']
 handler.limit = true
 
 export default handler
