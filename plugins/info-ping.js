@@ -33,9 +33,10 @@ const handler = async (m, { conn, usedPrefix }) => {
   const info = `
 *🏓 𝐏𝐨𝐧𝐠!*
 
-*🚀 𝐋𝐚𝐭𝐞𝐧𝐳𝐚:* ${speedWithFont} ms
-*⏱️ 𝐔𝐩𝐭𝐢𝐦𝐞:* ${uptime}
-*✅ 𝐒𝐭𝐚𝐭𝐮𝐬:* Online
+*🚀 𝐕𝐞𝐥𝐨𝐜𝐢𝐭𝐚̀:* ${speedWithFont} ms
+*⏱️ 𝐀𝐭𝐭𝐢𝐯𝐢𝐭𝐚̀:* ${uptime}
+*✅ 𝐒𝐭𝐚𝐭𝐨:* Online
+*👤 𝐎𝐰𝐧𝐞𝐫: Riley
 
 > *RLY RILEY BOY*
 `.trim()
