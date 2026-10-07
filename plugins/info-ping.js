@@ -1,39 +1,37 @@
-import { performance } from 'perf_hooks';
+  const uptime = clockString(process.uptime() * 1000)
 
-const clockString = ms => {
-  const days = Math.floor(ms / 86400000);
-  const hours = Math.floor((ms % 86400000) / 3600000);
-  const minutes = Math.floor((ms % 3600000) / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000);
-  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-};
+  const info = `
+*🏓 𝐏𝐨𝐧𝐠!*
 
-const handler = async (m, { conn }) => {
-  const _uptime = process.uptime() * 1000;
-  const uptime = clockString(_uptime);
+*🚀 ׁׅ᥎ׁׅꫀׁׅܻ݊ᥣׁׅ֪ᨵׁׅׅᝯׁ֒ꪱׁׁׁׅׅׅtׁׁׅׅɑׁׅ́:* ${speedWithFont} s
+*⏱️ ɑׁׅtׁׅtׁׅꪱׁׁׁׁׅׅׅׅ᥎ׁׅꪱׁׁׁׅׅׅtׁׅɑׁׅ́:* ${uptime}
+*✅ ׅ꯱tׁׅɑׁׅtׁׅᨵׁׅׅ:* Online
 
-  const old = performance.now();
-  const neww = performance.now();
-  const speed = (neww - old).toFixed(3);
-  
-  const avvio = new Date().toLocaleString('it-IT');
-  let nomeDelBot = global.db.data.nomedelbot || 'ʙʟᴏᴏᴅ-ʙᴏᴛ';
+> *𝐑𝐈𝐋𝐄𝐘 𝚩𝚯𝐓*
+`.trim()
 
-  const info = `╭━━━━━━•✦•━━━━━━╮
-              ✨ ᴘɪɴɢ ✨
-╰━━━━━━•✦•━━━━━━╯
+  const buttons = [
+    {
+      buttonId: `${usedPrefix}ping`,
+      buttonText: { displayText: '🔄 Ping' },
+      type: 1
+    },
+    {
+      buttonId: `${usedPrefix}menu`,
+      buttonText: { displayText: '📋 Menu' },
+      type: 1
+    }
+  ]
 
-◈ Attività: \`${uptime}\`
-◈ Velocità: \`${speed} ms\`
-◈ 𝖠𝗏𝗏𝗂𝗈: \`${avvio}\`
+  await conn.sendMessage(m.chat, {
+    text: info,
+    buttons,
+    headerType: 1
+  }, { quoted: m })
+}
 
-╭━━━━━━•✦•━━━━━━╮
-   𝖮𝗐𝗇𝖾𝗋: *RILEY*
-   𝖲𝗍𝖺𝗍𝗈: _Online_
-╰━━━━━━•✦•━━━━━━╯`.trim();
+handler.help = ['ping']
+handler.tags = ['info']
+handler.command = /^(ping)$/i
 
-  await conn.sendMessage(m.chat, { text: info }, { quoted: m });
-};
-
-handler.command = /^(ping)$/i;
-export default handler;
+export default handler
