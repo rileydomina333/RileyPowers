@@ -36,7 +36,7 @@ const handler = async (m, { conn, usedPrefix }) => {
 *🚀 𝐕𝐞𝐥𝐨𝐜𝐢𝐭𝐚̀:* ${speedWithFont} ms
 *⏱️ 𝐀𝐭𝐭𝐢𝐯𝐢𝐭𝐚̀:* ${uptime}
 *✅ 𝐒𝐭𝐚𝐭𝐨:* Online
-*👤 𝐎𝐰𝐧𝐞𝐫: Riley
+*👤 𝐎𝐰𝐧𝐞𝐫:* Riley
 
 > *RLY RILEY BOY*
 `.trim()
