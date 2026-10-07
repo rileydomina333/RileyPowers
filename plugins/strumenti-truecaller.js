@@ -74,7 +74,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     info += `\n*Link utili:*\n`
     info += `WhatsApp: wa.me/${soloNumeri}\n`
     info += `Telegram: t.me/+${soloNumeri}\n`
-    info += `_Se i link aprono una chat, il numero è registrato. Non forzo controlli._\n\n`
+    info += `_Link whatsapp/telegram._\n\n`
 
     // 4. Check formato
     let lunghezza = numero.replace('+', '').length
