@@ -1,7 +1,7 @@
 let handler = async (m, { conn, text, usedPrefix, command }) => {
     if (!text) {
         return m.reply(
-            `╭─〔 📞 NUMINFO PRO 〕\n` +
+            `╭─〔 📞 TRUECALLER INFO〕\n` +
             `│ Uso: ${usedPrefix + command} <numero>\n` +
             `│ Esempio: ${usedPrefix + command} +393471234567\n` +
             `╰────────────────────`
@@ -384,9 +384,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         `┃ ${tellows}\n` +
         `┃\n` +
         `╰━━━━━━━━━━━━━━━━━━━━╯\n\n` +
-
-        `⚠️ *Nota:* operatore e zona sono stime basate sui prefissi. ` +
-        `La portabilità può rendere l'operatore indicato non aggiornato.\n\n` +
 
         `_𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓_`
 
