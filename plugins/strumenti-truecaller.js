@@ -1,23 +1,30 @@
 let handler = async (m, { conn, text, usedPrefix, command }) => {
     if (!text) {
         return m.reply(
-            `╭─〔 📞 TRUECALLER 〕\n` +
+            `╭─〔 📞 NUMINFO PRO 〕\n` +
             `│ Uso: ${usedPrefix + command} <numero>\n` +
             `│ Esempio: ${usedPrefix + command} +393471234567\n` +
-            `╰───────────────`
+            `╰────────────────────`
         )
     }
 
     let numero = text.replace(/[^\d+]/g, '')
 
+    // Mantiene un solo +
+    numero = numero.replace(/(?!^)\+/g, '')
+
     if (!numero.startsWith('+')) {
         return m.reply(
             `❌ *Prefisso internazionale mancante!*\n\n` +
-            `Esempio: *+39 347 1234567*`
+            `Esempio:\n` +
+            `*${usedPrefix + command} +393471234567*`
         )
     }
 
-    // Database prefissi Paesi
+    // ============================================================
+    // DATABASE PAESI
+    // ============================================================
+
     const paesi = {
         '+39': 'Italia',
         '+1': 'USA / Canada',
@@ -38,10 +45,40 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         '+55': 'Brasile',
         '+52': 'Messico',
         '+54': 'Argentina',
-        '+61': 'Australia'
+        '+61': 'Australia',
+        '+64': 'Nuova Zelanda',
+        '+27': 'Sudafrica',
+        '+20': 'Egitto',
+        '+90': 'Turchia',
+        '+972': 'Israele',
+        '+971': 'Emirati Arabi Uniti',
+        '+966': 'Arabia Saudita',
+        '+380': 'Ucraina',
+        '+48': 'Polonia',
+        '+40': 'Romania',
+        '+359': 'Bulgaria',
+        '+385': 'Croazia',
+        '+386': 'Slovenia',
+        '+420': 'Repubblica Ceca',
+        '+421': 'Slovacchia',
+        '+36': 'Ungheria',
+        '+353': 'Irlanda',
+        '+45': 'Danimarca',
+        '+46': 'Svezia',
+        '+47': 'Norvegia',
+        '+358': 'Finlandia',
+        '+354': 'Islanda',
+        '+52': 'Messico',
+        '+57': 'Colombia',
+        '+51': 'Perù',
+        '+56': 'Cile',
+        '+58': 'Venezuela'
     }
 
-    // Prefissi mobili italiani
+    // ============================================================
+    // PREFISSI MOBILI ITALIANI
+    // ============================================================
+
     const mobiliITA = {
         'TIM': [
             '+39328', '+39329', '+39330', '+39331',
@@ -86,7 +123,10 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         ]
     }
 
-    // Prefissi telefonia fissa italiana
+    // ============================================================
+    // PREFISSI TELEFONIA FISSA ITALIANA
+    // ============================================================
+
     const fissiITA = {
         '+3902': 'Milano',
         '+3906': 'Roma',
@@ -99,14 +139,30 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         '+39049': 'Padova',
         '+39040': 'Trieste',
         '+39070': 'Cagliari',
-        '+39080': 'Bari'
+        '+39080': 'Bari',
+        '+39050': 'Pisa',
+        '+39075': 'Perugia',
+        '+39071': 'Ancona',
+        '+39085': 'Pescara',
+        '+39095': 'Catania',
+        '+39089': 'Salerno',
+        '+39045': 'Verona',
+        '+39046': 'Trento',
+        '+39031': 'Como',
+        '+39032': 'Novara',
+        '+39035': 'Bergamo',
+        '+39039': 'Monza',
+        '+39042': 'Treviso',
+        '+39041': 'Venezia'
     }
 
-    // Trova Paese
+    // ============================================================
+    // TROVA PAESE
+    // ============================================================
+
     let paese = null
     let prefissoPaese = null
 
-    // Prima i prefissi più lunghi
     const prefissiOrdinati = Object.keys(paesi)
         .sort((a, b) => b.length - a.length)
 
@@ -121,86 +177,216 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     if (!paese) {
         return m.reply(
             `❌ *Prefisso internazionale non riconosciuto.*\n\n` +
-            `Numero analizzato: ${numero}`
+            `📞 Numero: ${numero}\n` +
+            `🔢 Prefisso analizzato: non disponibile`
         )
     }
 
+    // ============================================================
+    // ANALISI GENERALE
+    // ============================================================
+
+    const soloNumeri = numero.replace(/\D/g, '')
+    const lunghezza = soloNumeri.length
+
     let tipo = 'Sconosciuto'
     let operatore = 'Non identificato'
-    let zona = null
+    let zona = 'Non identificata'
+    let sottotipo = 'Non disponibile'
 
-    // Analisi numeri italiani
+    // ============================================================
+    // ANALISI ITALIA
+    // ============================================================
+
     if (numero.startsWith('+39')) {
 
-        // Mobile
+        // MOBILE
         for (const [op, prefs] of Object.entries(mobiliITA)) {
             if (prefs.some(pref => numero.startsWith(pref))) {
                 tipo = 'Mobile'
                 operatore = op
+                sottotipo = 'Numero cellulare'
                 break
             }
         }
 
-        // Fisso
+        // FISSO
         if (tipo === 'Sconosciuto') {
+
             const prefissiFissi = Object.keys(fissiITA)
                 .sort((a, b) => b.length - a.length)
 
             for (const pref of prefissiFissi) {
+
                 if (numero.startsWith(pref)) {
                     tipo = 'Fisso'
-                    zona = fissiITA[pref]
                     operatore = 'Rete fissa'
+                    zona = fissiITA[pref]
+                    sottotipo = 'Numero geografico'
                     break
                 }
             }
         }
 
-        // Numero italiano non riconosciuto
+        // NUMERO NON CLASSIFICATO
         if (tipo === 'Sconosciuto') {
-            tipo = 'Fisso / Mobile'
+            tipo = 'Numero italiano'
         }
     }
 
-    // Validazione lunghezza
-    const soloNumeri = numero.replace(/\D/g, '')
-    const lunghezza = soloNumeri.length
+    // ============================================================
+    // VALIDAZIONE
+    // ============================================================
 
-    let validita = '✅ Formato valido'
+    let validita = '✅ Formato plausibile'
 
     if (numero.startsWith('+39')) {
+
         if (lunghezza !== 12) {
             validita =
                 `⚠️ Formato sospetto (${lunghezza} cifre, ` +
-                `attese 12 per un numero italiano)`
+                `normalmente 12 per numeri italiani)`
         }
     }
 
-    // Link
+    // ============================================================
+    // FORMATO NAZIONALE
+    // ============================================================
+
+    let formatoNazionale = numero
+
+    if (numero.startsWith('+39')) {
+        formatoNazionale = '0' + numero.substring(3)
+    }
+
+    // ============================================================
+    // PREFISSO OPERATORE
+    // ============================================================
+
+    let prefissoOperatore = 'Non disponibile'
+
+    if (numero.startsWith('+39')) {
+
+        for (const prefs of Object.values(mobiliITA)) {
+
+            const trovato = prefs.find(pref =>
+                numero.startsWith(pref)
+            )
+
+            if (trovato) {
+                prefissoOperatore = trovato
+                break
+            }
+        }
+    }
+
+    // ============================================================
+    // WHATSAPP / TELEGRAM
+    // ============================================================
+
     const numeroLink = numero.replace(/\+/g, '')
 
+    const whatsapp =
+        `https://wa.me/${numeroLink}`
+
+    const telegram =
+        `https://t.me/+${numeroLink}`
+
+    // ============================================================
+    // RICERCHE PUBBLICHE
+    // ============================================================
+
+    const google =
+        `https://www.google.com/search?q=${encodeURIComponent('"' + numero + '"')}`
+
+    const bing =
+        `https://www.bing.com/search?q=${encodeURIComponent('"' + numero + '"')}`
+
+    const duckduckgo =
+        `https://duckduckgo.com/?q=${encodeURIComponent('"' + numero + '"')}`
+
+    // ============================================================
+    // GOOGLE MAPS
+    // ============================================================
+
+    const maps =
+        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(numero)}`
+
+    // ============================================================
+    // LINK DI RICERCA NUMERO
+    // ============================================================
+
+    const tellows =
+        `https://www.tellows.it/c/about-it/`
+
+    // ============================================================
+    // ANALISI NUMERICA
+    // ============================================================
+
+    const ultime3 = soloNumeri.slice(-3)
+    const ultime4 = soloNumeri.slice(-4)
+    const prime3 = soloNumeri.substring(0, 3)
+
+    // ============================================================
+    // RISULTATO
+    // ============================================================
+
     let info =
-        `╭━━〔 📞 NUMINFO 〕━━╮\n` +
+        `╭━━〔 📞 NUMINFO PRO 〕━━╮\n` +
         `┃\n` +
         `┃ 📱 *Numero:* ${numero}\n` +
         `┃ 🌍 *Paese:* ${paese}\n` +
         `┃ 🔢 *Prefisso:* ${prefissoPaese}\n` +
         `┃ 📡 *Tipo:* ${tipo}\n` +
-        `┃ 🏢 *Operatore:* ${operatore}\n`
+        `┃ 🏢 *Operatore:* ${operatore}\n` +
+        `┃ 🔎 *Pref. operatore:* ${prefissoOperatore}\n` +
+        `┃ 📋 *Sottotipo:* ${sottotipo}\n`
 
-    if (zona) {
-        info += `┃ 📍 *Zona:* ${zona}\n`
+    if (zona !== 'Non identificata') {
+        info +=
+            `┃ 📍 *Zona:* ${zona}\n`
     }
 
     info +=
-        `┃ 📏 *Lunghezza:* ${lunghezza} cifre\n` +
+        `┃ 📏 *Cifre:* ${lunghezza}\n` +
+        `┃ 🔢 *Prime 3:* ${prime3}\n` +
+        `┃ 🔢 *Ultime 4:* ${ultime4}\n` +
+        `┃ 🇮🇹 *Formato nazionale:* ${formatoNazionale}\n` +
         `┃ ${validita}\n` +
         `┃\n` +
-        `╰━━━━━━━━━━━━━━━━━━╯\n\n` +
+        `╰━━━━━━━━━━━━━━━━━━━━╯\n\n` +
 
-        `🔗 *Link pubblici*\n` +
-        `├─ WhatsApp: wa.me/${numeroLink}\n` +
-        `└─ Telegram: t.me/+${numeroLink}\n\n` +
+        `╭━━〔 🔎 RICERCHE PUBBLICHE 〕━━╮\n` +
+        `┃\n` +
+        `┃ 🌐 Google:\n` +
+        `┃ ${google}\n` +
+        `┃\n` +
+        `┃ 🔍 Bing:\n` +
+        `┃ ${bing}\n` +
+        `┃\n` +
+        `┃ 🦆 DuckDuckGo:\n` +
+        `┃ ${duckduckgo}\n` +
+        `┃\n` +
+        `┃ 🗺️ Maps:\n` +
+        `┃ ${maps}\n` +
+        `┃\n` +
+        `╰━━━━━━━━━━━━━━━━━━━━╯\n\n` +
+
+        `╭━━〔 🔗 SERVIZI 〕━━╮\n` +
+        `┃\n` +
+        `┃ 💬 WhatsApp:\n` +
+        `┃ ${whatsapp}\n` +
+        `┃\n` +
+        `┃ ✈️ Telegram:\n` +
+        `┃ ${telegram}\n` +
+        `┃\n` +
+        `┃ ☎️ Tellows:\n` +
+        `┃ ${tellows}\n` +
+        `┃\n` +
+        `╰━━━━━━━━━━━━━━━━━━━━╯\n\n` +
+
+        `⚠️ *Nota:* operatore e zona sono stime basate sui prefissi. ` +
+        `La portabilità può rendere l'operatore indicato non aggiornato.\n\n` +
 
         `_𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓_`
 
