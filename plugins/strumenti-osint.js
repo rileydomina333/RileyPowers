@@ -272,20 +272,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     // ============================================================
 
     output +=
-        `╭━━〔 ⚠️ INFORMAZIONI 〕━━╮\n` +
-        `┃\n` +
-        `┃ Questa modalità utilizza esclusivamente\n` +
-        `┃ ricerche e fonti pubblicamente accessibili.\n` +
-        `┃\n` +
-        `┃ I risultati dei motori di ricerca possono\n` +
-        `┃ contenere falsi positivi o omonimi.\n` +
-        `┃\n` +
-        `┃ Non vengono ricavati dati privati,\n` +
-        `┃ password, posizione reale o informazioni\n` +
-        `┃ non pubblicamente disponibili.\n` +
-        `┃\n` +
-        `╰━━━━━━━━━━━━━━━━━━━━╯\n\n` +
-
         `_𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓_`
 
     return m.reply(output)
