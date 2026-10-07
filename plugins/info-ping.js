@@ -31,8 +31,7 @@ const handler = async (m, { conn, usedPrefix }) => {
   const uptime = clockString(process.uptime() * 1000)
 
   const info = `
-*🏓 𝐏𝐨𝐧𝐠!*
-
+༶•┈┈⛧┈♛ 𝗥𝗶𝗹𝗲𝘆 𝗣𝗶𝗻𝗴 ♛┈⛧┈┈•༶
 *🚀 𝐕𝐞𝐥𝐨𝐜𝐢𝐭𝐚̀:* ${speedWithFont} ms
 *⏱️ 𝐀𝐭𝐭𝐢𝐯𝐢𝐭𝐚̀:* ${uptime}
 *✅ 𝐒𝐭𝐚𝐭𝐨:* Online
@@ -42,11 +41,6 @@ const handler = async (m, { conn, usedPrefix }) => {
 `.trim()
 
   const buttons = [
-    {
-      buttonId: `${usedPrefix}ping`,
-      buttonText: { displayText: '🔄 Ping' },
-      type: 1
-    },
     {
       buttonId: `${usedPrefix}menu`,
       buttonText: { displayText: '📋 Menu' },
