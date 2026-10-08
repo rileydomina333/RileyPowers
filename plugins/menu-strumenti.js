@@ -2,11 +2,11 @@ import { promises } from 'fs'
 import { join } from 'path'
 
 // --- PERCORSO IMMAGINE ---
-const localImg = join(process.cwd(), 'IMG-20261005-WA0143.jpg');
+const localImg = join(process.cwd(), 'WA_1791285295586.jpeg');
 
 const defmenu = {
   testoInizio: `
-⚡  〔 𝐈𝐍𝐅𝐄𝐂𝐓𝐈𝐎𝐍 • 𝐓𝐎𝐎𝐋𝐒 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘  •  𝐓 𝐎 𝐎 𝐋 𝐒 〕  ⚡
 
 ┃ 👤 𝚄ﺘ𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ ⚙️ 𝙼𝚘𝚍𝚞𝚕𝚒 ⭔ 𝚂𝚝𝚛𝚞𝚖𝚎𝚗𝚝𝚒
@@ -21,7 +21,7 @@ const defmenu = {
 
 let handler = async (m, { conn, usedPrefix: _p }) => {
   let tags = {
-    'strumenti': '⚡ ɪɴғᴇᴄᴛɪᴏɴ 𝙻𝙰𝙱𝙾𝚁𝙰𝚃𝙾𝚁𝙸𝙾 ⚡'
+    'strumenti': '⚡ ʀʟʏ 𝙻𝙰𝙱𝙾𝚁𝙰𝚃𝙾𝚁𝙸𝙾 ⚡'
   }
 
   try {
@@ -68,7 +68,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
         forwardedNewsletterMessageInfo: {
           ...fake.contextInfo?.forwardedNewsletterMessageInfo,
           newsletterJid: '',
-          newsletterName: "🔪 Cyber Infection - Tools ☣️"
+          newsletterName: "🔪 Cyber Riley - Tools ☣️"
         }
       }
     }, { quoted: m })
