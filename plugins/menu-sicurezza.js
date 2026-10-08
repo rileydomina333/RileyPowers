@@ -3,7 +3,7 @@ import { join } from 'path'
 
 let handler = async (m, { conn, usedPrefix: _p, command, args, isOwner, isAdmin }) => {
   const userName = m.pushName || 'Utente'
-  const localImg = join(process.cwd(), 'WA_1791285295586.jpeg')
+  const localImg = join(process.cwd(), 'IMG-20261005-WA0143.jpg')
 
   global.db.data.chats[m.chat] = global.db.data.chats[m.chat] || {}
   global.db.data.settings[conn.user.jid] = global.db.data.settings[conn.user.jid] || {}
@@ -37,7 +37,7 @@ let handler = async (m, { conn, usedPrefix: _p, command, args, isOwner, isAdmin 
 
   if (!args.length || /menu|help/i.test(args[0])) {
     let text = `
-⚡  〔 𝐑 𝐋 𝐘  •  𝐒 𝐄 𝐂 𝐔 𝐑 𝐈 𝐓 𝐘 〕  ⚡
+⚡  〔 𝐈𝐍𝐅𝐄𝐂𝐓𝐈𝐎𝐍 • 𝐒𝐄𝐂𝐔𝐑𝐈𝐓𝐘 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ 📡 𝚂𝚝𝚊𝚝𝚞𝚜 ⭔ 𝙾𝚗𝚕𝚒𝚗𝚎
@@ -52,7 +52,7 @@ ${securityFeatures.map(f => `┃ ⌲ ${f.name} ( comando: ${toTypewriter(f.key)}
 〔 🤖 ʀʟʏ 𝙰𝚄𝚃𝙾𝙼𝙰𝚉𝙸𝙾𝙽𝙴 〕
 ${automationFeatures.map(f => `┃ ⌲ ${f.name} ( comando: ${toTypewriter(f.key)} )`).join('\n')}
 
-_Powered by RLY-BOT Interface_`
+_Powered by INFECTION-BOT Interface_`
 
     let userJid = m.sender.split('@')[0]
     let formattedText = text.replace(/%user/g, userJid)
