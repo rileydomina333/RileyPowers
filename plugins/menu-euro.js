@@ -5,11 +5,11 @@ import moment from 'moment-timezone'
 import os from 'os'
 
 // --- PERCORSO IMMAGINE ---
-const localImg = join(process.cwd(), 'IMG-20261005-WA0143.jpg');
+const localImg = join(process.cwd(), 'WA_1791285295586.jpeg');
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐈𝐍𝐅𝐄𝐂𝐓𝐈𝐎𝐍•𝐄𝐂𝐎𝐍𝐎𝐌𝐘 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘  •  𝐄 𝐂 𝐎 𝐍 𝐎 𝐌 𝐘 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ 💳 𝚂𝚊𝚕𝚍𝚘 ⭔ %eris 𝙴𝚛𝚒𝚜
