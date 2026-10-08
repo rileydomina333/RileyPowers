@@ -5,11 +5,11 @@ import moment from 'moment-timezone'
 import os from 'os'
 
 // --- PERCORSO IMMAGINE ---
-const localImg = join(process.cwd(), 'WA_1791285295586.jpeg');
+const localImg = join(process.cwd(), 'IMG-20261005-WA0143.jpg');
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐑 𝐋 𝐘  •  𝐃 𝐎 𝐖 𝐍 𝐋 𝐎 𝐀 𝐃 〕  ⚡
+⚡  〔 𝐈𝐍𝐅𝐄𝐂𝐓𝐈𝐎𝐍•𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ ⏳ 𝚄𝚙𝚝𝚒𝚖𝚎 ⭔ %uptime
@@ -19,7 +19,7 @@ const defaultMenu = {
   header: '\n〔 %category 〕',
   body: '┃ ⌲ %emoji %cmd',
   footer: '',
-  testoFine: `\n_RLY-BOT NETWORK DATA_`
+  testoFine: `\n_INFECTION-BOT NETWORK DATA_`
 }
 
 let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
