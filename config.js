@@ -11,8 +11,7 @@ import NodeCache from 'node-cache'
 const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf-8'))
 const moduleCache = new NodeCache({ stdTTL: 300 });
 
-/*⭑⭒━━━✦❘༻☾⋆⁺₊✧ Rileybot✧₊⁺⋆☽༺❘✦━━━⭒⭑*/
-
+/*✧༺✦✮✦༻∞ 𝗥𝗶𝗹𝗲𝘆𝗣𝗼𝘄𝗲𝗿𝘀 ∞༺✦✮✦༻✧*/
 global.sam = ['393701330693'];
 global.owner = [
   ['393929491354', 'Riley', true],
@@ -26,7 +25,7 @@ global.owner = [
 global.mods = ['xxxxxxxxxxx', 'xxxxxxxxxxx', 'xxxxxxxxxxx']
 global.prems = ['xxxxxxxxxxx', 'xxxxxxxxxxx', 'xxxxxxxxxxx']
 
-/*⭑⭒━━━✦❘༻🩸 INFO BOT 🕊️༺❘✦━━━⭒⭑*/
+/*✧༺✦✮✦༻∞ 𝗥𝗶𝗹𝗲𝘆𝗣𝗼𝘄𝗲𝗿𝘀 ∞༺✦✮✦༻✧*/
 
 global.nomepack = 'RLY-RILEY'
 global.nomebot = 'RLY-RILEY'
@@ -37,19 +36,18 @@ global.testobot = `RLY-RILEY`
 global.versione = pkg.version
 global.errore = '*ERRORE INATTESO*, UTILIZZA IL COMANDO .segnala (errore) per contattare lo sviluppatore. contatto diretto:+39 392 949 1354'
 
-/*⭑⭒━━━✦❘༻🌐 LINK 🌐༺❘✦━━━⭒⭑*/
+/*✧༺✦✮✦༻∞ 𝗥𝗶𝗹𝗲𝘆𝗣𝗼𝘄𝗲𝗿𝘀 ∞༺✦✮✦༻✧ */
 
 global.repobot ='https://wa.me/+39 392 949 1354'
 
-/*⭑⭒━━━✦❘༻ MODULI ༺❘✦━━━⭒⭑*/
-
+/*✧༺✦✮✦༻∞ 𝗥𝗶𝗹𝗲𝘆𝗣𝗼𝘄𝗲𝗿𝘀 ∞༺✦✮✦༻✧ */
 global.cheerio = cheerio
 global.fs = fs
 global.fetch = fetch
 global.axios = axios
 global.moment = moment
 
-/*⭑⭒━━━✦❘🗝️ API KEYS 🌍༺❘✦━━━⭒⭑*/
+/*✧༺✦✮✦༻∞ 𝗥𝗶𝗹𝗲𝘆𝗣𝗼𝘄𝗲𝗿𝘀 ∞༺✦✮✦༻✧ */
 
 global.APIKeys = { 
     spotifyclientid: 'varebot',
@@ -75,11 +73,11 @@ global.APIKeys = {
 
 
 
-/*⭑⭒━━━✦❘༻🪷 SISTEMA XP/EURO 💸༺❘✦━━━⭒⭑*/
+/*✧༺✦✮✦༻∞ 𝗥𝗶𝗹𝗲𝘆𝗣𝗼𝘄𝗲𝗿𝘀 ∞༺✦✮✦༻✧ */
 
 global.multiplier = 1 
 
-/*⭑⭒━━━✦❘༻📦 RELOAD 📦༺❘✦━━━⭒⭑*/
+/*✧༺✦✮✦༻∞ 𝗥𝗶𝗹𝗲𝘆𝗣𝗼𝘄𝗲𝗿𝘀 ∞༺✦✮✦༻✧ */
 
 let filePath = fileURLToPath(import.meta.url)
 let fileUrl = pathToFileURL(filePath).href
