@@ -8,13 +8,13 @@ const emojicategoria = {
 }
 
 let tags = {
-  main: '⚡ ʀʟʏ 𝙼𝙰𝙸𝙽 𝚂𝚈𝚂𝚃𝙴𝙼 ⚡',
-  info: '⚡ ʀʟʏ 𝙸𝙽𝙵𝙾 𝙱𝙰𝚂𝙴 ⚡'
+  main: '⚡ ɪɴғᴇᴄᴛɪᴏɴ 𝙼𝙰𝙸𝙽 𝚂𝚈𝚂𝚃𝙴𝙼 ⚡',
+  info: '⚡ ɪɴғᴇᴄᴛɪᴏɴ 𝙸𝙽𝙵𝙾 𝙱𝙰𝚂𝙴 ⚡'
 }
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐑 𝐋 𝐘 •  𝐁 𝐎 𝐓 〕  ⚡
+⚡  〔 𝐈𝐍𝐅𝐄𝐂𝐓𝐈𝐎𝐍 • 𝐁𝐎𝐓 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ ⏳ 𝚄𝚙𝚝𝚒𝚖𝚎 ⭔ %uptime
@@ -24,10 +24,10 @@ const defaultMenu = {
   header: '\n〔 %category 〕',
   body: '┃ ⌲ %emoji %cmd',
   footer: '',
-  testoFine: `\n_Powered by RLY-BOT Interface_`,
+  testoFine: `\n_Powered by INFECTION-BOT Interface_`,
 }
 
-const localImg = './WA_1791285295586.jpeg'
+const localImg = './IMG-20261005-WA0143.jpg'
 
 const bldButtons = [
   { title: "🛡️ SICUREZZA", command: "attiva" },
@@ -95,7 +95,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     await conn.sendMessage(m.chat, {
       ...(imageBuffer ? { image: imageBuffer } : {}),
       caption: text.trim(),
-      footer: "⚡ RLY-BOT Core System",
+      footer: "⚡ INFECTION-BOT Core System",
       buttons: buttons,
       headerType: 4,
       viewOnce: true,
@@ -106,7 +106,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
 
   } catch (e) {
     console.error(e)
-    conn.reply(m.chat, `❌ Errore RLY-SYS: ${e.message}`, m)
+    conn.reply(m.chat, `❌ Errore infection-SYS: ${e.message}`, m)
   }
 }
 
