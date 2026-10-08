@@ -31,11 +31,13 @@ const handler = async (m, { conn, usedPrefix }) => {
   const uptime = clockString(process.uptime() * 1000)
 
   const info = `
-༻꫞ 𝗜𝗡𝗙𝗘𝗖𝗧𝗜𝗢𝗡 𝗣𝗜𝗡𝗚 ꫞༺ 
+༶•┈┈⛧┈♛ 𝗥𝗶𝗹𝗲𝘆 𝗣𝗶𝗻𝗴 ♛┈⛧┈┈•༶
 *🚀 𝐕𝐞𝐥𝐨𝐜𝐢𝐭𝐚̀:* ${speedWithFont} ms
 *⏱️ 𝐀𝐭𝐭𝐢𝐯𝐢𝐭𝐚̀:* ${uptime}
+*✅ 𝐒𝐭𝐚𝐭𝐨:* Online
+*👤 𝐎𝐰𝐧𝐞𝐫:* Riley
 
-> *INFECTION BOT*
+> *RLY RILEY BOY*
 `.trim()
 
   const buttons = [
