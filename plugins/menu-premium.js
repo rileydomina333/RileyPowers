@@ -2,7 +2,7 @@ import { xpRange } from '../lib/levelling.js'
 import { join } from 'path'
 
 // --- PERCORSO IMMAGINE ---
-const localImg = join(process.cwd(), 'WA_1791285295586.jpeg');
+const localImg = join(process.cwd(), 'IMG-20261005-WA0143.jpg');
 
 const defaultMenu = {
   testoInizio: `
