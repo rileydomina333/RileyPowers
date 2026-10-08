@@ -6,7 +6,7 @@ const localImg = join(process.cwd(), 'WA_1791285295586.jpeg');
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐑 𝐋 𝐘  •  𝐏 𝐑 𝐄 𝐌 𝐈 𝐔 𝐌 〕  ⚡
+⚡  〔 𝐈𝐍𝐅𝐄𝐂𝐓𝐈𝐎𝐍 • 𝐏𝐑𝐄𝐌𝐈𝐔𝐌 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ 🏆 𝚁𝚊𝚗𝚔 ⭔ %role
@@ -16,7 +16,7 @@ const defaultMenu = {
   header: '\n〔 %category 〕',
   body: '┃ ⌲ %emoji %cmd',
   footer: '',
-  testoFine: `\n_RLY-BOT EXCLUSIVE SYSTEM_`
+  testoFine: `\n_INFECTION-BOT EXCLUSIVE SYSTEM_`
 }
 
 let handler = async (m, { conn, usedPrefix: _p }) => {
@@ -70,7 +70,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
         mentionedJid: [m.sender],
         forwardedNewsletterMessageInfo: {
           newsletterJid: '120363232743845068@newsletter',
-          newsletterName: "✧ 𝐑 𝐋 𝐘 •  𝐁 𝐎 𝐓 𝙿𝚁𝙴𝙼𝙸𝚄𝙼 ✧"
+          newsletterName: "✧ 𝐈𝐍𝐅𝐄𝐂𝐓𝐈𝐎𝐍 • 𝐁𝐎𝐓 𝙿𝚁𝙴𝙼𝙸𝚄𝙼 ✧"
         }
       }
     }, { quoted: m })
