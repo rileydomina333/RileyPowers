@@ -7,7 +7,7 @@ import { join } from 'path'
 const defaultMenu = {
   before: `
 ┎━━━━━━━━━━━━━━━━━━━┑
-┃   ✧  𝐑𝐋𝐘 - 𝐂𝐑𝐄𝐀𝐓𝐎𝐑  ✧   ┃
+┃ ✧𝐈𝐍𝐅𝐄𝐂𝐓𝐈𝐎𝐍-𝐂𝐑𝐄𝐀𝐓𝐎𝐑✧   ┃
 ┖━━━━━━━━━━━━━━━━━━━┙
 ┌───────────────────┐
   👤 𝙾𝚠𝚗𝚎𝚛: %name
@@ -20,7 +20,7 @@ const defaultMenu = {
   header: '┍━━━〔 %category 〕━━━┑',
   body: '┇ 👨‍💻  *%cmd*',
   footer: '┕━━━━━──ׄ──ׅ──ׄ──━━━━━┙\n',
-  after: `_ʀʟʏ-ʙᴏᴛ ᴀᴅᴍɪɴ ɪɴᴛᴇʀꜰᴀᴄᴇ_`
+  after: `_ɪɴғᴇᴄᴛɪᴏɴ-ʙᴏᴛ ᴀᴅᴍɪɴ ɪɴᴛᴇʀꜰᴀᴄᴇ_`
 }
 
 let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
@@ -77,7 +77,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
         mentionedJid: [m.sender],
         forwardedNewsletterMessageInfo: {
           newsletterJid: '',
-          newsletterName: "✧ ʀʟʏ-𝙱𝙾𝚃 𝙲𝚁𝙴𝙰𝚃𝙾𝚁 ✧"
+          newsletterName: "✧ ɪɴғᴇᴄᴛɪᴏɴ-𝙱𝙾𝚃 𝙲𝚁𝙴𝙰𝚃𝙾𝚁 ✧"
         }
       }
     }, { quoted: m })
