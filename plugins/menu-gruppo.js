@@ -5,11 +5,11 @@ import moment from 'moment-timezone'
 import os from 'os'
 
 // --- PERCORSO IMMAGINE ---
-const localImg = join(process.cwd(), 'IMG-20261005-WA0143.jpg');
+const localImg = join(process.cwd(), 'WA_1791285295586.jpeg');
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐈𝐍𝐅𝐄𝐂𝐓𝐈𝐎𝐍•𝐆𝐑𝐎𝐔𝐏 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘  •  𝐆 𝐑 𝐎 𝐔 𝐏 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
 ┃ 🛡️ 𝚁𝚊𝚗𝚐𝚘 ⭔ %role
@@ -24,7 +24,7 @@ const defaultMenu = {
 
 let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
   let tags = {
-    'gruppo': '⚡ ɪɴғᴇᴄᴛɪᴏɴ 𝙶𝚁𝙾𝚄𝙿 𝙲𝙾𝙽𝚃𝚁𝙾𝙻 ⚡'
+    'gruppo': '⚡ ʀʟʏ 𝙶𝚁𝙾𝚄𝙿 𝙲𝙾𝙽𝚃𝚁𝙾𝙻 ⚡'
   }
 
   try {
@@ -76,7 +76,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
         mentionedJid: [m.sender],
         forwardedNewsletterMessageInfo: {
           newsletterJid: '',
-          newsletterName: "✧ ɪɴғᴇᴄᴛɪᴏɴ-𝙱𝙾𝚃 𝙶𝚁𝙾𝚄𝙿 𝙰𝙳𝙼𝙸𝙽 ✧"
+          newsletterName: "✧ ʀʟʏ-𝙱𝙾𝚃 𝙶𝚁𝙾𝚄𝙿 𝙰𝙳𝙼𝙸𝙽 ✧"
         }
       }
     }, { quoted: m })
