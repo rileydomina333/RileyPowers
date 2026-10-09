@@ -51,7 +51,7 @@ const handler = async (m, { conn, usedPrefix }) => {
     buttons: [
       {
         buttonId: `${usedPrefix}ping`,
-        buttonText: { displayText: '⚡ CALCOLA PING' }
+        buttonText: { displayText: 'CALCOLA PING' }
       }
     ],
     footer: '『 R L Y • B O T 』',
