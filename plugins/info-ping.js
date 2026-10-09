@@ -36,7 +36,7 @@ const handler = async (m, { conn, usedPrefix }) => {
 *⏱️ 𝐀𝐭𝐭𝐢𝐯𝐢𝐭𝐚̀:* ${uptime}
 *✅ 𝐒𝐭𝐚𝐭𝐨:* Online
 *👤 𝐎𝐰𝐧𝐞𝐫:* Riley
-ミミ◦❧◦°˚°◦.¸¸◦°´*•¸.•*´°◦¸¸.◦°˚°◦☙◦彡彡 
+ミミ◦❧◦°˚´°◦.¸¸◦°´´*•¸.•*´°◦¸¸.◦°˚°◦☙◦彡彡 
 `.trim()
 
   const buttons = [
