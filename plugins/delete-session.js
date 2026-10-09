@@ -8,12 +8,16 @@ text: "*⟡ ACCESSO NEGATO ⟡*\n\n💠 *Usa questo comando solo dal numero del 
 }, { quoted: m })
 }
 
-// Percorso assoluto della cartella sessioni nella root del bot
+// Percorso assoluto della cartella sessioni
 const sessionFolder = path.resolve(process.cwd(), 'sessioni')
+
+console.log('📂 Directory di avvio:', process.cwd())
+console.log('📂 Percorso sessioni:', sessionFolder)
+console.log('📂 Cartella esistente:', existsSync(sessionFolder))
 
 if (!existsSync(sessionFolder)) {
 return conn.sendMessage(m.chat, {
-text: "*⟡ CARTELLA NON TROVATA ⟡*\n\n💠 *Percorso cercato:*\n${sessionFolder}\n\n💠 *Controlla dove si trova realmente la cartella sessioni.*"
+text: "*⟡ CARTELLA NON TROVATA ⟡*\n\n📂 *Directory di avvio:*\n${process.cwd()}\n\n📂 *Percorso cercato:*\n${sessionFolder}\n\n💠 *Controlla dove si trova realmente la cartella sessioni.*"
 }, { quoted: m })
 }
 
@@ -25,7 +29,6 @@ withFileTypes: true
 })
 
 for (const file of files) {
-  // Non eliminare credenziali o sottocartelle
   if (file.name === 'creds.json' || !file.isFile()) continue
 
   await fsPromises.unlink(path.join(sessionFolder, file.name))
@@ -40,7 +43,7 @@ text: "*⟡ ERRORE ⟡*\n\n💠 ${e.message}"
 
 const text = deletedCount === 0
 ? "*⟡ SVUOTAMENTO COMPLETATO ⟡*\n\n💠 *Nessun file da eliminare.*"
-: "*⟡ SESSIONI ELIMINATE ⟡*\n\n💠 *Sono stati eliminati ${deletedCount} file.*\n\n💠 *Operazione completata!*"
+: "*⟡ SESSIONI ELIMINATE ⟡*\n\n💠 *Sono stati eliminati ${deletedCount} file dalle sessioni.*\n\n💠 *Operazione completata!*"
 
 await conn.sendMessage(m.chat, {
 text,
