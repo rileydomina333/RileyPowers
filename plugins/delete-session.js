@@ -2,65 +2,93 @@ import { existsSync, promises as fsPromises } from 'fs'
 import path from 'path'
 
 let handler = async (m, { conn }) => {
-if (global.conn.user.jid !== conn.user.jid) {
-return conn.sendMessage(m.chat, {
-text: "*⟡ ACCESSO NEGATO ⟡*\n\n💠 *Usa questo comando solo dal numero del bot*"
-}, { quoted: m })
-}
+  if (global.conn.user.jid !== conn.user.jid) {
+    return conn.sendMessage(m.chat, {
+      text: `*⟡ ACCESSO NEGATO ⟡*
 
-// Percorso assoluto della cartella sessioni
-const sessionFolder = path.resolve(process.cwd(), 'sessioni')
+💠 *Usa questo comando solo dal numero del bot*`
+    }, { quoted: m })
+  }
 
-console.log('📂 Directory di avvio:', process.cwd())
-console.log('📂 Percorso sessioni:', sessionFolder)
-console.log('📂 Cartella esistente:', existsSync(sessionFolder))
+  // Percorso della cartella sessioni
+  const sessionFolder = path.resolve(process.cwd(), 'sessioni')
 
-if (!existsSync(sessionFolder)) {
-return conn.sendMessage(m.chat, {
-text: "*⟡ CARTELLA NON TROVATA ⟡*\n\n📂 *Directory di avvio:*\n${process.cwd()}\n\n📂 *Percorso cercato:*\n${sessionFolder}\n\n💠 *Controlla dove si trova realmente la cartella sessioni.*"
-}, { quoted: m })
-}
+  console.log('📂 Directory di avvio:', process.cwd())
+  console.log('📂 Percorso sessioni:', sessionFolder)
+  console.log('📂 Cartella esistente:', existsSync(sessionFolder))
 
-let deletedCount = 0
+  if (!existsSync(sessionFolder)) {
+    return conn.sendMessage(m.chat, {
+      text: `*⟡ CARTELLA NON TROVATA ⟡*
 
-try {
-const files = await fsPromises.readdir(sessionFolder, {
-withFileTypes: true
-})
+📂 *Directory di avvio:*
+${process.cwd()}
 
-for (const file of files) {
-  if (file.name === 'creds.json' || !file.isFile()) continue
+📂 *Percorso cercato:*
+${sessionFolder}
 
-  await fsPromises.unlink(path.join(sessionFolder, file.name))
-  deletedCount++
-}
+💠 *Controlla dove si trova realmente la cartella sessioni.*`
+    }, { quoted: m })
+  }
 
-} catch (e) {
-return conn.sendMessage(m.chat, {
-text: "*⟡ ERRORE ⟡*\n\n💠 ${e.message}"
-}, { quoted: m })
-}
+  let deletedCount = 0
 
-const text = deletedCount === 0
-? "*⟡ SVUOTAMENTO COMPLETATO ⟡*\n\n💠 *Nessun file da eliminare.*"
-: "*⟡ SESSIONI ELIMINATE ⟡*\n\n💠 *Sono stati eliminati ${deletedCount} file dalle sessioni.*\n\n💠 *Operazione completata!*"
+  try {
+    const stat = await fsPromises.stat(sessionFolder)
 
-await conn.sendMessage(m.chat, {
-text,
-footer: 'RLY BOT',
-buttons: [
-{
-buttonId: '.svuota',
-buttonText: { displayText: '💠 Svuota di nuovo' },
-type: 1
-},
-{
-buttonId: '.ping',
-buttonText: { displayText: '💠 Ping' },
-type: 1
-}
-]
-}, { quoted: m })
+    if (!stat.isDirectory()) {
+      throw new Error('Il percorso indicato non è una cartella.')
+    }
+
+    const files = await fsPromises.readdir(sessionFolder, {
+      withFileTypes: true
+    })
+
+    for (const file of files) {
+      // Conserva le credenziali e tutte le sottocartelle
+      if (file.name === 'creds.json' || !file.isFile()) {
+        continue
+      }
+
+      await fsPromises.unlink(path.join(sessionFolder, file.name))
+      deletedCount++
+    }
+  } catch (e) {
+    console.error('Errore durante la pulizia:', e)
+
+    return conn.sendMessage(m.chat, {
+      text: `*⟡ ERRORE ⟡*
+
+💠 ${e.message}`
+    }, { quoted: m })
+  }
+
+  const text = deletedCount === 0
+    ? `*⟡ SVUOTAMENTO COMPLETATO ⟡*
+
+💠 *Nessun file da eliminare.*`
+    : `*⟡ SESSIONI ELIMINATE ⟡*
+
+💠 *Sono stati eliminati ${deletedCount} file dalla cartella sessioni.*
+
+💠 *Operazione completata!*`
+
+  await conn.sendMessage(m.chat, {
+    text,
+    footer: 'RLY BOT',
+    buttons: [
+      {
+        buttonId: '.svuota',
+        buttonText: { displayText: '💠 Svuota di nuovo' },
+        type: 1
+      },
+      {
+        buttonId: '.ping',
+        buttonText: { displayText: '💠 Ping' },
+        type: 1
+      }
+    ]
+  }, { quoted: m })
 }
 
 handler.help = ['ds']
