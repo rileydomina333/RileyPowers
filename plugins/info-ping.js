@@ -38,7 +38,6 @@ const handler = async (m, { conn, usedPrefix }) => {
 *✅ 𝐒𝐭𝐚𝐭𝐨:* Online
 *👤 𝐎𝐰𝐧𝐞𝐫:* Riley
 *𝐑𝐀𝐌:* (server): ${usedMemMB} MB / ${totalMemMB} MB
-*𝐌𝐄𝐌:* (process): ${heapUsedMB} MB / ${heapTotalMB} MB
 
 ミミ◦❧◦°˚°◦.¸¸◦°´*•¸.•*´°◦¸¸.◦°˚°◦☙◦彡彡 
 `.trim()
