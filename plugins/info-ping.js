@@ -30,7 +30,7 @@ const handler = async (m, { conn, usedPrefix }) => {
   const ram = `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`
 
   const caption = `
-╭━━━〔 ⚡ 𝗜𝗡𝗙𝗢 𝗣𝗜𝗡𝗚 〕━━━╮
+╭━━━〔 𝑰𝑵𝑭𝑶 𝑷𝑰𝑵𝑮 〕━━━╮
 ┃
 ┃  ◈ 𝗩𝗘𝗟𝗢𝗖𝗜𝗧𝗔̀ 𝗗𝗜 𝗥𝗜𝗦𝗣𝗢𝗦𝗧𝗔
 ┃  └─ ${toMathematicalAlphanumericSymbols(velocita)} ms
@@ -44,7 +44,7 @@ const handler = async (m, { conn, usedPrefix }) => {
 ┃  ◈ 𝗦𝗧𝗔𝗧𝗢 𝗗𝗘𝗟 𝗕𝗢𝗧
 ┃  └─ 🟢 Online
 ┃
-╰━━━━━━━━━━━━━━━━━━━━━━╯
+╰━━━━━━━━━━━━━━━━━━╯
 `.trim()
 
   await conn.reply(m.chat, caption, m, {
