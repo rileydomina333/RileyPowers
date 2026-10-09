@@ -45,10 +45,6 @@ const handler = async (m, { conn, usedPrefix }) => {
 ┃  └─ 🟢 Online
 ┃
 ╰━━━━━━━━━━━━━━━━━━━━━━╯
-
-「 ◆ 」𝗦𝗜𝗦𝗧𝗘𝗠𝗔 𝗥𝗟𝗬 𝗕𝗢𝗧
-「 ◆ 」Premi il pulsante qui sotto
-       per calcolare nuovamente il ping.
 `.trim()
 
   await conn.reply(m.chat, caption, m, {
