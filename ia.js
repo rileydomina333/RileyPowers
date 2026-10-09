@@ -1,80 +1,95 @@
 
-const axios = require("axios");
+const { default: makeWASocket, useMultiFileAuthState } =
+  require("@whiskeysockets/baileys");
 
-module.exports = {
-  command: ".ia",
+async function startBot() {
+  const { state, saveCreds } =
+    await useMultiFileAuthState("session");
 
-  async execute(sock, m, args) {
-    const domanda = args.join(" ").trim();
+  const sock = makeWASocket({ auth: state });
 
-    if (!domanda) {
-      return sock.sendMessage(
-        m.key.remoteJid,
-        { text: "🤖 Scrivi una domanda!\nEsempio: .ia Ciao, come stai?" },
-        { quoted: m }
-      );
-    }
+  sock.ev.on("creds.update", saveCreds);
 
-    const chat = m.key.remoteJid;
+  sock.ev.on("messages.upsert", async ({ messages, type }) => {
+    if (type !== "notify") return;
 
-    try {
-      await sock.sendMessage(chat, {
-        react: { text: "🤖", key: m.key }
-      });
+    for (const m of messages) {
+      if (!m.message || m.key.fromMe) continue;
 
-      const response = await fetch(
-        "https://text.pollinations.ai/openai",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            model: "openai",
-            messages: [
-              {
-                role: "system",
-                content: "Sei un assistente AI utile e veloce. Rispondi in italiano."
-              },
-              {
-                role: "user",
-                content: domanda
-              }
-            ]
-          }),
-          signal: AbortSignal.timeout(45000)
+      const chat = m.key.remoteJid;
+      if (!chat || chat === "status@broadcast") continue;
+
+      const msg =
+        m.message.conversation ||
+        m.message.extendedTextMessage?.text ||
+        m.message.imageMessage?.caption ||
+        m.message.videoMessage?.caption ||
+        "";
+
+      if (!msg.toLowerCase().startsWith(".ia")) continue;
+
+      const domanda = msg.slice(3).trim();
+
+      if (!domanda) {
+        await sock.sendMessage(
+          chat,
+          { text: "🤖 Usa il comando: .ia la tua domanda" },
+          { quoted: m }
+        );
+        continue;
+      }
+
+      try {
+        await sock.sendPresenceUpdate("composing", chat);
+
+        const prompt =
+          "Rispondi in italiano in modo utile e chiaro.\n\nDomanda: " +
+          domanda;
+
+        const url =
+          "https://text.pollinations.ai/" +
+          encodeURIComponent(prompt);
+
+        const res = await fetch(url, {
+          signal: AbortSignal.timeout(40000)
+        });
+
+        if (!res.ok) {
+          throw new Error(`Servizio AI: HTTP ${res.status}`);
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(`Errore API: ${response.status}`);
+        const risposta = (await res.text()).trim();
+
+        if (!risposta) throw new Error("Risposta vuota");
+
+        const chunks = risposta.match(/[\s\S]{1,4000}/g) || [];
+
+        for (let i = 0; i < chunks.length; i++) {
+          await sock.sendMessage(
+            chat,
+            { text: (i === 0 ? "🤖 *RISPOSTA AI*\n\n" : "") + chunks[i] },
+            i === 0 ? { quoted: m } : {}
+          );
+        }
+      } catch (err) {
+        console.error("Errore .ia:", err);
+
+        await sock.sendMessage(
+          chat,
+          {
+            text:
+              "❌ Il servizio AI non risponde.\n" +
+              "Riprova più tardi.\n\n" +
+              "Errore: " + String(err.message).slice(0, 150)
+          },
+          { quoted: m }
+        );
+      } finally {
+        await sock.sendPresenceUpdate("paused", chat)
+          .catch(() => {});
       }
-
-      const data = await response.json();
-
-      const risposta =
-        data.choices?.[0]?.message?.content ||
-        data.message ||
-        data.response;
-
-      if (!risposta) {
-        throw new Error("Risposta AI vuota");
-      }
-
-      await sock.sendMessage(
-        chat,
-        { text: `🤖 *AI*\n\n${risposta}` },
-        { quoted: m }
-      );
-
-    } catch (err) {
-      console.error("Errore IA:", err);
-
-      await sock.sendMessage(
-        chat,
-        { text: "❌ AI non disponibile al momento. Riprova tra poco." },
-        { quoted: m }
-      );
     }
-  }
-};
+  });
+}
+
+startBot().catch(console.error);
