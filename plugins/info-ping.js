@@ -31,7 +31,7 @@ const handler = async (m, { conn, usedPrefix }) => {
   const uptime = clockString(process.uptime() * 1000)
 
   const info = `
-ミミ◦❧◦°˚°◦.¸¸◦R͜͡I͜͡L͜͡E͜͡Y P͜͡I͜͡N͜͡G¸.•◦°˚°◦☙◦彡彡 
+ミミ◦❧◦°°◦.¸¸◦R͜͡I͜͡L͜͡E͜͡Y P͜͡I͜͡N͜͡G¸.•◦°˚◦☙◦彡彡 
 *🚀 𝐕𝐞𝐥𝐨𝐜𝐢𝐭𝐚̀:* ${speedWithFont} ms
 *⏱️ 𝐀𝐭𝐭𝐢𝐯𝐢𝐭𝐚̀:* ${uptime}
 *✅ 𝐒𝐭𝐚𝐭𝐨:* Online
