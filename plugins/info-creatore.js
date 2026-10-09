@@ -16,7 +16,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 *╰───╼ 👑 ╾───╯*
 
 👋 Ciao ${mention}, 
-ecco i riferimenti ufficiali del mio creatore.
+ecco i riferimenti ufficiali di RLY RILEY BOT.
 
 *┏━━━━━━━━━━━━━━━━┓*
 *┃* 👤 *OWNER:* Riley
