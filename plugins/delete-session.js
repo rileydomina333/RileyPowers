@@ -10,24 +10,67 @@ let handler = async (m, { conn }) => {
     }, { quoted: m })
   }
 
-  // Percorso della cartella sessioni
-  const sessionFolder = path.resolve(process.cwd(), 'sessioni')
+  // Cerca automaticamente la cartella sessioni
+  const searchRoot = '/home/riley'
+
+  async function findSessionFolder(dir, depth = 0) {
+    if (depth > 6) return null
+
+    let entries
+
+    try {
+      entries = await fsPromises.readdir(dir, {
+        withFileTypes: true
+      })
+    } catch {
+      return null
+    }
+
+    // Controlla prima le cartelle direttamente presenti
+    for (const entry of entries) {
+      if (
+        entry.isDirectory() &&
+        entry.name.toLowerCase() === 'sessioni'
+      ) {
+        return path.join(dir, entry.name)
+      }
+    }
+
+    // Cerca nelle sottocartelle
+    for (const entry of entries) {
+      if (
+        !entry.isDirectory() ||
+        ['node_modules', '.git', 'proc', 'sys', 'dev'].includes(entry.name)
+      ) continue
+
+      const found = await findSessionFolder(
+        path.join(dir, entry.name),
+        depth + 1
+      )
+
+      if (found) return found
+    }
+
+    return null
+  }
+
+  const sessionFolder = await findSessionFolder(searchRoot)
 
   console.log('📂 Directory di avvio:', process.cwd())
-  console.log('📂 Percorso sessioni:', sessionFolder)
-  console.log('📂 Cartella esistente:', existsSync(sessionFolder))
+  console.log('📂 Directory di ricerca:', searchRoot)
+  console.log('📂 Cartella sessioni trovata:', sessionFolder)
 
-  if (!existsSync(sessionFolder)) {
+  if (!sessionFolder || !existsSync(sessionFolder)) {
     return conn.sendMessage(m.chat, {
       text: `*⟡ CARTELLA NON TROVATA ⟡*
 
 📂 *Directory di avvio:*
 ${process.cwd()}
 
-📂 *Percorso cercato:*
-${sessionFolder}
+📂 *Directory di ricerca:*
+${searchRoot}
 
-💠 *Controlla dove si trova realmente la cartella sessioni.*`
+💠 *Nessuna cartella sessioni trovata entro 6 livelli di profondità.*`
     }, { quoted: m })
   }
 
@@ -37,7 +80,7 @@ ${sessionFolder}
     const stat = await fsPromises.stat(sessionFolder)
 
     if (!stat.isDirectory()) {
-      throw new Error('Il percorso indicato non è una cartella.')
+      throw new Error('Il percorso trovato non è una cartella.')
     }
 
     const files = await fsPromises.readdir(sessionFolder, {
@@ -45,7 +88,7 @@ ${sessionFolder}
     })
 
     for (const file of files) {
-      // Conserva le credenziali e tutte le sottocartelle
+      // Non eliminare credenziali, sottocartelle o altri elementi speciali
       if (file.name === 'creds.json' || !file.isFile()) {
         continue
       }
@@ -66,10 +109,14 @@ ${sessionFolder}
   const text = deletedCount === 0
     ? `*⟡ SVUOTAMENTO COMPLETATO ⟡*
 
-💠 *Nessun file da eliminare.*`
+💠 *Nessun file da eliminare.*
+
+📂 *Cartella:* ${sessionFolder}`
     : `*⟡ SESSIONI ELIMINATE ⟡*
 
-💠 *Sono stati eliminati ${deletedCount} file dalla cartella sessioni.*
+💠 *File eliminati:* ${deletedCount}
+
+📂 *Cartella:* ${sessionFolder}
 
 💠 *Operazione completata!*`
 
