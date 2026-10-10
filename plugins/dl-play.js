@@ -1,515 +1,134 @@
-import yts from 'yt-search';
+import os from 'os'
 
-const CHATUNITY_API = 'https://api.chatunity.it/download/play';
-const WEIRDDL_API = 'https://weirddl.sbs/api/download';
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  let outputPath
+  let voicePath
 
-const getYoutubeInfo = async (url) => {
-    try {
-        const search = await yts(url);
-        const videos = search.videos || [];
+  if (!text) {
+    return m.reply(
+      `💡 *Uso corretto:* 
+${usedPrefix + command} <nome canzone>`
+    )
+  }
 
-        return videos.find(v => v.url === url) || videos[0] || null;
-    } catch {
-        return null;
-    }
-};
+  try {
+    const isDownloadCommand = command === 'playaud' || command === 'playvid'
 
-const chatunity = async (url) => {
-    const apiUrl = `${CHATUNITY_API}?query=${encodeURIComponent(url)}`;
+    const directUrl = /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test(text.trim())
+      ? text.trim()
+      : null
 
-    console.log('[CHATUNITY]', apiUrl);
+    const search = directUrl ? null : await yts(text)
+    const vid = directUrl
+      ? { url: directUrl, title: directUrl, timestamp: '', author: { name: '' }, views: 0 }
+      : search?.videos?.[0]
 
-    const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'User-Agent': 'Mozilla/5.0'
-        }
-    });
+    if (!vid) return m.reply('❌ *Nessun risultato trovato per la ricerca.*')
 
-    const raw = await response.text();
+    const url = vid.url
 
-    console.log('[CHATUNITY STATUS]', response.status);
-    console.log('[CHATUNITY RESPONSE]', raw);
+    // MENU — SOLO PULSANTI
+    if (!isDownloadCommand) {
+      const infoMsg = `
+─── 𝗥𝗜𝗟𝗘𝗬 𝗣𝗟𝗔𝗬𝗘𝗥 ───
 
-    let data;
+🎵 *Titolo:* ${vid.title}
+⏱️ *Durata:* ${vid.timestamp}
+👤 *Canale:* ${vid.author.name}
+👁️ *Visualizzazioni:* ${vid.views.toLocaleString()}
 
-    try {
-        data = JSON.parse(raw);
-    } catch {
-        throw new Error(`ChatUnity risposta non valida: HTTP ${response.status}`);
-    }
+👇 *Scegli il formato:*`.trim()
 
-    if (!response.ok) {
-        throw new Error(
-            data.message ||
-            data.error ||
-            `ChatUnity HTTP ${response.status}`
-        );
-    }
+                              const buttons = [
+        { buttonId: `${usedPrefix}playaud ${url}`, buttonText: { displayText: '🎧 𝐌𝐏𝟑' }, type: 1 },
+        { buttonId: `${usedPrefix}playvid ${url}`, buttonText: { displayText: '📹 𝐌𝐏𝟒' }, type: 1 }
+      ]
 
-    if (!data.success) {
-        throw new Error(
-            data.message ||
-            data.error ||
-            'ChatUnity download fallito'
-        );
-    }
+      const buttonMessage = {
+        image: { url: vid.thumbnail },
+        caption: infoMsg,
+        footer: '𝗥𝗜𝗟𝗘𝗬 𝗕𝗢𝗧 • Downloader',
+        buttons: buttons,
+        headerType: 4
+      }
 
-    if (!data.downloadUrl) {
-        throw new Error('ChatUnity non ha restituito downloadUrl');
+      return await conn.sendMessage(m.chat, buttonMessage, { quoted: m })
     }
 
-    return {
-        url: data.downloadUrl,
-        provider: 'ChatUnity'
-    };
-};
+    // DOWNLOAD AUDIO/VIDEO
+    await conn.sendMessage(m.chat, { react: { text: "⏳", key: m.key } })
 
-const weirdDL = async (url) => {
-    const apiUrl = `${WEIRDDL_API}?url=${encodeURIComponent(url)}`;
+    const isAudio = command === 'playaud'
+    const tmpDir = os.tmpdir()
+    const fileName = `file_${Date.now()}`
+    outputPath = path.join(tmpDir, `${fileName}.${isAudio ? 'mp3' : 'mp4'}`)
 
-    console.log('[WEIRDDL]', apiUrl);
+    await new Promise((resolve, reject) => {
+      const cmd = isAudio
+        ? `yt-dlp -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 -o "${outputPath}" "${url}"`
+        : `yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" -o "${outputPath}" "${url}"`
 
-    const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-            Accept: '*/*',
-            'User-Agent': 'Mozilla/5.0'
-        }
-    });
+      exec(cmd, (err) => {
+        if (err) reject(err)
+        else resolve()
+      })
+    })
 
-    console.log('[WEIRDDL STATUS]', response.status);
-    console.log(
-        '[WEIRDDL CONTENT-TYPE]',
-        response.headers.get('content-type')
-    );
+    if (!fs.existsSync(outputPath)) throw new Error('Download fallito.')
 
-    if (!response.ok) {
-        const raw = await response.text();
+    if (isAudio) {
+      voicePath = path.join(tmpDir, `${fileName}.ogg`)
 
-        let message = raw;
+      await new Promise((resolve, reject) => {
+        exec(
+          `ffmpeg -hide_banner -loglevel error -y -i "${outputPath}" -map_metadata -1 -vn -ar 48000 -ac 1 -c:a libopus -b:a 64k -application voip -f ogg "${voicePath}"`,
+          (err) => {
+            if (err) reject(err)
+            else resolve()
+          }
+        )
+      })
 
-        try {
-            const data = JSON.parse(raw);
+      await conn.sendMessage(
+        m.chat,
+        {
+          audio: fs.readFileSync(voicePath),
+          mimetype: "audio/ogg; codecs=opus",
+          ptt: true
+        },
+        { quoted: m }
+      )
 
-            message =
-                data.message ||
-                data.error ||
-                data.code ||
-                raw;
-        } catch {}
-
-        throw new Error(
-            `WeirdDL HTTP ${response.status}: ${message}`
-        );
+      if (fs.existsSync(voicePath)) fs.unlinkSync(voicePath)
+    } else {
+      await conn.sendMessage(
+        m.chat,
+        {
+          video: fs.readFileSync(outputPath),
+          mimetype: "video/mp4",
+          caption: `✨ *Completato da 𝗥𝗜𝗟𝗘𝗬 𝗕𝗢𝗧*`
+        },
+        { quoted: m }
+      )
     }
 
-    const contentType =
-        response.headers.get('content-type') || '';
+    await conn.sendMessage(m.chat, { react: { text: "✅", key: m.key } })
 
-    if (
-        contentType.includes('video/') ||
-        contentType.includes('audio/') ||
-        contentType.includes('application/octet-stream')
-    ) {
-        const arrayBuffer = await response.arrayBuffer();
-
-        return {
-            buffer: Buffer.from(arrayBuffer),
-            provider: 'WeirdDL',
-            contentType
-        };
+  } catch (e) {
+    console.error("Handler Error:", e.message)
+    const message = /not found|is not recognized/i.test(e.message)
+      ? '⚠️ *Errore:* Installa yt-dlp e ffmpeg, poi riprova.'
+      : '⚠️ *Errore:* Impossibile completare il download.'
+    m.reply(message)
+  } finally {
+    for (const file of [outputPath, voicePath]) {
+      if (file && fs.existsSync(file)) fs.unlinkSync(file)
     }
+  }
+}
 
-    const raw = await response.text();
+handler.help = ['play']
+handler.tags = ['downloader']
+handler.command = /^(play|playaud|playvid)$/i
 
-    let data;
-
-    try {
-        data = JSON.parse(raw);
-    } catch {
-        throw new Error(
-            'WeirdDL ha restituito una risposta non riconosciuta'
-        );
-    }
-
-    if (data.url) {
-        return {
-            url: data.url,
-            provider: 'WeirdDL'
-        };
-    }
-
-    if (data.downloadUrl) {
-        return {
-            url: data.downloadUrl,
-            provider: 'WeirdDL'
-        };
-    }
-
-    if (data.media?.url) {
-        return {
-            url: data.media.url,
-            provider: 'WeirdDL'
-        };
-    }
-
-    if (Array.isArray(data.medias) && data.medias.length) {
-        const media =
-            data.medias.find(x =>
-                x.type === 'video'
-            ) ||
-            data.medias.find(x =>
-                x.type === 'audio'
-            ) ||
-            data.medias[0];
-
-        if (media?.url) {
-            return {
-                url: media.url,
-                provider: 'WeirdDL'
-            };
-        }
-    }
-
-    throw new Error(
-        'WeirdDL non ha restituito un URL di download'
-    );
-};
-
-const getFile = async (url) => {
-    const response = await fetch(url, {
-        headers: {
-            'User-Agent': 'Mozilla/5.0'
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error(
-            `Download file fallito: HTTP ${response.status}`
-        );
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-
-    return {
-        buffer: Buffer.from(arrayBuffer),
-        contentType:
-            response.headers.get('content-type') || ''
-    };
-};
-
-const downloadMedia = async (youtubeUrl, mode) => {
-    try {
-        console.log('[DOWNLOAD] Provo ChatUnity');
-
-        const result = await chatunity(youtubeUrl);
-
-        console.log(
-            '[DOWNLOAD] ChatUnity OK'
-        );
-
-        const file = await getFile(result.url);
-
-        return {
-            buffer: file.buffer,
-            contentType: file.contentType,
-            provider: 'ChatUnity'
-        };
-    } catch (error) {
-        console.error(
-            '[CHATUNITY FALLBACK]',
-            error.message
-        );
-    }
-
-    try {
-        console.log('[DOWNLOAD] Provo WeirdDL');
-
-        const result = await weirdDL(youtubeUrl);
-
-        console.log(
-            '[DOWNLOAD] WeirdDL OK'
-        );
-
-        if (result.buffer) {
-            return {
-                buffer: result.buffer,
-                contentType: result.contentType || '',
-                provider: 'WeirdDL'
-            };
-        }
-
-        if (result.url) {
-            const file = await getFile(result.url);
-
-            return {
-                buffer: file.buffer,
-                contentType: file.contentType,
-                provider: 'WeirdDL'
-            };
-        }
-
-        throw new Error(
-            'WeirdDL non ha fornito un file'
-        );
-    } catch (error) {
-        console.error(
-            '[WEIRDDL ERROR]',
-            error.message
-        );
-
-        throw new Error(
-            `ChatUnity e WeirdDL hanno fallito.\n\n${error.message}`
-        );
-    }
-};
-
-let handler = async (
-    m,
-    {
-        conn,
-        text,
-        usedPrefix,
-        command
-    }
-) => {
-    if (!text) {
-        return m.reply(
-            `⚡ *𝑹𝑰𝑳𝑬𝒀-𝑩𝑶𝑻*\n\n` +
-            `💡 Usa:\n` +
-            `${usedPrefix}play nome canzone`
-        );
-    }
-
-    try {
-        const cmd = command.toLowerCase();
-
-        let youtubeUrl = text.trim();
-        let title = 'YouTube';
-        let duration = '';
-        let thumbnail = null;
-
-        if (!/^https?:\/\//i.test(youtubeUrl)) {
-            const search = await yts(youtubeUrl);
-            const vid = search.videos?.[0];
-
-            if (!vid) {
-                return m.reply(
-                    '❌ *Nessun risultato trovato.*'
-                );
-            }
-
-            youtubeUrl = vid.url;
-            title = vid.title || 'Senza titolo';
-            duration = vid.timestamp || '';
-            thumbnail = vid.thumbnail || null;
-        } else {
-            const vid = await getYoutubeInfo(
-                youtubeUrl
-            );
-
-            if (vid) {
-                title = vid.title || title;
-                duration = vid.timestamp || '';
-                thumbnail = vid.thumbnail || null;
-            }
-        }
-
-        if (cmd === 'play') {
-            const caption =
-                `┏━━━━━━━━━━━━━━━━━━━┓\n` +
-                `   🎧 *𝙋𝙇𝘼𝙔 𝐑𝐈𝐋𝐄𝐘 𝐁𝐎𝐓* 🎧\n` +
-                `┗━━━━━━━━━━━━━━━━━━━┛\n\n` +
-                `◈ 📌 *Titolo:* ${title}\n` +
-                `◈ ⏱️ *Durata:* ${duration || 'Sconosciuta'}\n\n` +
-                `🎵 *Seleziona il formato:*`;
-
-            const buttons = [
-                {
-                    buttonId:
-                        `${usedPrefix}playaud ${youtubeUrl}`,
-                    buttonText: {
-                        displayText:
-                            '🎵 𝗔𝗨𝗗𝗜𝗢 (𝗠𝗣𝟯)'
-                    },
-                    type: 1
-                },
-                {
-                    buttonId:
-                        `${usedPrefix}playvid ${youtubeUrl}`,
-                    buttonText: {
-                        displayText:
-                            '🎬 𝗩𝗜𝗗𝗘𝗢 (𝗠𝗣𝟰)'
-                    },
-                    type: 1
-                }
-            ];
-
-            if (thumbnail) {
-                return await conn.sendMessage(
-                    m.chat,
-                    {
-                        image: {
-                            url: thumbnail
-                        },
-                        caption,
-                        footer:
-                            '𝐑𝐈𝐋𝐄𝐘 𝐁𝐎𝐓',
-                        buttons,
-                        headerType: 4
-                    },
-                    {
-                        quoted: m
-                    }
-                );
-            }
-
-            return await conn.sendMessage(
-                m.chat,
-                {
-                    text: caption,
-                    footer:
-                        '𝑹𝑰𝑳𝑬𝒀-𝑩𝑶𝑻',
-                    buttons,
-                    headerType: 1
-                },
-                {
-                    quoted: m
-                }
-            );
-        }
-
-        await conn.sendMessage(
-            m.chat,
-            {
-                react: {
-                    text: '📥',
-                    key: m.key
-                }
-            }
-        );
-
-        const result = await downloadMedia(
-            youtubeUrl,
-            cmd === 'playaud'
-                ? 'audio'
-                : 'video'
-        );
-
-        console.log(
-            '[PROVIDER]',
-            result.provider
-        );
-
-        console.log(
-            '[FILE SIZE]',
-            `${(
-                result.buffer.length /
-                1024 /
-                1024
-            ).toFixed(2)} MB`
-        );
-
-        if (cmd === 'playvid') {
-            if (
-                result.buffer.length >
-                200 * 1024 * 1024
-            ) {
-                throw new Error(
-                    'Il video è troppo grande per essere inviato.'
-                );
-            }
-
-            await conn.sendMessage(
-                m.chat,
-                {
-                    video: result.buffer,
-                    mimetype:
-                        result.contentType.includes(
-                            'webm'
-                        )
-                            ? 'video/webm'
-                            : 'video/mp4',
-                    fileName:
-                        `${title}.mp4`,
-                    caption:
-                        `✅ *Download completato!*\n\n` +
-                        `🎬 *${title}*` +
-                        (
-                            duration
-                                ? `\n⏱️ ${duration}`
-                                : ''
-                        )
-                },
-                {
-                    quoted: m
-                }
-            );
-        }
-
-        if (cmd === 'playaud') {
-            await conn.sendMessage(
-                m.chat,
-                {
-                    audio: result.buffer,
-                    mimetype:
-                        result.contentType.includes(
-                            'ogg'
-                        )
-                            ? 'audio/ogg'
-                            : result.contentType.includes(
-                                'mpeg'
-                            )
-                                ? 'audio/mpeg'
-                                : 'audio/mp4',
-                    fileName:
-                        `${title}.mp3`,
-                    ptt: false
-                },
-                {
-                    quoted: m
-                }
-            );
-        }
-
-        await conn.sendMessage(
-            m.chat,
-            {
-                react: {
-                    text: '✅',
-                    key: m.key
-                }
-            }
-        );
-
-    } catch (error) {
-        console.error(
-            '[PLAY ERROR]',
-            error
-        );
-
-        await conn.sendMessage(
-            m.chat,
-            {
-                react: {
-                    text: '❌',
-                    key: m.key
-                }
-            }
-        );
-
-        return m.reply(
-            `❌ *PLAY ERROR*\n\n` +
-            `${error.message || 'Errore sconosciuto'}`
-        );
-    }
-};
-
-handler.help = ['play'];
-handler.tags = ['downloader'];
-handler.command =
-    /^(play|playaud|playvid)$/i;
-
-export default handler;
+export default handler
