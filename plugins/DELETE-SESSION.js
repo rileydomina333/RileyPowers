@@ -99,11 +99,7 @@ ${failedCount === 0
     text,
     footer: 'RLY BOT',
     buttons: [
-      {
-        buttonId: '.svuota',
-        buttonText: { displayText: 'Svuota di nuovo' },
-        type: 1
-      },
+      
       {
         buttonId: '.ping',
         buttonText: { displayText: 'Controlla ping' },
