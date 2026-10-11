@@ -2,39 +2,121 @@ import { existsSync, promises as fsPromises } from 'fs'
 import path from 'path'
 
 let handler = async (m, { conn }) => {
-  if (global.conn.user.jid!== conn.user.jid) {
-    return conn.sendMessage(m.chat, { text: `*⟡ ACCESSO NEGATO ⟡*\n\n💠 *Usa questo comando solo dal numero del bot*` }, { quoted: m })
+  const header = '╭━━━━━━━━━━━━━━━━━━━━╮'
+  const footer = '╰━━━━━━━━━━━━━━━━━━━━╯'
+
+  if (global.conn.user.jid !== conn.user.jid) {
+    return conn.sendMessage(m.chat, {
+      text: `${header}
+┃   ACCESSO NEGATO
+╰━━━━━━━━━━━━━━━━━━━━╯
+
+Non disponi dei permessi necessari
+per eseguire questo comando.
+
+Motivo: numero del bot non autorizzato.`
+    }, { quoted: m })
   }
 
-  const sessionFolder = "./varesession/"
+  const sessionFolder = './varesession/'
+
   if (!existsSync(sessionFolder)) {
-    return conn.sendMessage(m.chat, { text: `*⟡ CARTELLA NON TROVATA ⟡*\n\n💠 *La cartella./sessioni/ non esiste*` }, { quoted: m })
+    return conn.sendMessage(m.chat, {
+      text: `${header}
+┃   CARTELLA NON TROVATA
+╰━━━━━━━━━━━━━━━━━━━━╯
+
+La directory delle sessioni non esiste.
+
+Percorso previsto:
+${sessionFolder}`
+    }, { quoted: m })
   }
 
   let deletedCount = 0
+  let failedCount = 0
+
   try {
     const files = await fsPromises.readdir(sessionFolder)
-    for (let file of files) {
-      if (file!== "creds.json") {
-        await fsPromises.unlink(path.join(sessionFolder, file))
+
+    for (const file of files) {
+      if (file === 'creds.json') continue
+
+      const filePath = path.join(sessionFolder, file)
+
+      try {
+        const stat = await fsPromises.lstat(filePath)
+
+        // Rimuove file e collegamenti simbolici,
+        // senza seguire collegamenti esterni.
+        if (stat.isDirectory()) continue
+
+        await fsPromises.unlink(filePath)
         deletedCount++
+      } catch {
+        failedCount++
       }
     }
-  } catch(e) {
-    return conn.sendMessage(m.chat, { text: `*⟡ ERRORE ⟡*\n\n💠 ${e.message}` }, { quoted: m })
+  } catch (e) {
+    return conn.sendMessage(m.chat, {
+      text: `${header}
+┃   ERRORE DI SISTEMA
+╰━━━━━━━━━━━━━━━━━━━━╯
+
+Impossibile completare la pulizia
+della directory delle sessioni.
+
+Dettagli: ${e.message}`
+    }, { quoted: m })
   }
 
-  let text = deletedCount === 0
-   ? `*⟡ SVUOTAMENTO COMPLETATO ⟡*\n\n💠 *Le sessioni sono già vuote*`
-    : `*⟡ SESSIONI ELIMINATE ⟡*\n\n💠 *Sono stati eliminati ${deletedCount} archivi dalle sessioni*\n
-💠 *Grazie per avermi svuotato!*\n\n`
+  let text
+
+  if (deletedCount === 0 && failedCount === 0) {
+    text = `${header}
+┃   SISTEMA OPERATIVO
+╰━━━━━━━━━━━━━━━━━━━━╯
+
+La directory delle sessioni è già vuota.
+
+Nessun file da eliminare.
+
+Stato: NESSUNA OPERAZIONE NECESSARIA`
+  } else {
+    text = `${header}
+┃   PULIZIA SESSIONI
+╰━━━━━━━━━━━━━━━━━━━━╯
+
+Operazione completata.
+
+┌─ RIEPILOGO ──────────
+│
+│ File eliminati : ${deletedCount}
+│ Errori rilevati: ${failedCount}
+│
+└━━━━━━━━━━━━━━━━━━━━━
+
+${failedCount === 0
+  ? 'Stato: COMPLETATO CON SUCCESSO'
+  : 'Stato: COMPLETATO CON AVVISI'}
+
+RLY BOT  |  SYSTEM`
+  }
 
   await conn.sendMessage(m.chat, {
     text,
-    footer: 'RLY BOT',
+    footer: 'RLY BOT | DARK SYSTEM',
     buttons: [
-      {buttonId: '.svuota', buttonText: {displayText: '💠 Svuota di nuovo'}, type: 1},
-      {buttonId: '.ping', buttonText: {displayText: '💠 Ping'}, type: 1}
+      {
+        buttonId: '.svuota',
+        buttonText: { displayText: 'Svuota di nuovo' },
+        type: 1
+      },
+      {
+        buttonId: '.ping',
+        buttonText: { displayText: 'Verifica sistema' },
+        type: 1
+      }
     ]
   }, { quoted: m })
 }
@@ -43,4 +125,5 @@ handler.help = ['ds']
 handler.tags = ['owner']
 handler.command = /^(ds|clearsession)$/i
 handler.owner = true
+
 export default handler
