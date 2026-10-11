@@ -3,12 +3,11 @@ import path from 'path'
 
 let handler = async (m, { conn }) => {
   const header = '╭━━━━━━━━━━━━━━━━━━━━╮'
-  const footer = '╰━━━━━━━━━━━━━━━━━━━━╯'
 
   if (global.conn.user.jid !== conn.user.jid) {
     return conn.sendMessage(m.chat, {
       text: `${header}
-┃   ACCESSO NEGATO
+┃    ACCESSO NEGATO
 ╰━━━━━━━━━━━━━━━━━━━━╯
 
 Non disponi dei permessi necessari
@@ -23,7 +22,7 @@ Motivo: numero del bot non autorizzato.`
   if (!existsSync(sessionFolder)) {
     return conn.sendMessage(m.chat, {
       text: `${header}
-┃   CARTELLA NON TROVATA
+┃  CARTELLA NON TROVATA
 ╰━━━━━━━━━━━━━━━━━━━━╯
 
 La directory delle sessioni non esiste.
@@ -47,8 +46,6 @@ ${sessionFolder}`
       try {
         const stat = await fsPromises.lstat(filePath)
 
-        // Rimuove file e collegamenti simbolici,
-        // senza seguire collegamenti esterni.
         if (stat.isDirectory()) continue
 
         await fsPromises.unlink(filePath)
@@ -63,8 +60,8 @@ ${sessionFolder}`
 ┃   ERRORE DI SISTEMA
 ╰━━━━━━━━━━━━━━━━━━━━╯
 
-Impossibile completare la pulizia
-della directory delle sessioni.
+Impossibile pulire la directory
+delle sessioni.
 
 Dettagli: ${e.message}`
     }, { quoted: m })
@@ -74,12 +71,10 @@ Dettagli: ${e.message}`
 
   if (deletedCount === 0 && failedCount === 0) {
     text = `${header}
-┃   SISTEMA OPERATIVO
+┃   SESSIONI VUOTE
 ╰━━━━━━━━━━━━━━━━━━━━╯
 
-La directory delle sessioni è già vuota.
-
-Nessun file da eliminare.
+Non ci sono file da eliminare.
 
 Stato: NESSUNA OPERAZIONE NECESSARIA`
   } else {
@@ -98,9 +93,12 @@ ${failedCount === 0
   ? 'Stato: COMPLETATO CON SUCCESSO'
   : 'Stato: COMPLETATO CON AVVISI'}
 
-await conn.sendMessage(m.chat, {
+RLY BOT`
+  }
+
+  await conn.sendMessage(m.chat, {
     text,
-    footer: 'RILEY BOT SYSTEM',
+    footer: 'RLY BOT',
     buttons: [
       {
         buttonId: '.svuota',
