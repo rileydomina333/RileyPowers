@@ -92,8 +92,7 @@ Stato: NESSUNA OPERAZIONE NECESSARIA`
 ${failedCount === 0
   ? 'Stato: COMPLETATO CON SUCCESSO'
   : 'Stato: COMPLETATO CON AVVISI'}
-
-RLY BOT`
+`
   }
 
   await conn.sendMessage(m.chat, {
@@ -107,7 +106,7 @@ RLY BOT`
       },
       {
         buttonId: '.ping',
-        buttonText: { displayText: 'Verifica sistema' },
+        buttonText: { displayText: 'Controlla ping' },
         type: 1
       }
     ]
