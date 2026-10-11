@@ -87,8 +87,6 @@ Stato: NESSUNA OPERAZIONE NECESSARIA`
 ┃   PULIZIA SESSIONI
 ╰━━━━━━━━━━━━━━━━━━━━╯
 
-Operazione completata.
-
 ┌─ RIEPILOGO ──────────
 │
 │ File eliminati : ${deletedCount}
@@ -100,12 +98,9 @@ ${failedCount === 0
   ? 'Stato: COMPLETATO CON SUCCESSO'
   : 'Stato: COMPLETATO CON AVVISI'}
 
-RLY BOT  |  SYSTEM`
-  }
-
-  await conn.sendMessage(m.chat, {
+await conn.sendMessage(m.chat, {
     text,
-    footer: 'RLY BOT | DARK SYSTEM',
+    footer: 'RILEY BOT SYSTEM',
     buttons: [
       {
         buttonId: '.svuota',
