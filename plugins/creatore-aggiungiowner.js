@@ -31,7 +31,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   const configPath = path.join(process.cwd(), 'config.js')
 
   if (!fs.existsSync(configPath)) {
-    return m.reply(`*❌ 𝐅𝐢𝐥𝐞 𝐜𝐨𝐧𝐟𝐢𝐠.𝐣𝐬 𝐧𝐨𝐧 𝐭𝐫𝐨𝐯𝐚𝐭𝐨.*`)
+    return m.reply(`*❌ 𝐅𝐢𝐥𝐞 𝐜𝐨𝐧𝐟𝐢𝐠.𝐣𝐬 𝐧𝐨𝐧 𝐭𝐫𝐨𝐯𝐚𝐭𝐨*`)
   }
 
   let name = ''
