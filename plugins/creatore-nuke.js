@@ -40,7 +40,7 @@ let handler = async (m, { conn, isROwner }) => {
       }
     }
 
-    await conn.sendMessage(m.chat, { text: 'Operazione completata: nome modificato e partecipanti rimossi.' }, { quoted: m })
+    { quoted: m })
   } catch (error) {
     console.error(error)
     await conn.reply(m.chat, 'Errore durante l’esecuzione di .afterlight.', m)
