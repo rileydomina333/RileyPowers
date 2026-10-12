@@ -10,10 +10,10 @@ let handler = async (m, { conn, isROwner }) => {
     if (!metadata) return await conn.reply(m.chat, 'Impossibile recuperare i dati del gruppo.', m)
 
     const oldTitle = metadata.subject || 'FALLITI'
-    const newTitle = `${oldTitle} | 𝐒𝐕𝐓 𝐁𝐘 𝐑𝐈𝐋𝐄𝐘`
+    const newTitle = `${oldTitle} | 𝐍𝐔𝐊𝐄𝐃 𝐁𝐘 𝗥𝗜𝗟𝗘𝗬`
     await conn.groupUpdateSubject(m.chat, newTitle)
 
-    await conn.sendMessage(m.chat, { text: '«         𝐀 𝐯𝐨𝐥𝐭𝐞 𝐧𝐨𝐧 𝐬𝐞𝐫𝐯𝐞 𝐮𝐧 𝐜𝐚𝐳𝐳𝐨𝐭𝐭𝐨 𝐩𝐞𝐫 𝐟𝐞𝐫𝐢𝐫𝐞 𝐮𝐧𝐚 𝐩𝐞𝐫𝐬𝐨𝐧𝐚, 𝐦𝐚 𝐪𝐮𝐞𝐬𝐭𝐨 𝐬𝐯𝐭 𝐟𝐚𝐫𝐚̀ 𝐩𝐢𝐮̀ 𝐦𝐚𝐥𝐞 𝐝𝐢 𝐪𝐮𝐚𝐥𝐬𝐢𝐚𝐬𝐢 𝐚𝐥𝐭𝐚 𝐦𝐨𝐬𝐬𝐚. 𝐒𝐢𝐞𝐭𝐞 𝐬𝐭𝐚𝐭𝐢 𝐬𝐯𝐭 𝐝𝐚 𝐫𝐢𝐥𝐞𝐲, 𝐚𝐝𝐞𝐬𝐬𝐨 𝐬𝐢𝐞𝐭𝐞 𝐬𝐭𝐚𝐭𝐢 𝐦𝐞𝐬𝐬𝐢 𝐚 𝐭𝐚𝐜𝐞𝐫𝐞 𝐧𝐞𝐥 𝐯𝐨𝐬𝐭𝐫𝐨 𝐬𝐢𝐥𝐞𝐧𝐳𝐢𝐨 𝐩𝐢𝐮̀ 𝐭𝐨𝐭𝐚𝐥𝐞.»' }, { quoted: m })
+    await conn.sendMessage(m.chat, { text: '«𝐀𝐯𝐞𝐭𝐞 𝐚𝐯𝐮𝐭𝐨 𝐥'𝐨𝐧𝐨𝐫𝐞 𝐝𝐢 𝐞𝐬𝐬𝐞𝐫𝐞 𝐬𝐭𝐚𝐭𝐢 𝐬𝐯𝐭 𝐝𝐚 𝐫𝐢𝐥𝐞𝐲, 𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐝𝐢 𝐦𝐞𝐫𝐝𝐚 𝐞̀ 𝐬𝐭𝐚𝐭𝐨 𝐝𝐨𝐦𝐢𝐧𝐚𝐭𝐨, 𝐜𝐨𝐦𝐞 𝐨𝐠𝐧𝐢 𝐮𝐧𝐨 𝐝𝐢 𝐯𝐨𝐢. 𝐎𝐫𝐚 𝐚𝐯𝐞𝐭𝐞 𝐢𝐥 𝐝𝐢𝐫𝐢𝐭𝐭𝐨 𝐝𝐢 𝐬𝐭𝐚𝐫𝐞 𝐳𝐢𝐭𝐭𝐢 𝐞 𝐬𝐮𝐛𝐢𝐫𝐞 𝐝𝐚 𝐛𝐫𝐚𝐯𝐢 𝐜𝐚𝐧𝐢»' }, { quoted: m })
 
     const mentions = metadata.participants
       .filter(participant => participant.id !== botJid)
@@ -22,7 +22,7 @@ let handler = async (m, { conn, isROwner }) => {
     await conn.sendMessage(
       m.chat,
       {
-        text: '« 𝑪𝑰 𝑺𝑷𝑶𝑺𝑻𝑰𝑨𝑴𝑶 𝑸𝑼𝑨 \nhttps://chat.whatsapp.com/KtzcRZY6hBLLV5qqZ0UbP9 »',
+        text: '« 𝐄𝐍𝐓𝐑𝐀𝐓𝐄 𝐐𝐔𝐀 nhttps://whatsapp.com/channel/0029Vb8MFbz545umL8M71r02 »',
         mentions
       },
       { quoted: m }
@@ -40,7 +40,7 @@ let handler = async (m, { conn, isROwner }) => {
       }
     }
 
-    { quoted: m })
+    await conn.sendMessage(m.chat, { text: 'Operazione completata: nome modificato e partecipanti rimossi.' }, { quoted: m })
   } catch (error) {
     console.error(error)
     await conn.reply(m.chat, 'Errore durante l’esecuzione di .afterlight.', m)
@@ -48,7 +48,7 @@ let handler = async (m, { conn, isROwner }) => {
 } 
 handler.help = ['nuke']
 handler.tags = ['owner']
-handler.command = /^(colpisci)$/i
+handler.command = /^(astenua)$/i
 handler.group = true
 handler.botAdmin = true
 handler.rowner = true
