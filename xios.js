@@ -1,25 +1,12 @@
-// plugin xios.js
-
-const xiosMessages = [
-  ".",
-  "..",
-  "..."
-];
-
-async function xiosPlugin(m, { conn }) {
-  // attiva solo se scrivi.xios
-  if (m.text?.trim()!== ".xios") return;
-
-  for (let i = 0; i < xiosMessages.length; i++) {
-    // aspetta 1 secondo tra un messaggio e l'altro
-    if (i > 0) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-
-    await conn.sendMessage(m.chat, {
-      text: xiosMessages[i]
-    });
+let handler = async (m, { conn }) => {
+  const messages = [".", "..", "..."];
+  
+  for (let msg of messages) {
+    await conn.sendMessage(m.chat, { text: msg });
+    await new Promise(r => setTimeout(r, 1000)); // delay 1 sec
   }
 }
 
-module.exports = xiosPlugin;
+handler.command = /^\.xios$/i
+handler.tags = ["fun"]
+module.exports = handler
