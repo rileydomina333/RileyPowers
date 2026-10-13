@@ -13,7 +13,7 @@ const handler = async (m, { conn }) => {
 
   const update = async (percent, text) => {
     await conn.sendMessage(m.chat, {
-      text: `⏳ *SISTEMA SCANSIONE 888*\n${text}\n\n${progress(percent)}`,
+      text: `⏳ *SISTEMA SCANSIONE RLY*\n${text}\n\n${progress(percent)}`,
       edit: msg.key
     });
   };
@@ -76,7 +76,7 @@ const handler = async (m, { conn }) => {
   await conn.sendMessage(m.chat, { delete: msg.key });
 
   const messaggio = `
-👥 *INFO GRUPPO 888*
+👥 *INFO GRUPPO RLY*
 Informazioni sincronizzate
 
 📛 *Nome gruppo:* ${nome}
