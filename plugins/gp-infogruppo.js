@@ -59,7 +59,7 @@ ${statoFunzioni}
 
 handler.help = ['infogruppo'];
 handler.tags = ['gruppo'];
-handler.command = ['infogruppo', 'gp', 'infogp', 'gruppo'];
+handler.command = ['infogruppo', 'igp', 'infogp', 'gruppo'];
 handler.group = true;
 handler.admin = true
 export default handler;
