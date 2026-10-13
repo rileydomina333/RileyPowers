@@ -12,15 +12,25 @@ let handler = async (m, { conn, usedPrefix: _p, command, args, isOwner, isAdmin 
 
   const securityFeatures = [
     { key: 'modoadmin', name: '🛡️ Soloadmin' },
+
 { key: 'modoadmin', name: '🔞 antiporno' },
+
 { key: 'modoadmin', name: '💉 Antigore' },
+
 { key: 'modoadmin', name: '🚨 Antiraid', },
+
     { key: 'antivoip', name: '📞 Antivoip' },
+
     { key: 'antilink', name: '🔗 Antilink' },
+
     { key: 'antilinksocial', name: '🌐 Antilinksocial' },
+
     { key: 'antitrava', name: '🧱 Antitrava' },
+
     { key: 'antinuke', name: '☢️ Antinuke', },
+
     { key: 'antiviewonce', name: '👁️ Antiviewonce' },
+
     { key: 'antispam', name: '🛑 Antispam' }
   ]
 
