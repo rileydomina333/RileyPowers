@@ -12,7 +12,7 @@ let handler = async (m, { conn, usedPrefix: _p, command, args, isOwner, isAdmin 
 
   const securityFeatures = [
     { key: 'modoadmin', name: '🛡️ Soloadmin', desc: 'Solo gli admin usano il bot' },
-{ key: 'modoadmin', name: '🔞 antiporno', desc: 'Solo gli admin usano il bot' },
+{ key: 'modoadmin', name: '🔞 antiporno' },
 { key: 'modoadmin', name: '💉 Antigore', desc: 'Solo gli admin usano il bot' },
 { key: 'modoadmin', name: '🚨 Antiraid', desc: 'Solo gli admin usano il bot' },
     { key: 'antivoip', name: '📞 Antivoip', desc: 'Rifiuta chiamate nel gruppo' },
