@@ -41,16 +41,16 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 
   const generateFlame = (target) => {
     const flames = [
-      `🔊 ${target}, scrivi così piano che i tuoi messaggi arrivano via fax?`,
-      `🎭 ${target}, sembri un bug di sistema... inutile e fastidioso!`,
-      `📱 ${target}, la tua sfiga prende sempre il 5G, complimenti!`,
-      `⚡ ${target}, se la stupidità fosse energia, saresti una centrale elettrica!`,
-      `🤡 ${target}, il circo ha chiamato, dicono che manchi solo tu!`,
-      `⚰️ ${target}, il tuo senso dell'umorismo è morto e sepolto!`,
-      `📡 ${target}, il segnale è arrivato, ma il tuo cervello è ancora in roaming?`,
-      `💅 ${target}, anche i sassi hanno conversazioni più interessanti delle tue!`,
-      `📉 ${target}, la tua dignità sta scendendo più velocemente delle azioni di una banca in crisi!`,
-      `🧟 ${target}, ti hanno mai detto che hai il carisma di un router spento?`
+      `${target}, sei più abusato di nicolivorno in community 🫩`,
+      `${target}, sei così brutto che quando ti guardi allo specchio,lo specchio si rompe`,
+      ` ${target}, sei utile come una padella bucata e uno scolapasta senza buchi`,
+      `${target}, se la stupidità fosse energia, saresti una centrale elettrica!`,
+      ` ${target}, sei come gli scogli,prendi schizzi ogni secondo`,
+      `${target},tuo padre da bravo cane sta mangiando nella ciotola col guinzaglio perché lo sa che se non obbedisce lo smonto`,
+      `${target} tua madre è come le strisce pedonali,ci passano tutti sopra`,
+      `${target}, prendi talmente tanti cazzi che hai la mandibola storta per le spinte`,
+      `${target} tua madre è come l'unieuro,batte,forte,sempre.`,
+      `${target} sei così brutto che quando ti guardi allo specchio punti contro il telecomando per cambiare canale`
     ];
     return flames[Math.floor(Math.random() * flames.length)];
   };
