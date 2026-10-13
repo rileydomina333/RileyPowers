@@ -11,31 +11,31 @@ let handler = async (m, { conn, usedPrefix: _p, command, args, isOwner, isAdmin 
   let bot = global.db.data.settings[conn.user.jid]
 
   const securityFeatures = [
-    { key: 'modoadmin', name: '🛡️ Soloadmin', desc: 'Solo gli admin usano il bot' },
+    { key: 'modoadmin', name: '🛡️ Soloadmin' },
 { key: 'modoadmin', name: '🔞 antiporno' },
-{ key: 'modoadmin', name: '💉 Antigore', desc: 'Solo gli admin usano il bot' },
-{ key: 'modoadmin', name: '🚨 Antiraid', desc: 'Solo gli admin usano il bot' },
-    { key: 'antivoip', name: '📞 Antivoip', desc: 'Rifiuta chiamate nel gruppo' },
-    { key: 'antilink', name: '🔗 Antilink', desc: 'Elimina link gruppi WhatsApp' },
-    { key: 'antilinksocial', name: '🌐 Antilinksocial', desc: 'Elimina link social (IG, TT, ecc)' },
-    { key: 'antitrava', name: '🧱 Antitrava', desc: 'Blocca crash/messaggi lunghi' },
-    { key: 'antinuke', name: '☢️ Antinuke', desc: 'Sicurezza avanzata del gruppo' },
-    { key: 'antiviewonce', name: '👁️ Antiviewonce', desc: 'Invia messaggi visualizza una volta' },
-    { key: 'antispam', name: '🛑 Antispam', desc: 'Blocca spam di comandi' }
+{ key: 'modoadmin', name: '💉 Antigore' },
+{ key: 'modoadmin', name: '🚨 Antiraid', },
+    { key: 'antivoip', name: '📞 Antivoip' },
+    { key: 'antilink', name: '🔗 Antilink' },
+    { key: 'antilinksocial', name: '🌐 Antilinksocial' },
+    { key: 'antitrava', name: '🧱 Antitrava' },
+    { key: 'antinuke', name: '☢️ Antinuke', },
+    { key: 'antiviewonce', name: '👁️ Antiviewonce' },
+    { key: 'antispam', name: '🛑 Antispam' }
   ]
 
   const automationFeatures = [
-    { key: 'ai', name: '🧠 IA', desc: 'Intelligenza artificiale attiva' },
-    { key: 'vocali', name: '🎤 Siri', desc: 'Risponde con audio ai messaggi' },
-    { key: 'reaction', name: '😎 Reazioni', desc: 'Reazioni automatiche ai messaggi' },
-    { key: 'autolevelup', name: '⬆️ Autolivello', desc: 'Messaggio di livello automatico' },
-    { key: 'welcome', name: '👋 Welcome', desc: 'Messaggio di benvenuto' }
+    { key: 'ai', name: '🧠 IA' },
+    { key: 'vocali', name: '🎤 Siri' },
+    { key: 'reaction', name: '😎 Reazioni', },
+    { key: 'autolevelup', name: '⬆️ Autolivello' },
+    { key: 'welcome', name: '👋 Welcome' }
   ]
 
   const ownerFeatures = [
-    { key: 'anticall', name: '📵 Antichiamate', desc: 'Blocca chiamate al bot (Global)' },
-    { key: 'antiprivate', name: '🔒 Antiprivato', desc: 'Blocca uso del bot in privato' },
-    { key: 'solocreatore', name: '👑 Solo Creatore', desc: 'Bot risponde solo all\'owner' }
+    { key: 'anticall', name: '📵 Antichiamate' },
+    { key: 'antiprivate', name: '🔒 Antiprivato' },
+    { key: 'solocreatore', name: '👑 Solo Creatore' }
   ]
 
   if (!args.length || /menu|help/i.test(args[0])) {
