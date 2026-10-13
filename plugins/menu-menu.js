@@ -1,35 +1,47 @@
 import { promises as fs } from 'fs'
 import { join } from 'path'
 
-const emojicategoria = {
-  info: '⚡',
-  main: '🌩️',
-  sicurezza: '🛡️'
+const emojiCat = {
+  info: '🌌',
+  main: '⚡',
+  sicurezza: '🛡️',
+  gruppo: '👥',
+  download: '📥',
+  strumenti: '🛠️',
+  giochi: '🎮',
+  ia: '🤖'
 }
 
 let tags = {
-  main: '⚡ ʀʟʏ 𝙼𝙰𝙸𝙽 𝚂𝚈𝚂𝚃𝙴𝙼 ⚡',
-  info: '⚡ ʀʟʏ 𝙸𝙽𝙵𝙾 𝙱𝙰𝚂𝙴 ⚡'
+  main: 'MAIN SYSTEM',
+  info: 'INFO BASE',
+  sicurezza: 'SICUREZZA',
+  gruppo: 'GRUPPO',
+  download: 'DOWNLOAD',
+  strumenti: 'STRUMENTI',
+  giochi: 'GIOCHI',
+  ia: 'INTELLIGENZA'
 }
 
 const defaultMenu = {
-  testoInizio: `
-⚡  〔 𝐑 𝐋 𝐘 •  𝐁 𝐎 𝐓 〕  ⚡
+  before: `
+╭─〔 🌌 RLY-BOT • GALAXY BLUE 〕─
+│ Utente: @%user
+│ Uptime: %uptime
+│ Utenti: %totalreg
+│ Versione: Galaxy 2.0
+╰──────────────────
+`.trim(),
 
-┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
-┃ ⏳ 𝚄𝚙𝚝𝚒𝚖𝚎 ⭔ %uptime
-┃ 👥 𝚄𝚝𝚎𝚗𝚝𝚒 ⭔ %totalreg
-`.trimStart(),
-
-  header: '\n〔 %category 〕',
-  body: '┃ ⌲ %emoji %cmd',
-  footer: '',
-  testoFine: `\n_Powered by RLY-BOT Interface_`,
+  header: '\n┌─〔 %category 〕',
+  body: '│ ◦ %cmd',
+  footer: '└────────────────',
+  after: '\n_Powered by RLY-BOT Galaxy Blue_',
 }
 
-const localImg = './WA_1791285295586.jpeg'
+const menuImage = './media/menu.jpg' // metti qui la tua foto galassia
 
-const bldButtons = [
+const sections = [
   { title: "🛡️ SICUREZZA", command: "attiva" },
   { title: "🎮 GIOCHI", command: "menugiochi" },
   { title: "🤖 IA", command: "menuia" },
@@ -37,81 +49,86 @@ const bldButtons = [
   { title: "📥 DOWNLOAD", command: "menudownload" },
   { title: "🛠️ STRUMENTI", command: "menustrumenti" },
   { title: "⭐ PREMIUM", command: "menupremium" },
-  { title: "💰 EURO", command: "menueuro" }
+  { title: "💰 ECONOMIA", command: "menueuro" }
 ]
 
 let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
     await conn.sendPresenceUpdate('composing', m.chat)
 
-    let who = m.sender
     let uptime = clockString(process.uptime() * 1000)
     let totalreg = Object.keys(global.db.data.users).length
+    let userId = m.sender.split('@')[0]
 
-    let help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
-      help: Array.isArray(p.help) ? p.help : [p.help],
-      tags: Array.isArray(p.tags) ? p.tags : [p.tags],
-      prefix: 'customPrefix' in p
-    }))
+    // Prende tutti i plugin
+    let help = Object.values(global.plugins)
+     .filter(p =>!p.disabled)
+     .map(p => ({
+        help: Array.isArray(p.help)? p.help : [p.help],
+        tags: Array.isArray(p.tags)? p.tags : [p.tags],
+        prefix: 'customPrefix' in p
+      }))
 
-    let menuTags = Object.keys(tags)
+    let text = defaultMenu.before
+     .replace(/%user/g, userId)
+     .replace(/%uptime/g, uptime)
+     .replace(/%totalreg/g, totalreg)
 
-    let _text = [
-      defaultMenu.testoInizio,
-      ...menuTags.map(tag => {
-        let commands = help
-          .filter(menu => menu.tags.includes(tag))
-          .flatMap(menu => menu.help.map(h => {
-            let rawCmd = menu.prefix ? h : _p + h
-            let styledCmd = toTypewriter(rawCmd)
-            return defaultMenu.body
-              .replace(/%cmd/g, styledCmd)
-              .replace(/%emoji/g, emojicategoria[tag])
-          })).join('\n')
+    for (let tag of Object.keys(tags)) {
+      let cmds = help
+       .filter(menu => menu.tags.includes(tag))
+       .flatMap(menu => menu.help.map(h => {
+          let cmd = menu.prefix? h : _p + h
+          return defaultMenu.body.replace(/%cmd/g, cmd)
+        }))
+       .join('\n')
 
-        return defaultMenu.header.replace(/%category/g, tags[tag]) + '\n' + commands
-      }),
-      defaultMenu.testoFine
-    ].join('\n')
+      if (cmds) {
+        text += '\n' + defaultMenu.header.replace(/%category/g, tags[tag]) + '\n' + cmds + '\n' + defaultMenu.footer
+      }
+    }
 
-    let userJid = who.split('@')[0]
-    let text = _text.replace(/%user/g, userJid)
-                    .replace(/%uptime/g, uptime)
-                    .replace(/%totalreg/g, totalreg)
+    text += '\n' + defaultMenu.after
 
-    const buttons = bldButtons.map(btn => ({
-      buttonId: _p + btn.command,
-      buttonText: { displayText: btn.title },
+    // Pulsanti
+    const buttons = sections.map(s => ({
+      buttonId: `${_p}${s.command}`,
+      buttonText: { displayText: s.title },
       type: 1
     }))
 
-    let imageBuffer = null
+    // Immagine con fallback
+    let imgBuffer
     try {
-      imageBuffer = await fs.readFile(localImg)
-    } catch (e) {
-      console.log("⚠️ Immagine NON trovata")
+      imgBuffer = await fs.readFile(join(process.cwd(), menuImage))
+    } catch {
+      try {
+        imgBuffer = await fs.readFile('./WA_1791285295586.jpeg')
+      } catch {
+        imgBuffer = null
+      }
     }
 
     await conn.sendMessage(m.chat, {
-      ...(imageBuffer ? { image: imageBuffer } : {}),
+     ...(imgBuffer? { image: imgBuffer } : {}),
       caption: text.trim(),
-      footer: "⚡ RLY-BOT Core System",
+      footer: '🌌 RLY-BOT • Galaxy Blue Edition',
       buttons: buttons,
       headerType: 4,
-      viewOnce: true,
-      mentions: [who]
+      mentions: [m.sender]
     }, { quoted: m })
 
-    await m.react('⚡')
+    await m.react('🌌')
 
   } catch (e) {
-    console.error(e)
-    conn.reply(m.chat, `❌ Errore RLY-SYS: ${e.message}`, m)
+    console.error('menu error:', e)
+    conn.reply(m.chat, `Errore menu: ${e.message}`, m)
   }
 }
 
 handler.help = ['menu']
-handler.command = ['menu', 'help']
+handler.tags = ['main']
+handler.command = ['menu', 'help', 'menù']
 
 export default handler
 
@@ -119,14 +136,5 @@ function clockString(ms) {
   let h = Math.floor(ms / 3600000)
   let m = Math.floor(ms / 60000) % 60
   let s = Math.floor(ms / 1000) % 60
-  return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':')
-}
-
-function toTypewriter(str) {
-  const normal = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-  const typewriter = "𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿"
-  return str.split('').map(char => {
-    const index = normal.indexOf(char)
-    return index !== -1 ? typewriter.substr(index * 2, 2) : char
-  }).join('')
+  return `${h}h ${m}m ${s}s`
 }
