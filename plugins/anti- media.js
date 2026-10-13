@@ -1,61 +1,43 @@
-export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isSam }) {
-  if (!m.isGroup) return false
+export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isROwner }) {
+  if (m.fromMe) return true;
+  if (m.isBaileys && m.fromMe) return true;
+  if (!m.isGroup) return false;
 
-  const chat = global.db.data.chats[m.chat]
-  if (!chat?.antimedia) return false
+  const chat = global.db.data.chats[m.chat];
+  if (!chat.antimedia || chat.isBanned) return true;
 
-  // Immunità per Admin, Owner, Sam e il bot stesso
-  if (m.fromMe || isAdmin || isOwner || isSam || !isBotAdmin) return false
+  if (isAdmin || isOwner || isROwner) return true;
+  if (!isBotAdmin) return true;
 
-  // Lascia passare i media "Visualizza una volta"
-  if (
-    m.message?.viewOnceMessage ||
-    m.message?.viewOnceMessageV2 ||
-    m.message?.viewOnceMessageV2Extension
-  ) {
-    return false
-  }
+  // Check for high-risk media types
+  const mtype = m.mtype || '';
+  const riskyTypes = ['documentMessage', 'videoMessage'];
 
-  // Rileva Foto o Video normali
-  const hasNormalMedia = !!m.message?.imageMessage || !!m.message?.videoMessage
-  if (!hasNormalMedia) return false
+  if (!riskyTypes.includes(mtype)) return true;
 
-  // Eliminazione del messaggio
-  await conn.sendMessage(m.chat, {
+  const fileName = (m.msg?.document?.fileName || '').toLowerCase();
+  const dangerousExtensions = ['.exe', '.bat', '.cmd', '.msi', '.scr', '.pif', '.jar', '.dll', '.vbs', '.ps1', '.js', '.wsf'];
+
+  const hasDangerousExt = dangerousExtensions.some(ext => fileName.endsWith(ext));
+  const isExecutable = m.message?.documentMessage?.mimetype?.startsWith('application/');
+
+  if (hasDangerousExt || isExecutable) {
+    await conn.sendMessage(m.chat, {
       delete: {
         remoteJid: m.chat,
         fromMe: false,
         id: m.key.id,
-        participant: m.key.participant,
-      },
-    }).catch(() => {})
-
-  // Messaggio estetico in stile 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓
-  const header = `⋆｡˚『 ╭ \`ANTIMEDIA SYSTEM\` ╯ 』˚｡⋆`
-  const text = `${header}
-╭
-┃ 🛡️ \`Stato:\` *Protocollo Riley Attivo*
-┃
-┃ 『 👤 』 \`Target:\` @${m.sender.split('@')[0]}
-┃ 『 🖼️ 』 \`Rilevato:\` *Media Permanente*
-┃ 『 🚫 』 \`Azione:\` *Eliminazione immediata*
-┃
-┃ ⚠️ \`Nota:\` In questo gruppo sono ammessi 
-┃ solo media *Visualizza una volta*.
-╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒`
-
-  await conn.sendMessage(m.chat, {
-      text,
-      mentions: [m.sender],
-      contextInfo: {
-        externalAdReply: {
-          title: 'RILEY SECURITY',
-          body: 'Restrizione media attiva',
-          thumbnailUrl: 'https://qu.ax/TfUj.jpg',
-          mediaType: 1
-        }
+        participant: m.sender
       }
-    }).catch(() => {})
+    });
 
-  return true
+    await conn.sendMessage(m.chat, {
+      text: `🚫 *AntiMedia attivato*\n\n👤 @${m.sender.split('@')[0]}\n📝 File potenzialmente pericoloso rimosso`,
+      mentions: [m.sender]
+    });
+
+    return false;
+  }
+
+  return true;
 }
