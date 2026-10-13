@@ -1,56 +1,63 @@
-import { createAIService } from '../lib/ai-service.js';
-import { isActive, setActive } from '../lib/ai-toggle.js';
+const { createAIService } = require('../lib/ai-service.js');
 
+// salva attivi in memoria (se riavvii il bot si resettano, ma almeno non crasha)
+if (!global.aiActive) global.aiActive = new Set();
 const ai = createAIService(process.env.GROQ_API_KEY, process.env.OPENAI_API_KEY);
 
-let handler = async (m, { conn }) => {
-  const txt = m.text.trim();
-  const lower = txt.toLowerCase();
+let handler = async (m, { conn, text }) => {
+  let chatId = m.chat;
+  let msg = (m.text || '').trim();
 
-  if (lower === '.attiva ai') {
-    setActive(m.chat, true);
-    return conn.sendMessage(m.chat, { text: "*✅ AI attivata*\nOra rispondo a tutto." }, { quoted: m });
-  }
-  
-  if (lower === '.disattiva ai') {
-    setActive(m.chat, false);
-    ai.resetHistory(m.chat);
-    return conn.sendMessage(m.chat, { text: "*❌ AI disattivata*\nNon rispondo più. Usa *.bot* per parlarmi o *.attiva ai* per riattivarmi." }, { quoted: m });
+  // .attiva ai
+  if (/^\.attiva ai$/i.test(msg)) {
+    global.aiActive.add(chatId);
+    return conn.reply(m.chat, "✅ *AI attivata* in questa chat\nOra rispondo a tutto.\n`.disattiva ai` per spegnere", m);
   }
 
-  if (lower.startsWith('.bot ')) {
-    const query = txt.slice(5).trim();
-    if (!query) return m.reply("Usa: *.bot ciao come stai*");
+  // .disattiva ai
+  if (/^\.disattiva ai$/i.test(msg)) {
+    global.aiActive.delete(chatId);
+    ai.resetHistory(chatId);
+    return conn.reply(m.chat, "❌ *AI disattivata*\nOra rispondo solo con `.bot`", m);
+  }
 
-    const reply = await ai.generateReply({
+  // .bot
+  if (/^\.bot /i.test(msg)) {
+    let query = msg.replace(/^\.bot /i, '').trim();
+    if (!query) return conn.reply(m.chat, "Scrivi: *.bot ciao*", m);
+    
+    let reply = await ai.generateReply({
       messageText: query,
       authorName: m.pushName || m.sender,
-      chatId: m.chat
+      chatId: chatId
     });
-    return conn.sendMessage(m.chat, { text: reply }, { quoted: m });
+    return conn.reply(m.chat, reply, m);
   }
 }
 
+// Risposta automatica se attiva
 handler.before = async (m, { conn }) => {
-  if (m.isBaileys) return;
   if (!m.text) return;
-  
-  const lower = m.text.trim().toLowerCase();
-  // ignora comandi
-  if (lower === '.attiva ai' || lower === '.disattiva ai' || lower.startsWith('.bot ')) return;
-  if (m.text.startsWith('.')) return;
+  if (m.isBaileys) return;
 
-  // Se è disattivata, NON rispondere nemmeno se rispondi al bot
-  if (!isActive(m.chat)) return;
+  let msg = m.text.trim();
+  if (/^\.attiva ai$/i.test(msg)) return;
+  if (/^\.disattiva ai$/i.test(msg)) return;
+  if (/^\.bot/i.test(msg)) return;
+  if (msg.startsWith('.')) return; // ignora altri comandi
 
-  const reply = await ai.generateReply({
+  if (!global.aiActive.has(m.chat)) return; // se non attiva, sta zitta
+
+  let reply = await ai.generateReply({
     messageText: m.text,
     authorName: m.pushName || m.sender,
     chatId: m.chat
   });
 
-  if (reply) await conn.sendMessage(m.chat, { text: reply }, { quoted: m });
+  if (reply) await conn.reply(m.chat, reply, m);
 }
 
 handler.command = /^(attiva ai|disattiva ai|bot)$/i;
+handler.help = ["attiva ai", "disattiva ai", "bot"];
+
 module.exports = handler;
