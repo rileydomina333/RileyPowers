@@ -1,81 +1,129 @@
-let handler = m => m
-const ZALGO_REGEX = /[\u0300-\u036f\u1ab0-\u1aff\u1dc0-\u1dff\u20d0-\u20ff\ufe20-\ufe2f]{3,}/g;
+import {
+  ROLES,
+  addWarn,
+  resetWarns,
+  getWarnConfig,
+  applyMute,
+  formatDuration,
+  flushDbNow
+} from '../../lib/moderation.js'
 
-function extractText(m) {
-    if (!m) return '';
-    let text = m.text || m.caption || '';
-    const poll = m.message?.pollCreationMessageV3 || m.message?.pollCreationMessage;
-    if (poll?.name) {
-        text += ' ' + poll.name;
-        poll.options?.forEach(opt => text += ' ' + opt.optionName);
-    }
-    return text;
+function normalizeJid(jid) {
+  return String(jid || '').split(':')[0]
 }
 
-export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isSam }) {
-    if (m.isBaileys && m.fromMe) return true;
-    if (!m.isGroup || !m.sender) return false;
+export async function before(m, { conn, isAdmin, isBotAdmin }) {
 
-    const chat = global.db.data.chats[m.chat];
-    if (!chat || !chat.antitrava) return true;
+  if (m.fromMe) return true
+  if (m.isBaileys && m.fromMe) return true
+  if (!m.isGroup) return true
 
-    // Immunità per Admin, Blood e il bot stesso
-    if (isAdmin || isOwner || isSam || m.fromMe) return true;
+  const chat = global.db.data.chats[m.chat]
+  if (!chat?.antitrava || chat?.isBanned) return true
+  if (isAdmin || !isBotAdmin) return true
 
-    const text = extractText(m);
-    if (!text) return true;
+  const text = (m.text || m.message?.extendedTextMessage?.text || '').toString()
+  const messageSize = JSON.stringify(m.message || {}).length
+  const fileLength = Number(
+    m.message?.imageMessage?.fileLength ||
+    m.message?.videoMessage?.fileLength ||
+    m.message?.documentMessage?.fileLength ||
+    m.message?.audioMessage?.fileLength ||
+    m.message?.stickerMessage?.fileLength ||
+    0
+  )
+  const hasInvisibleSpam = /[\u200b\u200c\u200d\u2060\uFEFF]{10,}/.test(text)
 
-    const isTooLong = text.length > 4000;
-    const zalgoMatches = text.match(ZALGO_REGEX) || [];
-    const isZalgo = zalgoMatches.length > 5;
+  const isTravaPayload =
+    messageSize > 18000 ||
+    text.length > 1600 ||
+    fileLength > 8_000_000 ||
+    hasInvisibleSpam
 
-    if (isTooLong || isZalgo) {
-        // Eliminazione immediata del messaggio pericoloso
-        await conn.sendMessage(m.chat, { delete: m.key }).catch(() => {});
+  if (!isTravaPayload) return true
 
-        // Rimozione dell'utente se il bot è admin
-        if (isBotAdmin) {
-            await conn.groupParticipantsUpdate(m.chat, [m.sender], 'remove').catch(() => {});
-        }
+  const botJid = normalizeJid(conn.user?.jid || conn.user?.id || '')
+  const cfg = getWarnConfig(m.chat)
 
-        const userTag = m.sender.split('@')[0];
-        const reason = isTooLong ? 'Eccessiva lunghezza (Trava)' : 'Caratteri Zalgo/Crash rilevati';
-        
-        // Messaggio estetico 𝐑𝐈𝐋𝐄𝐘-𝐁𝐎𝐓
-        const header = `⋆｡˚『 ╭ \`ANTITRAVA SYSTEM\` ╯ 』˚｡⋆`;
-        const footer = `╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒`;
+  // Elimina subito il messaggio
+  try {
+    await conn.sendMessage(m.chat, {
+      delete: {
+        remoteJid: m.chat,
+        fromMe: false,
+        id: m.key.id,
+        participant: m.sender
+      }
+    })
+  } catch {}
 
-        const textMsg = `${header}
-╭
-┃ 🛡️ \`Stato:\` *Protocollo Riley Attivo*
-┃
-┃ 『 👤 』 \`Target:\` @${userTag}
-┃ 『 ⚠️ 』 \`Rilevato:\` *Tentativo di Crash*
-┃ 『 🚫 』 \`Azione:\` *ELIMINAZIONE UTENTE*
-┃ 『 📝 』 \`Motivo:\` ${reason}
-┃
-┃ ⚠️ \`Nota:\` I tentativi di destabilizzazione
-┃ del gruppo non sono tollerati.
-╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒`;
+  // Warn nel sistema centrale (visibile con .warn, rimovibile con .unwarn / .resetwarn)
+  let res
+  try {
+    res = addWarn({
+      chat: m.chat,
+      target: m.sender,
+      reason: 'AntiTrava: messaggio crash/trava',
+      actor: botJid,
+      role: ROLES.OWNER
+    })
+  } catch (e) {
+    console.log('Errore addWarn antitrava:', e)
+    return false
+  }
 
-        await conn.sendMessage(m.chat, {
-            text: textMsg,
-            mentions: [m.sender],
-            contextInfo: {
-                externalAdReply: {
-                    title: 'RILEY CRASH PROTECTION',
-                    body: 'Minaccia neutralizzata',
-                    thumbnailUrl: 'https://qu.ax/TfUj.jpg',
-                    mediaType: 1,
-                    renderLargerThumbnail: true
-                }
-            }
-        });
+  // Espulsione al raggiungimento del limite
+  if (res.escalate) {
+    try {
+      resetWarns({ chat: m.chat, target: m.sender })
+      await flushDbNow()
 
-        return true;
+      await conn.sendMessage(m.chat, {
+        text:
+`❌ *UTENTE ESPULSO*
+
+👤 @${m.sender.split('@')[0]}
+⚙️ Azione: Rimozione automatica
+⛔ Motivo: Ha raggiunto ${cfg.max} avvertimenti (AntiTrava)`,
+        mentions: [m.sender]
+      })
+
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      await conn.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
+    } catch (e) {
+      console.log('Errore espulsione antitrava:', e)
     }
+    return false
+  }
 
-    return true;
+  // Mute automatico, se previsto dalla configurazione warn
+  let muteNote = ''
+  if (res.mute) {
+    try {
+      const mr = applyMute({
+        chat: m.chat,
+        target: m.sender,
+        actor: botJid,
+        role: ROLES.OWNER,
+        durationMs: cfg.muteMs
+      })
+      muteNote = `\n🔇 Mute automatico: ${formatDuration(mr.ms)}`
+    } catch {}
+  }
+
+  const riskNote = res.count >= cfg.max - 1
+    ? `\n⛔ Al prossimo warn verrai espulso.`
+    : ''
+
+  await conn.sendMessage(m.chat, {
+    text:
+`🚫 *AntiTrava attivato*
+
+👤 @${m.sender.split('@')[0]}
+📝 Messaggio rimosso perché potenzialmente crash/trava
+⚠️ Warn: ${res.count}/${cfg.max}${muteNote}${riskNote}`,
+    mentions: [m.sender]
+  })
+
+  return false
 }
-
-export default handler;
