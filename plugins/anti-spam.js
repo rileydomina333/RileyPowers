@@ -1,136 +1,124 @@
-import crypto from 'crypto';
+import { Mutex } from 'async-mutex'
 
-const uzer = new Map();
-let lastCleanup = 0;
-const handler = m => m;
+const CONFIG = {
+  window: 10000,
+  maxCommands: 8,
+  maxUnique: 6,
+  warnCooldown: 60000
+}
 
-handler.before = async function (m, { conn, isAdmin, isBotAdmin, isOwner, isSam }) {
-    if (!m.isGroup) return;
-    const chat = global.db.data.chats[m.chat] || {};
+const track = {}
+const warned = new Set()
+const mutexes = {}
+const lock = (chat) => {
+  if (!mutexes[chat]) mutexes[chat] = new Mutex()
+  return mutexes[chat]
+}
 
-    // Filtri di esclusione
-    if (!chat.antispam || chat.modoadmin || isOwner || isSam || isAdmin || !isBotAdmin) return;
-    if (m.message?.viewOnceMessage) return;
-    if (['reactionMessage', 'pollUpdateMessage', 'protocolMessage'].includes(m.mtype)) return;
+const digits = (jid = '') => String(jid ?? '').split('@')[0].split(':')[0].replace(/\D+/g, '')
 
-    const msgTimestamp = (m.messageTimestamp ? m.messageTimestamp * 1000 : Date.now());
-    if (Date.now() - msgTimestamp > 10000) return; 
+const isOwnerOfBot = (jid) => {
+  const target = digits(jid)
+  if (!target) return false
+  return (global.owner || []).some(e => {
+    const raw = Array.isArray(e) ? e[0] : e
+    return digits(String(raw ?? '')) === target
+  })
+}
 
-    const sender = m.sender;
-    let decodedSender = conn.decodeJid(sender);
-    if (decodedSender.endsWith('@lid')) return;
+const configOf = (chat) => {
+  const c = global.db?.data?.chats?.[chat] || {}
+  return {
+    enabled: c.antiflood === true,
+    maxCommands: Number.isFinite(c.antifloodMax) && c.antifloodMax > 0 ? c.antifloodMax : CONFIG.maxCommands,
+    maxUnique: Number.isFinite(c.antifloodUnique) && c.antifloodUnique > 0 ? c.antifloodUnique : CONFIG.maxUnique,
+    window: Number.isFinite(c.antifloodWindow) && c.antifloodWindow > 0 ? c.antifloodWindow : CONFIG.window,
+    silent: c.antifloodSilent === true
+  }
+}
 
-    const config = {
-        timeWindow: 10000,      // Finestra di 10 secondi
-        removeThreshold: 10,    // Max messaggi
-        timeThreshold: 1500,    // Media millisecondi tra messaggi
-        cleanupInterval: 300000 // 5 minuti
-    };
+const extractCommand = (m) => {
+  const text = String(m?.text || '')
+  if (!text.startsWith('.')) return null
+  return text.split(/\s+/)[0].slice(1).toLowerCase() || null
+}
 
-    const now = Date.now();
-    if (now - lastCleanup > config.cleanupInterval) {
-        cleanupOldData(config.cleanupInterval);
-        lastCleanup = now;
-    }
+const prune = (obj, chat) => {
+  if (!obj[chat]) return null
+  const now = Date.now()
+  const cfg = configOf(chat)
+  obj[chat] = obj[chat].filter(e => now - e.at < cfg.window)
+  if (!obj[chat].length) delete obj[chat]
+  return obj[chat] || null
+}
 
-    let userData = uzer.get(decodedSender);
-    if (!userData) {
-        userData = { timestamps: [], messages: [] };
-        uzer.set(decodedSender, userData);
-    }
+export async function before(m, { conn, isAdmin, isOwner, isROwner, isMods }) {
+  try {
+    if (m?.fromMe) return true
+    if (!m?.isGroup) return false
+    if (!m?.sender) return true
 
-    const messageContent = getMessageContent(m);
-    if (['unknown_message_type', 'error_parsing_message'].includes(messageContent)) return;
+    const chat = m.chat
+    const cfg = configOf(chat)
+    if (!cfg.enabled) return true
 
-    const contentHash = crypto.createHash('md5').update(messageContent).digest('hex');
+    if (isOwner || isROwner || isAdmin || isMods) return true
+    if (isOwnerOfBot(m.sender)) return true
 
-    userData.timestamps.push(msgTimestamp);
-    userData.messages.push({ time: msgTimestamp, hash: contentHash });
+    const cmd = extractCommand(m)
+    if (!cmd) return true
 
-    // Pulizia vecchi log utente
-    userData.timestamps = userData.timestamps.filter(t => now - t < config.timeWindow);
-    userData.messages = userData.messages.filter(msg => now - msg.time < config.timeWindow);
-
-    const duplicateCount = userData.messages.filter(msg => 
-        msg.hash === contentHash && msg.time !== msgTimestamp
-    ).length;
-
-    let effectiveThreshold = config.removeThreshold;
-    if (duplicateCount > 0) {
-        effectiveThreshold = Math.max(5, config.removeThreshold - (duplicateCount * 2));
-    }
-
-    const messageCount = userData.timestamps.length;
-
-    if (messageCount >= effectiveThreshold) {
-        userData.timestamps.sort((a, b) => a - b);
-        const totalDuration = userData.timestamps[userData.timestamps.length - 1] - userData.timestamps[0];
-        const averageTime = (userData.timestamps.length > 1) ? (totalDuration / (userData.timestamps.length - 1)) : 10000;
-
-        if (averageTime < config.timeThreshold || duplicateCount >= 4) {
-            try {
-                uzer.delete(decodedSender);
-                const typeSanz = duplicateCount >= 4 ? `SPAM DUPLICATI (${duplicateCount + 1}x)` : `FLOOD RAPIDO (${averageTime.toFixed(0)}ms)`;
-
-                const header = `⋆｡˚『 ╭ \`ANTISPAM SYSTEM\` ╯ 』˚｡⋆`;
-                const footer = `╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒`;
-
-                const text = `${header}
-╭
-┃ 🛡️ \`Stato:\` *Protocollo Riley Attivo*
-┃
-┃ 『 👤 』 \`Target:\` @${decodedSender.split('@')[0]}
-┃ 『 ⚡ 』 \`Rilevato:\` *${typeSanz}*
-┃ 『 🚫 』 \`Azione:\` *ELIMINAZIONE UTENTE*
-┃
-┃ ⚠️ \`Nota:\` Lo spam destabilizza il gruppo.
-┃ La sicurezza di Blood ha priorità.
-╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒`;
-
-                await conn.sendMessage(m.chat, {
-                    text,
-                    mentions: [decodedSender],
-                    contextInfo: {
-                        externalAdReply: {
-                            title: 'RILEY ANTI-FLOOD',
-                            body: 'Minaccia spam neutralizzata',
-                            thumbnailUrl: 'https://qu.ax/TfUj.jpg',
-                            mediaType: 1
-                        }
-                    }
-                });
-
-                await conn.groupParticipantsUpdate(m.chat, [decodedSender], 'remove');
-
-            } catch (e) {
-                console.error(`[AntiSpam] Errore:`, e);
-            }
-            return;
-        }
-    }
-
-    uzer.set(decodedSender, userData);
-};
-
-function getMessageContent(m) {
+    const release = await lock(chat).acquire()
     try {
-        const msg = m.message;
-        if (msg?.conversation) return msg.conversation;
-        if (msg?.extendedTextMessage?.text) return msg.extendedTextMessage.text;
-        if (msg?.imageMessage?.caption) return `img:${msg.imageMessage.caption}`;
-        if (msg?.videoMessage?.caption) return `vid:${msg.videoMessage.caption}`;
-        if (msg?.stickerMessage) return `stk:${msg.stickerMessage.fileSha256?.toString('base64')}`;
-        return 'unknown_message_type';
-    } catch { return 'error_parsing_message'; }
-}
+      const now = Date.now()
+      const log = prune(track, chat) || []
+      log.push({ at: now, cmd, by: m.sender })
+      track[chat] = log
 
-function cleanupOldData(interval) {
-    const now = Date.now();
-    for (const [key, data] of uzer.entries()) {
-        if (!data.timestamps.length || now - data.timestamps[data.timestamps.length - 1] > interval) {
-            uzer.delete(key);
-        }
+      const uniqueSenders = new Set(log.map(e => e.by)).size
+      const uniqueCmds = new Set(log.map(e => e.cmd)).size
+
+      const flood = log.length > cfg.maxCommands || uniqueCmds > cfg.maxUnique
+      const multiUser = uniqueSenders > 2 && log.length > cfg.maxCommands
+
+      if (!flood && !multiUser) return true
+
+      const key = `${chat}:${m.sender}`
+      const firstWarn = !warned.has(key)
+      if (!firstWarn) return true
+
+      if (!cfg.silent) {
+        await conn.sendMessage(chat, {
+          text:
+`🌊 *ANTI-FLOOD RLY*
+━━━━━━━━━━━━━━━━━━━━━
+⚠️ Troppi comandi in pochi secondi.
+📊 Comandi: *${log.length}* nella finestra
+🔁 Comandi diversi: *${uniqueCmds}*
+⏱️ Finestra: *${cfg.window / 1000}s*
+━━━━━━━━━━━━━━━━━━━━━
+I tuoi comandi verranno ignorati per un po'.
+🔐 *RLY SECURITY*`,
+          contextInfo: { mentionedJid: [m.sender] },
+          mentions: [m.sender]
+        }).catch(() => {})
+      }
+
+      warned.add(key)
+      setTimeout(() => warned.delete(key), CONFIG.warnCooldown).unref?.()
+      return true
+    } finally {
+      release()
     }
+  } catch (e) {
+    console.error('[antiflood]', e?.message || e)
+    return true
+  }
 }
 
-export default handler;
+const handler = m => m
+handler.help = ['attiva antiflood']
+handler.tags = ['anti']
+handler.command = [/^antiflood$/i]
+
+export default handler
