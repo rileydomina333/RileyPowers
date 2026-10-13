@@ -11,7 +11,7 @@ let handler = async (m, { conn, command, text }) => {
 
   if (!text || (text !== 'on' && text !== 'off')) {
     const status = chat.antiLink ? 'attivo ✅' : 'disattivo ❌';
-    return conn.reply(m.chat, `『 ℹ️ 』 *AntiLink è attualmente:* ${status}\n\n*Uso:*\n.antilink on\n.antilink off`, m);
+    return conn.reply(m.chat, `『 ℹ️ 』 *AntiLink è attualmente:* ${status}\n\n*Uso:*\n.attiva antilink\n.disattiva antilink`, m);
   }
 
   const action = text;
