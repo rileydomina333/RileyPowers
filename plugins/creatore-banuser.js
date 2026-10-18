@@ -1,72 +1,79 @@
 import {
   ROLES,
+  LIMITS,
   resolveRole,
   canUse,
   roleLabel,
   resolveTarget,
-  getTempBan,
-  liftBan,
-  ensureUser,
+  parseDuration,
+  formatDuration,
+  isTargetProtected,
+  applyBan,
+  restoreTempBans,
+  startBanSweeper,
   recordAction,
   logModAction
 } from '../../lib/moderation.js'
 
-let handler = async (m, { conn, text, isOwner, isROwner, isAdmin, isMods }) => {
+let handler = async (m, { conn, text, isOwner, isROwner, isAdmin, isMods, participants }) => {
   const role = resolveRole({ isOwner, isROwner, isAdmin, isMods })
   if (!canUse(role, ROLES.MOD)) {
     return conn.reply(m.chat, '⛔ Questo comando è riservato allo staff (Moderatori/Admin/Owner).', m)
   }
 
   const target = resolveTarget(m, text || '')
-  if (!target) return conn.reply(m.chat, '❌ Tagga, rispondi o scrivi un numero da sbannare.', m)
+  if (!target) return conn.reply(m.chat, '❌ Tagga, rispondi o scrivi un numero da bannare.', m)
 
-  const record = getTempBan(target)
-  const user = global.db?.data?.users?.[target]
-  const isBanned = !!user?.banned || !!record
-
-  if (!isBanned) {
-    return conn.reply(m.chat, 'ℹ️ Questo utente non è attualmente bannato.', m)
+  const protection = isTargetProtected({
+    target,
+    actorRole: role,
+    participants,
+    conn,
+    chat: m.chat
+  })
+  if (protection.protected) {
+    return conn.reply(m.chat, `⛔ Ban non consentito: ${protection.reason} (${roleLabel(protection.targetRole)}).`, m)
   }
 
-  if (role === ROLES.MOD && (!record || record.permanent)) {
-    logModAction({ role, actor: m.sender, action: 'unban BLOCCATO', target, extra: 'ban permanente' })
-    return conn.reply(
-      m.chat,
-      `⛔ Questo è un *ban permanente*: i moderatori non possono revocarlo.\n⏳ Richiedi l'intervento di un Admin/Owner.`,
-      m
-    )
-  }
+  const reason = String(text || '')
+    .replace(/@\d+/g, '')
+    .replace(/^\d+/, '')
+    .replace(/\b\d+\s*(m|min|minuti|minuto|h|ore|ora|d|giorni|giorno|s|sec|secondi)\b/gi, '')
+    .trim()
 
-  const result = liftBan({ target, role })
+  const requested = parseDuration(text || '')
+  const resolved = applyBan({
+    conn,
+    target,
+    actor: m.sender,
+    role,
+    durationMs: requested?.ms ?? null,
+    chat: m.chat,
+    reason
+  })
 
-  if (!result.ok) {
-    if (result.reason === 'higher') {
-      return conn.reply(m.chat, '⛔ Solo un Owner può revocare un ban applicato da un Owner.', m)
-    }
-    return conn.reply(m.chat, '❌ Impossibile revocare il ban.', m)
-  }
-
-  const safeUser = ensureUser(target)
-  if (safeUser) {
-    safeUser.banned = false
-    safeUser.notifiedBan = false
-    global.markDbDirty?.()
-  }
+  startBanSweeper(conn)
+  restoreTempBans(conn).catch(() => {})
 
   const number = String(target).split('@')[0]
+  const durationLabel = formatDuration(resolved.ms)
 
-  recordAction({ chat: m.chat, actor: m.sender, action: 'unban', target, role, detail: 'ban revocato' })
-  logModAction({ role, actor: m.sender, action: 'unban', target, extra: result.record?.until ? 'temporaneo' : 'permanente' })
+  recordAction({ chat: m.chat, actor: m.sender, action: 'ban', target, role, detail: durationLabel })
+  logModAction({ role, actor: m.sender, action: 'ban', target, extra: durationLabel })
+
+  const capNote = resolved.capped
+    ? `\n⚠️ Durata ridotta al massimo consentito ai moderatori (${LIMITS.MOD_BAN_MAX_MS / 60000} minuti).`
+    : ''
 
   const fake = {
     key: {
       participants: '0@s.whatsapp.net',
       fromMe: false,
-      id: '888UnbanUser'
+      id: '888BanUser'
     },
     message: {
       contactMessage: {
-        displayName: `✅ Utente Sbannato`,
+        displayName: `🚫 Ban Utente`,
         vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\\nFN:y\nitem1.TEL;waid=${number}:${number}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
       }
     },
@@ -77,19 +84,32 @@ let handler = async (m, { conn, text, isOwner, isROwner, isAdmin, isMods }) => {
     m.chat,
     {
       text:
-        `✅ *UTENTE SBANNATO*\n` +
+        `🚫 *UTENTE BANNATO*\n` +
         `👤 Target: @${number}\n` +
         `📞 wa.me/${number}\n` +
-        `👑 Da: @${m.sender.split('@')[0]} ${roleLabel(role)}\n\n` +
-        `🔓 L’utente è stato riattivato e ora può usare il bot.`,
+        `👑 Da: @${m.sender.split('@')[0]} ${roleLabel(role)}\n` +
+        `⏳ Durata: ${durationLabel}${capNote}\n` +
+        (reason ? `📝 Motivo: ${reason}\n` : '') +
+        `\n🔒 L’utente è stato bloccato dai moduli del bot.`,
       mentions: [target, m.sender]
     },
     { quoted: fake }
   )
 }
 
-handler.command = /^unbanuser$/i
+handler.command = /^banuser$/i
 handler.mods = true
 handler.tags = ['admin']
+
+const initBanRestore = (attempt = 0) => {
+  const conn = global.conn
+  if (conn?.sendMessage) {
+    startBanSweeper(conn)
+    restoreTempBans(conn).catch(() => {})
+    return
+  }
+  if (attempt < 10) setTimeout(() => initBanRestore(attempt + 1), 1500).unref?.()
+}
+initBanRestore()
 
 export default handler
