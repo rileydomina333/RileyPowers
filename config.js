@@ -14,9 +14,9 @@ const moduleCache = new NodeCache({ stdTTL: 300 });
 /*✧༺✦✮✦༻∞ 𝗥𝗶𝗹𝗲𝘆𝗣𝗼𝘄𝗲𝗿𝘀 ∞༺✦✮✦༻✧*/
 global.sam = ['393701330693'];
 global.owner = [
-  ['393929491354', 'Riley', true],
+  ['393505792964', 'Riley', true],
   ['8801794913207', 'Nexus', true],
-  ['639755670432', 'deadly', true],
+  ['12894477458', 'jiny', true],
   ['393297014539', 'elixir', true],
   ['xxxxxxxxxxxx', 'xxxxx', true],
   ['xxxxxxxxxxxx', 'xxxxx', true]
