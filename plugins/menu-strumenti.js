@@ -2,7 +2,7 @@ import { promises } from 'fs'
 import { join } from 'path'
 
 // --- PERCORSO IMMAGINE ---
-const localImg = join(process.cwd(), 'WA_1791285295586.jpeg');
+const localImg = join(process.cwd(), '1792367895106.jpg');
 
 const defmenu = {
   testoInizio: `
