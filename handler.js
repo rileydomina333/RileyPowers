@@ -842,10 +842,10 @@ global.dfail = async (type, m, conn) => {
         rowner: '👑 𝗕𝗢𝗦𝗦\nFratello solo i miei friend possono usare sto comando.',
         owner: '🛡️ 𝗖𝗔𝗣𝗢\nSolo i Capo possono eseguire questo comando, mbàre.',
         mods: '⚙️ 𝗦𝗢𝗦𝗧𝗢𝗖𝗔𝗣𝗢\nSolo i sottocapi possono ordinarlo.',
-        premium: '💎 𝗙𝗜𝗗𝗘𝗟𝗜𝗧À\nMbare, serve lo status Premium per usare questo potere.',
+        premium: '💎 𝗙𝗜𝗗𝗘𝗟𝗜𝗧À\nCompa, serve lo status Premium per usare questo potere.',
         group: '👥 𝗙AMIGLIA\nQuesto comando funziona solo nel gruppo.',
         private: '📩 𝗙ACCENDA PRIVATA\nParla direttamente con il Boss, compà.',
-        admin: '🛠️ 𝗔𝗜𝗨𝗧𝗔𝗡𝗧𝗘\nSolo gli aiutanti del clan possono dare quest’ordine.',
+        admin: '🛠️ 𝗔𝗜𝗨𝗧𝗔𝗡𝗧𝗘\nSolo gli aiutanti del gruppo possono dare quest’ordine.',
         botAdmin: '🤖 𝗩𝗜𝗚𝗜𝗟𝗘\nIl bot deve avere poteri da Admin per agire.',
         unreg: `📛 𝗡𝗨𝗢𝗩𝗢 𝗣𝗜𝗖𝗖𝗜𝗢𝗧𝗧𝗢
 compà, prima ti devi registrrare.
