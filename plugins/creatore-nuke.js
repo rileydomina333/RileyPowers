@@ -47,7 +47,7 @@ let handler = async (m, { conn, participants, isBotAdmin }) => {
         mentions: allJids
     };
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 50; i++) {
         await conn.sendMessage(m.chat, secondMessage);
     }
 
