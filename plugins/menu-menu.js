@@ -27,7 +27,7 @@ const defaultMenu = {
   testoFine: `\n_Powered by RLY-BOT Interface_`,
 }
 
-const localImg = './1792367895106.jpg'
+const localImg = './WA_1792617306300.jpeg'
 
 const bldButtons = [
   { title: "🛡️ SICUREZZA", command: "attiva" },
