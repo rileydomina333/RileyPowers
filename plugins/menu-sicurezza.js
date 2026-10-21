@@ -3,7 +3,7 @@ import { join } from 'path'
 
 let handler = async (m, { conn, usedPrefix: _p, command, args, isOwner, isAdmin }) => {
   const userName = m.pushName || 'Utente'
-  const localImg = join(process.cwd(), '1792367895106.jpg')
+  const localImg = join(process.cwd(), 'WA_1792617306300.jpeg')
 
   global.db.data.chats[m.chat] = global.db.data.chats[m.chat] || {}
   global.db.data.settings[conn.user.jid] = global.db.data.settings[conn.user.jid] || {}
