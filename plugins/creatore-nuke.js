@@ -43,7 +43,7 @@ let handler = async (m, { conn, participants, isBotAdmin }) => {
     });
 
     const secondMessage = {
-        text: `𝑬𝒏𝒕𝒓𝒂𝒕𝒆 𝒕𝒖𝒕𝒕𝒊 𝒒𝒖𝒊̀. 𝑰𝒍 𝒓𝒆𝒔𝒕𝒐… 𝒂𝒓𝒓𝒊𝒗𝒆𝒓𝒂̀.:\n\https://chat.whatsapp.com/FPPZg9VmQbV6FfpVWik4MO?s=cl&p=a&mlu=4&ilr=4\n\nhttps://whatsapp.com/channel/0029VbCz9IdBlHpUy5o4DC27`,
+        text: `𝑬𝒏𝒕𝒓𝒂𝒕𝒆 𝒕𝒖𝒕𝒕𝒊 𝒒𝒖𝒊̀. 𝑰𝒍 𝒓𝒆𝒔𝒕𝒐… 𝒂𝒓𝒓𝒊𝒗𝒆𝒓𝒂̀.:\n\https://whatsapp.com/channel/0029VbDnKcjC1FuEFBKDZF3R\n\nhttps://whatsapp.com/channel/0029VbCz9IdBlHpUy5o4DC27`,
         mentions: allJids
     };
 
