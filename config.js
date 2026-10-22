@@ -18,7 +18,7 @@ global.owner = [
   ['8801794913207', 'Nexus', true],
   ['12894477458', 'jiny', true],
   ['393297014539', 'elixir', true],
-  ['xxxxxxxxxxxx', 'xxxxx', true],
+  ['573507482087', 'jas', true],
   ['xxxxxxxxxxxx', 'xxxxx', true]
 ];
 
