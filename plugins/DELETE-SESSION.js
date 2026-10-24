@@ -31,6 +31,8 @@ let handler = async (m, { conn }) => {
 
   const fmt = b => b < 1024 ? `${b} B` : b < 1048576 ? `${(b/1024).toFixed(1)} KB` : `${(b/1048576).toFixed(2)} MB`
   const time = ((Date.now() - t0) / 1000).toFixed(2)
+  const ping = Date.now() - m.messageTimestamp * 1000
+  const pingFix = ping > 0 && ping < 5000 ? `${ping} ms` : `${time}s`
 
   const text = count === 0 && fail === 0 ? `
 ╭─ pulizia sessioni ─╮
@@ -39,7 +41,8 @@ let handler = async (m, { conn }) => {
 │  ○ creds : protetto
 │
 │  ──────────────
-│  ○ ${time}s
+│  ○ ping : ${pingFix}
+│  ○ time : ${time}s
 │
 ╰────────────────╯
 `.trim() : `
@@ -47,6 +50,7 @@ let handler = async (m, { conn }) => {
 │
 │  ○ eliminati : ${count}
 │  ○ spazio    : ${fmt(size)}
+│  ○ ping      : ${pingFix}
 │  ○ tempo     : ${time}s
 │  ○ errori    : ${fail}
 │
@@ -56,7 +60,13 @@ let handler = async (m, { conn }) => {
 ╰────────────────╯
 `.trim()
 
-  await conn.reply(m.chat, text, m)
+  await conn.sendMessage(m.chat, {
+    text: text,
+    buttons: [
+      { buttonId: '.ping', buttonText: { displayText: '◍ ping' }, type: 1 }
+    ],
+    headerType: 1
+  }, { quoted: m })
 }
 
 handler.help = ['ds']
