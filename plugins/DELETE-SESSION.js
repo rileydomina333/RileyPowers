@@ -37,17 +37,12 @@ ${sessionFolder}`
 
   try {
     const files = await fsPromises.readdir(sessionFolder)
-
     for (const file of files) {
       if (file === 'creds.json') continue
-
       const filePath = path.join(sessionFolder, file)
-
       try {
         const stat = await fsPromises.lstat(filePath)
-
         if (stat.isDirectory()) continue
-
         await fsPromises.unlink(filePath)
         deletedCount++
       } catch {
@@ -68,7 +63,6 @@ Dettagli: ${e.message}`
   }
 
   let text
-
   if (deletedCount === 0 && failedCount === 0) {
     text = `${header}
 ┃   SESSIONI VUOTE
@@ -89,15 +83,12 @@ Stato: NESSUNA OPERAZIONE NECESSARIA`
 │
 └━━━━━━━━━━━━━━━━━━━━━
 
-${failedCount === 0
-  ? 'Stato: COMPLETATO CON SUCCESSO'
-  : 'Stato: COMPLETATO CON AVVISI'}
-`
+${failedCount === 0 ? 'Stato: COMPLETATO CON SUCCESSO' : 'Stato: COMPLETATO CON AVVISI'}`
   }
 
   await conn.sendMessage(m.chat, {
+    text: text,
     buttons: [
-      
       {
         buttonId: '.ping',
         buttonText: { displayText: 'Controlla ping' },
