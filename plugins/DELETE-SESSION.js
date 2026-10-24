@@ -2,74 +2,94 @@ import { existsSync, promises as fs } from 'fs'
 import path from 'path'
 
 let handler = async (m, { conn }) => {
-  // Solo il bot principale può farlo
-  if (global.conn?.user?.jid !== conn.user.jid) {
-    return conn.reply(m.chat, `╭─〔 ✦ ACCESSO NEGATO 〕─╮\n│ Non sei il bot principale.\n╰────────────────────╯`, m)
+  const start = Date.now()
+  if (global.conn?.user?.jid !== conn.user.jid) return
+
+  const dir = './varesession/'
+  if (!existsSync(dir)) {
+    return conn.reply(m.chat, `「 ✦ error 」\n\n✗ folder not found\n> ${dir}`, m)
   }
 
-  const sessionFolder = './varesession/'
-  if (!existsSync(sessionFolder)) {
-    return conn.reply(m.chat, `╭─〔 ✦ ERRORE 〕─╮\n│ Cartella non trovata:\n│ ${sessionFolder}\n╰────────────────╯`, m)
-  }
-
-  let deleted = 0
-  let failed = 0
+  let deleted = []
+  let failed = []
   let totalSize = 0
+  let beforeFiles = 0
 
   try {
-    const files = await fs.readdir(sessionFolder)
+    const files = await fs.readdir(dir)
+    beforeFiles = files.length
 
-    await Promise.all(files.map(async (file) => {
-      if (file === 'creds.json') return
-      const filePath = path.join(sessionFolder, file)
+    await Promise.all(files.map(async (f) => {
+      if (f === 'creds.json') return
+      const p = path.join(dir, f)
       try {
-        const stat = await fs.lstat(filePath)
-        if (stat.isDirectory()) return
-        totalSize += stat.size
-        await fs.unlink(filePath)
-        deleted++
-      } catch {
-        failed++
+        const s = await fs.lstat(p)
+        if (s.isDirectory()) return
+        totalSize += s.size
+        await fs.unlink(p)
+        deleted.push({ name: f, size: s.size })
+      } catch (e) {
+        failed.push({ name: f, reason: e.message })
       }
     }))
 
   } catch (e) {
-    return conn.reply(m.chat, `╭─〔 ✦ ERRORE SISTEMA 〕─╮\n│ ${e.message}\n╰──────────────────────╯`, m)
+    return conn.reply(m.chat, `「 ✦ system error 」\n\n✗ ${e.message}`, m)
   }
 
-  const formatSize = (bytes) => {
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-    return `${(bytes / 1024 / 1024).toFixed(2)} MB`
+  const format = (b) => {
+    if (b < 1024) return `${b} B`
+    if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`
+    return `${(b / 1024 / 1024).toFixed(2)} MB`
   }
+
+  const elapsed = ((Date.now() - start) / 1000).toFixed(2)
+  const remain = beforeFiles - deleted.length - failed.length
+
+  // raggruppa per tipo
+  const types = {}
+  deleted.forEach(f => {
+    const ext = f.name.split('.').pop() || 'no-ext'
+    types[ext] = (types[ext] || 0) + 1
+  })
+  const typeLog = Object.entries(types).map(([k,v]) => `${k}: ${v}`).join(' / ') || 'nessuno'
+
+  // lista file (max 15 per non spammare)
+  const listLog = deleted.slice(0, 15).map(f => `│  • ${f.name} (${format(f.size)})`).join('\n')
+  const more = deleted.length > 15 ? `\n│  • ... +${deleted.length - 15} altri` : ''
 
   let text
-  if (deleted === 0 && failed === 0) {
+  if (deleted.length === 0 && failed.length === 0) {
     text = `
-╭━━━━━━━━━━━━━━━━╮
-┃  SESSIONI PULITE
-╰━━━━━━━━━━━━━━━━╯
+「 varesession 」
+__________
 
-> Nessun file da eliminare.
-> Tutto già pulito.
+✓ system clean
+> nessun file da eliminare
+> creds.json protetto
 
-Stato: ✓ OK
+__________
+path: ${dir}
+check: ${elapsed}s
 `.trim()
   } else {
     text = `
-╭━━━━━━━━━━━━━━━━╮
-┃ PULIZIA SESSIONI
-╰━━━━━━━━━━━━━━━━╯
+「 pulizia sessioni 」
+__________
 
-┌─ Riepilogo
-│
-│ • Eliminati: ${deleted}
-│ • Errori: ${failed}
-│ • Spazio liberato: ${formatSize(totalSize)}
-│
-└──────────────
+info :
+✓ path : ${dir}
+✓ time : ${elapsed}s
+✓ before : ${beforeFiles} files
+✓ after : ${remain + 1} files ( + creds.json )
 
-Stato: ${failed === 0 ? '✓ SUCCESSO' : '⚠ CON AVVISI'}
+rules :
+✓ deleted : ${deleted.length}
+✓ types : ${typeLog}
+✓ freed : ${format(totalSize)}
+✗ failed : ${failed.length}
+
+${deleted.length ? `files :\n${listLog}${more}\n\n__________\n\n` : ''}${failed.length ? `errors :\n${failed.map(f => `│  ✗ ${f.name}`).join('\n')}\n\n__________\n\n` : ''}stato: ${failed.length === 0 ? 'clean ✓' : 'clean with warns'}
 `.trim()
   }
 
