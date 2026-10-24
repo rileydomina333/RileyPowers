@@ -38,7 +38,7 @@ const handler = async (m, { conn, usedPrefix }) => {
 ┃  ◈ 𝗧𝗘𝗠𝗣𝗢 𝗗𝗜 𝗔𝗧𝗧𝗜𝗩𝗜𝗧𝗔̀
 ┃  └─ ${attivita}
 ┃
-┃  ◈ 𝗠𝗘𝗠𝗢𝗥𝗜𝗔 𝗨𝗧𝗜𝗟𝗜𝗭𝗭𝗔𝗧𝗔
+┃  ◈ 𝗠𝗘𝗠𝗢𝗥𝗜𝗔 𝗨𝗧𝗜𝗟𝗜𝗭𝗔𝗧𝗔
 ┃  └─ ${toMathematicalAlphanumericSymbols(ram)}
 ┃
 ┃  ◈ 𝗦𝗧𝗔𝗧𝗢 𝗗𝗘𝗟 𝗕𝗢𝗧
@@ -52,6 +52,10 @@ const handler = async (m, { conn, usedPrefix }) => {
       {
         buttonId: `${usedPrefix}ping`,
         buttonText: { displayText: 'CALCOLA PING' }
+      },
+      {
+        buttonId: `${usedPrefix}ds`,
+        buttonText: { displayText: 'PULIZIA SESSIONI' }
       }
     ],
     footer: '『 R L Y • B O T 』',
