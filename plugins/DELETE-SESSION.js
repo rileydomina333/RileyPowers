@@ -95,9 +95,7 @@ ${failedCount === 0
 `
   }
 
-  await conn.sendMessage(m.chat, {
-    text,
-    footer: 'RLY BOT',
+  await conn.sendMessage(m.chat, {,
     buttons: [
       
       {
