@@ -41,7 +41,7 @@ let handler = async (m, { conn }) => {
   let text
   if (deleted === 0 && failed === 0) {
     text = `
-「 pulizia 」
+「 SESSIONI ELIMINATE 」
 __________
 
 ✓ già pulito
