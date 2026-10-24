@@ -83,7 +83,7 @@ Stato: NESSUNA OPERAZIONE NECESSARIA`
 │
 └━━━━━━━━━━━━━━━━━━━━━
 
-${failedCount === 0 ? 'Stato: COMPLETATO CON SUCCESSO' : 'Stato: COMPLETATO CON AVVISI'}`
+${failedCount === 0 ? 'Stato: COMPLETATO CON SUCCESSO SENZA ERRORI' : 'Stato: COMPLETATO CON AVVISI'}`
   }
 
   await conn.sendMessage(m.chat, {
