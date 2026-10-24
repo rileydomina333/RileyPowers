@@ -6,7 +6,7 @@ let handler = async (m, { conn }) => {
 
   const dir = './varesession/'
   if (!existsSync(dir)) {
-    return conn.reply(m.chat, `· error — cartella non trovata`, m)
+    return conn.reply(m.chat, `╭─ error ─╮\n│ cartella non trovata\n╰──────────╯`, m)
   }
 
   const t0 = Date.now()
@@ -26,28 +26,34 @@ let handler = async (m, { conn }) => {
       } catch { fail++ }
     }))
   } catch (e) {
-    return conn.reply(m.chat, `· error — ${e.message}`, m)
+    return conn.reply(m.chat, `╭─ error ─╮\n│ ${e.message}\n╰────────╯`, m)
   }
 
-  const fmt = b => b < 1024 ? `${b} b` : b < 1048576 ? `${(b/1024).toFixed(1)} kb` : `${(b/1048576).toFixed(2)} mb`
+  const fmt = b => b < 1024 ? `${b} B` : b < 1048576 ? `${(b/1024).toFixed(1)} KB` : `${(b/1048576).toFixed(2)} MB`
   const time = ((Date.now() - t0) / 1000).toFixed(2)
 
   const text = count === 0 && fail === 0 ? `
-· pulizia
-  ──────────
-  stato · già pulito
-
-  ${time}s
+╭─ pulizia sessioni ─╮
+│
+│  ○ stato : già pulito
+│  ○ creds : protetto
+│
+│  ──────────────
+│  ○ ${time}s
+│
+╰────────────────╯
 `.trim() : `
-· pulizia
-  ──────────
-  eliminati · ${count}
-  spazio    · ${fmt(size)}
-  tempo     · ${time}s
-  errori    · ${fail}
-
-  ──────────
-  ${fail === 0 ? 'clean' : 'warns'}
+╭─ pulizia sessioni ─╮
+│
+│  ○ eliminati : ${count}
+│  ○ spazio    : ${fmt(size)}
+│  ○ tempo     : ${time}s
+│  ○ errori    : ${fail}
+│
+│  ──────────────
+│  ○ ${fail === 0 ? 'clean' : 'completato con avvisi'}
+│
+╰────────────────╯
 `.trim()
 
   await conn.reply(m.chat, text, m)
