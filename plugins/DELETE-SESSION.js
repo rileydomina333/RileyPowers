@@ -2,15 +2,16 @@ import { existsSync, promises as fs } from 'fs'
 import path from 'path'
 
 let handler = async (m, { conn }) => {
+  const t0 = Date.now()
   if (global.conn?.user?.jid !== conn.user.jid) return
 
   const dir = './varesession/'
   if (!existsSync(dir)) {
-    return conn.reply(m.chat, `「 error 」\n\n✗ folder not found`, m)
+    return conn.reply(m.chat, `「 error 」\n\n✗ cartella non trovata`, m)
   }
 
-  let deleted = 0
-  let failed = 0
+  let deleted = []
+  let failed = []
   let totalSize = 0
 
   try {
@@ -23,34 +24,57 @@ let handler = async (m, { conn }) => {
         if (s.isDirectory()) return
         totalSize += s.size
         await fs.unlink(p)
-        deleted++
-      } catch { failed++ }
+        deleted.push({ name: f, size: s.size })
+      } catch {
+        failed.push(f)
+      }
     }))
   } catch (e) {
     return conn.reply(m.chat, `「 error 」\n\n✗ ${e.message}`, m)
   }
 
   const format = (b) => b < 1024 ? `${b} B` : b < 1048576 ? `${(b/1024).toFixed(1)} KB` : `${(b/1048576).toFixed(2)} MB`
+  const elapsed = ((Date.now() - t0) / 1000).toFixed(2)
+
+  // tipi
+  const types = {}
+  deleted.forEach(f => {
+    const ext = f.name.split('-')[0] || 'other'
+    types[ext] = (types[ext] || 0) + 1
+  })
+  const typeLog = Object.entries(types).map(([k,v]) => `${k} ${v}`).join(' / ')
+
+  // lista max 10
+  const list = deleted.slice(0, 10).map(f => `│ ${f.name}`).join('\n')
+  const more = deleted.length > 10 ? `\n│ +${deleted.length - 10} altri` : ''
 
   let text
-  if (deleted === 0 && failed === 0) {
+  if (deleted.length === 0 && failed.length === 0) {
     text = `
 「 pulizia 」
 __________
 
 ✓ già pulito
+✓ creds protetto
+
+__________
+time: ${elapsed}s
 `.trim()
   } else {
     text = `
 「 pulizia 」
 __________
 
-✓ eliminati : ${deleted}
-✓ liberati : ${format(totalSize)}
-${failed ? `✗ errori : ${failed}` : ''}
+info :
+✓ tempo : ${elapsed}s
+✓ tipi : ${typeLog || '—'}
 
-__________
-${failed === 0 ? 'stato: clean' : 'stato: warns'}
+data :
+✓ eliminati : ${deleted.length}
+✓ spazio : ${format(totalSize)}
+✗ errori : ${failed.length}
+
+${deleted.length ? `files :\n${list}${more}\n\n__________\n\n` : ''}stato: ${failed.length === 0 ? 'clean' : 'warns'}
 `.trim()
   }
 
