@@ -95,7 +95,7 @@ ${failedCount === 0
 `
   }
 
-  await conn.sendMessage(m.chat, {,
+  await conn.sendMessage(m.chat, {
     buttons: [
       
       {
