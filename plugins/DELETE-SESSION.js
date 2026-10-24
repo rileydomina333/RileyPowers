@@ -1,106 +1,85 @@
-import { existsSync, promises as fsPromises } from 'fs'
+import { existsSync, promises as fs } from 'fs'
 import path from 'path'
 
 let handler = async (m, { conn }) => {
-  const header = '╭━━━━━━━━━━━━━━━━━━━━╮'
-
-  if (global.conn.user.jid !== conn.user.jid) {
-    return conn.sendMessage(m.chat, {
-      text: `${header}
-┃    ACCESSO NEGATO
-╰━━━━━━━━━━━━━━━━━━━━╯
-
-Non disponi dei permessi necessari
-per eseguire questo comando.
-
-Motivo: numero del bot non autorizzato.`
-    }, { quoted: m })
+  // Solo il bot principale può farlo
+  if (global.conn?.user?.jid !== conn.user.jid) {
+    return conn.reply(m.chat, `╭─〔 ✦ ACCESSO NEGATO 〕─╮\n│ Non sei il bot principale.\n╰────────────────────╯`, m)
   }
 
   const sessionFolder = './varesession/'
-
   if (!existsSync(sessionFolder)) {
-    return conn.sendMessage(m.chat, {
-      text: `${header}
-┃  CARTELLA NON TROVATA
-╰━━━━━━━━━━━━━━━━━━━━╯
-
-La directory delle sessioni non esiste.
-
-Percorso previsto:
-${sessionFolder}`
-    }, { quoted: m })
+    return conn.reply(m.chat, `╭─〔 ✦ ERRORE 〕─╮\n│ Cartella non trovata:\n│ ${sessionFolder}\n╰────────────────╯`, m)
   }
 
-  let deletedCount = 0
-  let failedCount = 0
+  let deleted = 0
+  let failed = 0
+  let totalSize = 0
 
   try {
-    const files = await fsPromises.readdir(sessionFolder)
-    for (const file of files) {
-      if (file === 'creds.json') continue
+    const files = await fs.readdir(sessionFolder)
+
+    await Promise.all(files.map(async (file) => {
+      if (file === 'creds.json') return
       const filePath = path.join(sessionFolder, file)
       try {
-        const stat = await fsPromises.lstat(filePath)
-        if (stat.isDirectory()) continue
-        await fsPromises.unlink(filePath)
-        deletedCount++
+        const stat = await fs.lstat(filePath)
+        if (stat.isDirectory()) return
+        totalSize += stat.size
+        await fs.unlink(filePath)
+        deleted++
       } catch {
-        failedCount++
+        failed++
       }
-    }
+    }))
+
   } catch (e) {
-    return conn.sendMessage(m.chat, {
-      text: `${header}
-┃   ERRORE DI SISTEMA
-╰━━━━━━━━━━━━━━━━━━━━╯
+    return conn.reply(m.chat, `╭─〔 ✦ ERRORE SISTEMA 〕─╮\n│ ${e.message}\n╰──────────────────────╯`, m)
+  }
 
-Impossibile pulire la directory
-delle sessioni.
-
-Dettagli: ${e.message}`
-    }, { quoted: m })
+  const formatSize = (bytes) => {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / 1024 / 1024).toFixed(2)} MB`
   }
 
   let text
-  if (deletedCount === 0 && failedCount === 0) {
-    text = `${header}
-┃   SESSIONI VUOTE
-╰━━━━━━━━━━━━━━━━━━━━╯
+  if (deleted === 0 && failed === 0) {
+    text = `
+╭━━━━━━━━━━━━━━━━╮
+┃  SESSIONI PULITE
+╰━━━━━━━━━━━━━━━━╯
 
-Non ci sono file da eliminare.
+> Nessun file da eliminare.
+> Tutto già pulito.
 
-Stato: NESSUNA OPERAZIONE NECESSARIA`
+Stato: ✓ OK
+`.trim()
   } else {
-    text = `${header}
-┃   PULIZIA SESSIONI
-╰━━━━━━━━━━━━━━━━━━━━╯
+    text = `
+╭━━━━━━━━━━━━━━━━╮
+┃ PULIZIA SESSIONI
+╰━━━━━━━━━━━━━━━━╯
 
-┌─ RIEPILOGO ──────────
+┌─ Riepilogo
 │
-│ File eliminati : ${deletedCount}
-│ Errori rilevati: ${failedCount}
+│ • Eliminati: ${deleted}
+│ • Errori: ${failed}
+│ • Spazio liberato: ${formatSize(totalSize)}
 │
-└━━━━━━━━━━━━━━━━━━━━━
+└──────────────
 
-${failedCount === 0 ? 'Stato: COMPLETATO CON SUCCESSO SENZA ERRORI' : 'Stato: COMPLETATO CON AVVISI'}`
+Stato: ${failed === 0 ? '✓ SUCCESSO' : '⚠ CON AVVISI'}
+`.trim()
   }
 
-  await conn.sendMessage(m.chat, {
-    text: text,
-    buttons: [
-      {
-        buttonId: '.ping',
-        buttonText: { displayText: 'Controlla ping' },
-        type: 1
-      }
-    ]
-  }, { quoted: m })
+  await conn.reply(m.chat, text, m)
 }
 
 handler.help = ['ds']
 handler.tags = ['owner']
-handler.command = /^(ds|clearsession)$/i
+handler.command = /^(ds|clearsession|clearsesi)$/i
 handler.owner = true
+handler.rowner = true
 
 export default handler
