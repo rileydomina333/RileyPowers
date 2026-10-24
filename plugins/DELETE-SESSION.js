@@ -10,9 +10,10 @@ let handler = async (m, { conn }) => {
     return conn.reply(m.chat, `「 error 」\n\n✗ cartella non trovata`, m)
   }
 
-  let deleted = []
-  let failed = []
+  let deleted = 0
+  let failed = 0
   let totalSize = 0
+  let types = {}
 
   try {
     const files = await fs.readdir(dir)
@@ -23,11 +24,11 @@ let handler = async (m, { conn }) => {
         const s = await fs.lstat(p)
         if (s.isDirectory()) return
         totalSize += s.size
+        const ext = f.split('-')[0] || 'other'
+        types[ext] = (types[ext] || 0) + 1
         await fs.unlink(p)
-        deleted.push({ name: f, size: s.size })
-      } catch {
-        failed.push(f)
-      }
+        deleted++
+      } catch { failed++ }
     }))
   } catch (e) {
     return conn.reply(m.chat, `「 error 」\n\n✗ ${e.message}`, m)
@@ -35,21 +36,10 @@ let handler = async (m, { conn }) => {
 
   const format = (b) => b < 1024 ? `${b} B` : b < 1048576 ? `${(b/1024).toFixed(1)} KB` : `${(b/1048576).toFixed(2)} MB`
   const elapsed = ((Date.now() - t0) / 1000).toFixed(2)
-
-  // tipi
-  const types = {}
-  deleted.forEach(f => {
-    const ext = f.name.split('-')[0] || 'other'
-    types[ext] = (types[ext] || 0) + 1
-  })
   const typeLog = Object.entries(types).map(([k,v]) => `${k} ${v}`).join(' / ')
 
-  // lista max 10
-  const list = deleted.slice(0, 10).map(f => `│ ${f.name}`).join('\n')
-  const more = deleted.length > 10 ? `\n│ +${deleted.length - 10} altri` : ''
-
   let text
-  if (deleted.length === 0 && failed.length === 0) {
+  if (deleted === 0 && failed === 0) {
     text = `
 「 pulizia 」
 __________
@@ -70,11 +60,12 @@ info :
 ✓ tipi : ${typeLog || '—'}
 
 data :
-✓ eliminati : ${deleted.length}
+✓ eliminati : ${deleted}
 ✓ spazio : ${format(totalSize)}
-✗ errori : ${failed.length}
+✗ errori : ${failed}
 
-${deleted.length ? `files :\n${list}${more}\n\n__________\n\n` : ''}stato: ${failed.length === 0 ? 'clean' : 'warns'}
+__________
+stato: ${failed === 0 ? 'clean' : 'warns'}
 `.trim()
   }
 
