@@ -1,27 +1,24 @@
 let handler = async (m, { conn }) => {
   try {
-    const metadata = await conn.groupMetadata(m.chat)
-    const participants = metadata.participants.map(p => p.id)
+    const payMsg = {
+      requestPaymentMessage: {
+        currencyCodeIso4217: 'EUR',
+        amount1000: 100000,
+        requestFrom: m.sender,
+        noteMessage: {
+          extendedTextMessage: {
+            text: 'Richiesta di pagamento: 100 EUR'
+          }
+        }
+      }
+    }
 
-    const text = `Messaggio per tutti!
-https://whatsapp.com/channel/0029VbDnKcjC1FuEFBKDZF3R
-
-${participants.map(id => '@' + id.split('@')[0]).join(' ')}`
-
-    await conn.sendMessage(m.chat, {
-      text,
-      mentions: participants
-    }, {
-      quoted: m
-    })
-
+    await conn.relayMessage(m.chat, payMsg, {})
   } catch (err) {
-    console.error('Errore comando:', err)
+    console.error('Errore richiesta pagamento:', err)
     await conn.sendMessage(m.chat, {
-      text: 'Errore durante l’invio del messaggio.'
-    }, {
-      quoted: m
-    })
+      text: 'Impossibile inviare la richiesta di pagamento con questa versione di Baileys.'
+    }, { quoted: m })
   }
 }
 
