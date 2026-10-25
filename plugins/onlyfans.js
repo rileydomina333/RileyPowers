@@ -1,26 +1,30 @@
 import { createCanvas, loadImage } from 'canvas'
 
-const handler = async (m, { conn, args, usedPrefix }) => {
+const handler = async (m, { conn, args, usedPrefix, text }) => {
+  
+  // target = menzionato > quotato > autore
+  let target = m.mentionedJid?.[0] || m.quoted?.sender || m.sender
+  let nome
 
-  if (!args[0]) {
-    return conn.reply(
-      m.chat,
-      `❌ Usa il comando così:\n${usedPrefix}onlyfans nomeprofilo`,
-      m
-    )
+  if (m.mentionedJid?.[0]) {
+    nome = await conn.getName(target)
+  } else if (text) {
+    // rimuove @ se scritto a mano
+    nome = text.replace(/@/g, '').trim()
   }
 
-  const nome = args.join(" ")
+  if (!nome) {
+    return conn.reply(m.chat, `✦ Usa così:\n${usedPrefix}onlyfans @utente\n${usedPrefix}onlyfans nome`, m)
+  }
 
-  const random = (min, max) =>
-    Math.floor(Math.random() * (max - min + 1)) + min
+  const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
 
   const id = random(100000, 999999)
   const prezzo = random(5, 50)
   const followers = random(1000, 900000)
   const post = random(5, 350)
   const likes = random(10000, 900000)
-  const verified = Math.random() < 0.4 // 40% verificato
+  const verified = Math.random() < 0.4
 
   const bioList = [
     "🔥 Contenuti esclusivi ogni giorno",
@@ -30,37 +34,36 @@ const handler = async (m, { conn, args, usedPrefix }) => {
     "🌙 Notte calda garantita",
     "🖤 DM aperti per richieste speciali"
   ]
-
   const bio = bioList[Math.floor(Math.random() * bioList.length)]
 
-  // Ottieni foto profilo WhatsApp
+  // foto del TARGET, non tua
   let avatarUrl
   try {
-    avatarUrl = await conn.profilePictureUrl(m.sender, 'image')
+    avatarUrl = await conn.profilePictureUrl(target, 'image')
   } catch {
     avatarUrl = 'https://i.imgur.com/8Km9tLL.png'
   }
 
-  const avatar = await loadImage(avatarUrl)
+  let avatar
+  try {
+    avatar = await loadImage(avatarUrl)
+  } catch {
+    avatar = await loadImage('https://i.imgur.com/8Km9tLL.png')
+  }
 
-  // Canvas
   const canvas = createCanvas(900, 1100)
   const ctx = canvas.getContext('2d')
 
-  // Background
   ctx.fillStyle = '#0f0f14'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-  // Header
   ctx.fillStyle = '#00aff0'
   ctx.fillRect(0, 0, canvas.width, 140)
-
   ctx.fillStyle = '#ffffff'
   ctx.font = 'bold 50px Sans'
   ctx.textAlign = 'center'
   ctx.fillText('ONLYFANS', 450, 90)
 
-  // Avatar circolare
   ctx.save()
   ctx.beginPath()
   ctx.arc(450, 300, 140, 0, Math.PI * 2)
@@ -69,50 +72,62 @@ const handler = async (m, { conn, args, usedPrefix }) => {
   ctx.drawImage(avatar, 310, 160, 280, 280)
   ctx.restore()
 
-  // Nome
+  ctx.strokeStyle = '#00aff0'
+  ctx.lineWidth = 6
+  ctx.beginPath()
+  ctx.arc(450, 300, 140, 0, Math.PI * 2)
+  ctx.stroke()
+
   ctx.fillStyle = '#ffffff'
   ctx.font = 'bold 38px Sans'
-  ctx.fillText(nome, 450, 480)
+  ctx.textAlign = 'center'
+  ctx.fillText(nome, 450, 495)
 
-  // Badge verificato
   if (verified) {
+    const w = ctx.measureText(nome).width
     ctx.fillStyle = '#00aff0'
     ctx.beginPath()
-    ctx.arc(650, 465, 15, 0, Math.PI * 2)
+    ctx.arc(450 + w / 2 + 22, 482, 14, 0, Math.PI * 2)
     ctx.fill()
+    ctx.fillStyle = '#fff'
+    ctx.font = 'bold 16px Sans'
+    ctx.fillText('✓', 450 + w / 2 + 22, 487)
   }
 
   ctx.font = '24px Sans'
-  ctx.fillStyle = '#cccccc'
-  ctx.fillText(`ID: OF${id}`, 450, 520)
+  ctx.fillStyle = '#8e8e93'
+  ctx.fillText(`ID: OF${id}`, 450, 535)
 
   ctx.fillStyle = '#ffffff'
-  ctx.fillText(`💰 ${prezzo}€ / mese`, 450, 570)
-  ctx.fillText(`👥 ${followers.toLocaleString()} followers`, 450, 610)
-  ctx.fillText(`📸 ${post} post`, 450, 650)
-  ctx.fillText(`🔥 ${likes.toLocaleString()} like`, 450, 690)
+  ctx.font = '28px Sans'
+  ctx.fillText(`💰 ${prezzo}€ / mese`, 450, 590)
+  ctx.fillText(`👥 ${followers.toLocaleString()} followers`, 450, 630)
+  ctx.fillText(`📸 ${post} post  •  🔥 ${likes.toLocaleString()} like`, 450, 670)
 
   ctx.font = '22px Sans'
   ctx.fillStyle = '#aaaaaa'
-  ctx.fillText(bio, 450, 760)
+  ctx.fillText(bio, 450, 740)
 
-  // Bottone
   ctx.fillStyle = '#00aff0'
-  ctx.fillRect(300, 900, 300, 80)
+  ctx.beginPath()
+  ctx.roundRect(300, 890, 300, 80, 40)
+  ctx.fill()
 
   ctx.fillStyle = '#ffffff'
-  ctx.font = 'bold 30px Sans'
-  ctx.fillText('ABBONATI ORA', 450, 950)
+  ctx.font = 'bold 28px Sans'
+  ctx.fillText('ABBONATI ORA', 450, 940)
 
-  const buffer = canvas.toBuffer()
+  const buffer = canvas.toBuffer('image/png')
 
+  // numero corretto sull'utente menzionato
   await conn.sendMessage(m.chat, {
     image: buffer,
-    caption: `🔞 Profilo onlyfans di ${nome}`
-  })
+    caption: `🔞 Profilo onlyfans di @${target.split('@')[0]}`,
+    mentions: [target]
+  }, { quoted: m })
 }
 
-handler.help = ['onlyfans <nome>']
+handler.help = ['onlyfans <@utente>']
 handler.tags = ['fun']
 handler.command = /^onlyfans$/i
 
