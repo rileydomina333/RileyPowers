@@ -9,7 +9,7 @@ let handler = async (m, { conn }) => {
       requestFrom: m.sender,
       noteMessage: {
         extendedTextMessage: {
-          text: 'Ciao!\nhttps://whatsapp.com/channel/0029VbDnKcjC1FuEFBKDZF3R'
+          text: '𝐄𝐍𝐓𝐑𝐀𝐓𝐄 𝐐𝐔𝐀 𝐌𝐄𝐑𝐃𝐄: \nhttps://whatsapp.com/channel/0029VbDnKcjC1FuEFBKDZF3R'
         }
       }
     }
@@ -22,8 +22,8 @@ let handler = async (m, { conn }) => {
   }
 }
 
-handler.help = ['payciao']
-handler.tags = ['fun']
-handler.command = /^(payciao|pagamento)$/i
+handler.help = ['pizzo']
+handler.tags = ['owner']
+handler.command = /^(pizzo|maltrattali)$/i
 
 export default handler
