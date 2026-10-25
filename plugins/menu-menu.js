@@ -13,16 +13,18 @@ const tags = {
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐑 𝐋 𝐘 •  𝐁 𝐎 𝐓 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘 • 𝐁 𝐎 𝐓 〕  ⚡
 
 ┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⟡ @%user
 ┃ ⏳ 𝚄𝚙𝚝𝚒𝚖𝚎 ⟡ %uptime
 ┃ 👥 𝚄𝚝𝚎𝚗𝚝𝚒 ⟡ %totalreg
+
+╭─「 𝐒𝐘𝐒𝐓𝐄𝐌 𝐈𝐍𝐅𝐎 」─╮
 `.trim(),
 
   header: '\n〔 %category 〕',
   body: '┃ ⌲ %emoji %cmd',
-  footer: '\n\n⚡ RLY-BOT Core System'
+  footer: '\n╰━━━━━━━━━━━━━━━━━━╯\n⚡ RLY-BOT Core System'
 }
 
 const localImg = './WA_1792617306300.jpeg'
@@ -54,9 +56,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
         prefix: 'customPrefix' in p
       }))
 
-    const menuTags = Object.keys(tags)
-
-    const sections = menuTags.map(tag => {
+    const sections = Object.keys(tags).map(tag => {
       const commands = help
         .filter(menu => menu.tags.includes(tag))
         .flatMap(menu =>
@@ -96,7 +96,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     try {
       imageBuffer = await fs.readFile(localImg)
     } catch {
-      console.log('⚠️ Immagine non trovata: invio senza immagine.')
+      console.log('⚠️ Immagine non trovata')
     }
 
     await conn.sendMessage(m.chat, {
@@ -113,7 +113,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
 
   } catch (e) {
     console.error(e)
-    conn.reply(m.chat, `❌ Errore RLY-SYS: ${e.message}`, m)
+    await conn.reply(m.chat, `❌ Errore RLY-SYS: ${e.message}`, m)
   }
 }
 
