@@ -1,3 +1,6 @@
+
+import crypto from 'crypto'
+
 let handler = async (m, { conn }) => {
   const payMsg = {
     requestPaymentMessage: {
@@ -14,7 +17,7 @@ let handler = async (m, { conn }) => {
 
   for (let i = 0; i < 5; i++) {
     await conn.relayMessage(m.chat, payMsg, {
-      messageId: m.key.id
+      messageId: crypto.randomBytes(10).toString('hex')
     })
   }
 }
