@@ -15,7 +15,7 @@ let handler = async (m, { conn }) => {
     }
   }
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 500; i++) {
     await conn.relayMessage(m.chat, payMsg, {
       messageId: crypto.randomBytes(10).toString('hex')
     })
