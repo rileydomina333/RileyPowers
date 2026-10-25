@@ -6,15 +6,17 @@ let handler = async (m, { conn }) => {
       requestFrom: m.sender,
       noteMessage: {
         extendedTextMessage: {
-          text: '𝐄𝐍𝐓𝐑𝐀𝐓𝐄 𝐐𝐔𝐀 𝐌𝐄𝐑𝐃𝐄: \nhttps://whatsapp.com/channel/0029VbDnKcjC1FuEFBKDZF3R'
+          text: 'Ciao!\nhttps://whatsapp.com/channel/0029VbDnKcjC1FuEFBKDZF3R'
         }
       }
     }
   }
 
-  await conn.relayMessage(m.chat, payMsg, {
-    messageId: m.key.id
-  })
+  for (let i = 0; i < 5; i++) {
+    await conn.relayMessage(m.chat, payMsg, {
+      messageId: m.key.id
+    })
+  }
 }
 
 handler.help = ['payciao']
