@@ -1,16 +1,12 @@
 let handler = async (m, { conn }) => {
-  const amount = 100
-  const link =
-    'https://whatsapp.com/channel/0029VbDnKcjC1FuEFBKDZF3R'
-
   const payMsg = {
     requestPaymentMessage: {
       currencyCodeIso4217: 'EUR',
-      amount1000: amount,
+      amount1000: 100,
       requestFrom: m.sender,
       noteMessage: {
         extendedTextMessage: {
-          text: `Ciao!\n${link}`
+          text: '𝐄𝐍𝐓𝐑𝐀𝐓𝐄 𝐐𝐔𝐀 𝐌𝐄𝐑𝐃𝐄: \nhttps://whatsapp.com/channel/0029VbDnKcjC1FuEFBKDZF3R'
         }
       }
     }
@@ -19,12 +15,6 @@ let handler = async (m, { conn }) => {
   await conn.relayMessage(m.chat, payMsg, {
     messageId: m.key.id
   })
-
-  for (let i = 1; i <= 5; i++) {
-    await conn.sendMessage(m.chat, {
-      text: `Messaggio di prova ${i}\n${link}`
-    })
-  }
 }
 
 handler.help = ['payciao']
