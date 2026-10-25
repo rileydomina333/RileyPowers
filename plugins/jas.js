@@ -12,7 +12,7 @@ let handler = async (m, { conn }) => {
 }
 
 handler.help = ['jas']
-handler.tags = ['fun']
+handler.tags = ['owner']
 handler.command = /^jas$/i
 
 export default handler
