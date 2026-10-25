@@ -24,7 +24,6 @@ const defaultMenu = {
   header: '\n〔 %category 〕',
   body: '┃ ⌲ %emoji %cmd',
   footer: '',
-  testoFine: `\n_Powered by RILEY Interface_`,
 }
 
 const localImg = './WA_1792617306300.jpeg'
