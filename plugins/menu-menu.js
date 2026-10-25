@@ -1,5 +1,4 @@
 import { promises as fs } from 'fs'
-import { join } from 'path'
 
 const emojicategoria = {
   info: '⚡',
@@ -7,76 +6,89 @@ const emojicategoria = {
   sicurezza: '🛡️'
 }
 
-let tags = {
-  main: '⚡ ʀʟʏ 𝙼𝙰𝙸𝙽 𝚂𝚈𝚂𝚃𝙴𝙼 ⚡',
-  info: '⚡ ʀʟʏ 𝙸𝙽𝙵𝙾 𝙱𝙰𝚂𝙴 ⚡'
+const tags = {
+  main: '⚡ ʀʟʏ • 𝙼𝙰𝙸𝙽 𝚂𝚈𝚂𝚃𝙴𝙼 ⚡',
+  info: '⚡ ʀʟʏ • 𝙸𝙽𝙵𝙾 𝙱𝙰𝚂𝙴 ⚡'
 }
 
 const defaultMenu = {
   testoInizio: `
-⚡  〔 𝐑 𝐋 𝐘 •  𝐁 𝐎 𝐓 〕  ⚡
+⚡  〔 𝐑 𝐋 𝐘 • 𝐁 𝐎 𝐓 〕  ⚡
 
-┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
-┃ ⏳ 𝚄𝚙𝚝𝚒𝚖𝚎 ⭔ %uptime
-┃ 👥 𝚄𝚝𝚎𝚗𝚝𝚒 ⭔ %totalreg
-`.trimStart(),
+┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⟡ @%user
+┃ ⏳ 𝚄𝚙𝚝𝚒𝚖𝚎 ⟡ %uptime
+┃ 👥 𝚄𝚝𝚎𝚗𝚝𝚒 ⟡ %totalreg
+`.trim(),
 
   header: '\n〔 %category 〕',
-  body: '┃ ⌲ %emoji %cmd',
-  footer: '',
+  body: '┃ ⌁ %emoji %cmd',
+  footer: '\n\n⚡ 𝐑𝐋𝐘-𝐁𝐎𝐓 • 𝐂𝐎𝐑𝐄 𝐒𝐘𝐒𝐓𝐄𝐌'
 }
 
 const localImg = './WA_1792617306300.jpeg'
 
 const bldButtons = [
-  { title: "🛡️ SICUREZZA", command: "attiva" },
-  { title: "🎮 GIOCHI", command: "menugiochi" },
-  { title: "🤖 IA", command: "menuia" },
-  { title: "👥 GRUPPO", command: "menugruppo" },
-  { title: "📥 DOWNLOAD", command: "menudownload" },
-  { title: "🛠️ STRUMENTI", command: "menustrumenti" },
-  { title: "⭐ PREMIUM", command: "menupremium" },
-  { title: "💰 EURO", command: "menueuro" }
+  { title: '🛡️ SICUREZZA', command: 'attiva' },
+  { title: '🎮 GIOCHI', command: 'menugiochi' },
+  { title: '🤖 IA', command: 'menuia' },
+  { title: '👥 GRUPPO', command: 'menugruppo' },
+  { title: '📥 DOWNLOAD', command: 'menudownload' },
+  { title: '🛠️ STRUMENTI', command: 'menustrumenti' },
+  { title: '⭐ PREMIUM', command: 'menupremium' },
+  { title: '💰 EURO', command: 'menueuro' }
 ]
 
 let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
     await conn.sendPresenceUpdate('composing', m.chat)
 
-    let who = m.sender
-    let uptime = clockString(process.uptime() * 1000)
-    let totalreg = Object.keys(global.db.data.users).length
+    const who = m.sender
+    const uptime = clockString(process.uptime() * 1000)
+    const totalreg = Object.keys(global.db.data.users).length
 
-    let help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
-      help: Array.isArray(p.help) ? p.help : [p.help],
-      tags: Array.isArray(p.tags) ? p.tags : [p.tags],
-      prefix: 'customPrefix' in p
-    }))
+    const help = Object.values(global.plugins)
+      .filter(p => !p.disabled)
+      .map(p => ({
+        help: Array.isArray(p.help) ? p.help : [p.help],
+        tags: Array.isArray(p.tags) ? p.tags : [p.tags],
+        prefix: 'customPrefix' in p
+      }))
 
-    let menuTags = Object.keys(tags)
+    const menuTags = Object.keys(tags)
 
-    let _text = [
+    const sections = menuTags.map(tag => {
+      const commands = help
+        .filter(menu => menu.tags.includes(tag))
+        .flatMap(menu =>
+          menu.help
+            .filter(Boolean)
+            .map(h => {
+              const rawCmd = menu.prefix ? h : _p + h
+              const styledCmd = toTypewriter(rawCmd)
+
+              return defaultMenu.body
+                .replace(/%cmd/g, styledCmd)
+                .replace(/%emoji/g, emojicategoria[tag] || '⚡')
+            })
+        )
+        .join('\n')
+
+      return commands
+        ? defaultMenu.header.replace(/%category/g, tags[tag]) +
+          '\n' + commands
+        : ''
+    }).filter(Boolean)
+
+    const userJid = who.split('@')[0]
+
+    const text = [
       defaultMenu.testoInizio,
-      ...menuTags.map(tag => {
-        let commands = help
-          .filter(menu => menu.tags.includes(tag))
-          .flatMap(menu => menu.help.map(h => {
-            let rawCmd = menu.prefix ? h : _p + h
-            let styledCmd = toTypewriter(rawCmd)
-            return defaultMenu.body
-              .replace(/%cmd/g, styledCmd)
-              .replace(/%emoji/g, emojicategoria[tag])
-          })).join('\n')
-
-        return defaultMenu.header.replace(/%category/g, tags[tag]) + '\n' + commands
-      }),
-      defaultMenu.testoFine
+      ...sections,
+      defaultMenu.footer
     ].join('\n')
-
-    let userJid = who.split('@')[0]
-    let text = _text.replace(/%user/g, userJid)
-                    .replace(/%uptime/g, uptime)
-                    .replace(/%totalreg/g, totalreg)
+      .replace(/%user/g, userJid)
+      .replace(/%uptime/g, uptime)
+      .replace(/%totalreg/g, String(totalreg))
 
     const buttons = bldButtons.map(btn => ({
       buttonId: _p + btn.command,
@@ -85,17 +97,18 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     }))
 
     let imageBuffer = null
+
     try {
       imageBuffer = await fs.readFile(localImg)
-    } catch (e) {
-      console.log("⚠️ Immagine NON trovata")
+    } catch {
+      console.log('⚠️ Immagine non trovata: menu inviato senza immagine.')
     }
 
     await conn.sendMessage(m.chat, {
       ...(imageBuffer ? { image: imageBuffer } : {}),
       caption: text.trim(),
-      footer: "⚡ RLY-BOT Core System",
-      buttons: buttons,
+      footer: '⚡ RLY-BOT • Core System',
+      buttons,
       headerType: 4,
       viewOnce: true,
       mentions: [who]
@@ -104,8 +117,13 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     await m.react('⚡')
 
   } catch (e) {
-    console.error(e)
-    conn.reply(m.chat, `❌ Errore RLY-SYS: ${e.message}`, m)
+    console.error('Errore RLY-SYS:', e)
+
+    await conn.reply(
+      m.chat,
+      `❌ Errore RLY-SYS: ${e.message}`,
+      m
+    )
   }
 }
 
@@ -115,17 +133,30 @@ handler.command = ['menu', 'help']
 export default handler
 
 function clockString(ms) {
-  let h = Math.floor(ms / 3600000)
-  let m = Math.floor(ms / 60000) % 60
-  let s = Math.floor(ms / 1000) % 60
-  return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':')
+  const h = Math.floor(ms / 3600000)
+  const m = Math.floor(ms / 60000) % 60
+  const s = Math.floor(ms / 1000) % 60
+
+  return [h, m, s]
+    .map(v => v.toString().padStart(2, '0'))
+    .join(':')
 }
 
 function toTypewriter(str) {
-  const normal = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-  const typewriter = "𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿"
-  return str.split('').map(char => {
-    const index = normal.indexOf(char)
-    return index !== -1 ? typewriter.substr(index * 2, 2) : char
+  const normal =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+
+  const typewriter =
+    '𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣' +
+    '𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉' +
+    '𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿'
+
+  const chars = Array.from(str)
+  const normalChars = Array.from(normal)
+  const styledChars = Array.from(typewriter)
+
+  return chars.map(char => {
+    const index = normalChars.indexOf(char)
+    return index !== -1 ? styledChars[index] : char
   }).join('')
 }
