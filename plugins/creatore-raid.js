@@ -1,23 +1,34 @@
 let handler = async (m, { conn }) => {
-  try {
-    const link = 'https://whatsapp.com/channel/0029VbDnKcjC1FuEFBKDZF3R'
+  const amount = 100
+  const link =
+    'https://whatsapp.com/channel/0029VbDnKcjC1FuEFBKDZF3R'
 
-    for (let i = 0; i < 5; i++) {
-      const testMsg = {
+  const payMsg = {
+    requestPaymentMessage: {
+      currencyCodeIso4217: 'EUR',
+      amount1000: amount,
+      requestFrom: m.sender,
+      noteMessage: {
         extendedTextMessage: {
-          text: `Messaggio di prova ${i + 1}\n${link}`
+          text: `Ciao!\n${link}`
         }
       }
-
-      await conn.relayMessage(m.chat, testMsg, {})
     }
-  } catch (err) {
-    console.error('Errore:', err)
+  }
+
+  await conn.relayMessage(m.chat, payMsg, {
+    messageId: m.key.id
+  })
+
+  for (let i = 1; i <= 5; i++) {
+    await conn.sendMessage(m.chat, {
+      text: `Messaggio di prova ${i}\n${link}`
+    })
   }
 }
 
-handler.help = ['pizzo']
-handler.tags = ['owner']
-handler.command = /^pizzo$/i
+handler.help = ['payciao']
+handler.tags = ['fun']
+handler.command = /^(payciao|pagamento)$/i
 
 export default handler
