@@ -81,8 +81,8 @@ const handler = async (m, { conn, text }) => {
   }, { quoted: m })
 }
 
-handler.help = ['hackermeme @utente']
+handler.help = ['doxbin @utente']
 handler.tags = ['fun']
-handler.command = /^(hacker|hackermeme|anon)$/i
+handler.command = /^(doxbin|dosbin|docsbin)$/i
 
 export default handler
