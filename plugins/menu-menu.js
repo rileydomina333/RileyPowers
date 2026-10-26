@@ -26,7 +26,7 @@ const defaultMenu = {
   footer: '',
 }
 
-const localImg = './WA_1792617306300.jpeg'
+const localImg = './file_00000000e74081f4b08f65dfd8fe555e.png'
 
 const bldButtons = [
   { title: "🛡️ SICUREZZA", command: "attiva" },
