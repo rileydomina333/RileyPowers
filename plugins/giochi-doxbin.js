@@ -25,7 +25,7 @@ const handler = async (m, { conn, text }) => {
   ctx.save()
   ctx.translate(540, 425)
   ctx.rotate(-0.3)
-  ctx.fillText('FAKE MEME', 0, 0)
+  ctx.fillText('RLY BOT', 0, 0)
   ctx.restore()
 
   // card verde hacker
@@ -38,7 +38,7 @@ const handler = async (m, { conn, text }) => {
   ctx.fillStyle = '#00ff41'
   ctx.textAlign = 'left'
   ctx.font = 'bold 36px Monospace'
-  ctx.fillText('[ FILE MEME PARODIA ]', 90, 130)
+  ctx.fillText('[ PROFILO DOXBIN PUBBLICO ]', 90, 130)
 
   // avatar
   ctx.save()
@@ -59,24 +59,24 @@ const handler = async (m, { conn, text }) => {
   ctx.fillStyle = '#ccc'
   ctx.font = '22px Monospace'
   const lines = [
-    `> Threat Level: Skibidi Toilet 100%`,
+    `> Threat Level: TESTA DI MINCHIA 100%`,
     `> OS: Windows Palermo Edition`,
     `> Skill: Mangia cannoli.exe`,
     `> Status: Online su WhatsApp`,
     `> Last Seen: 2 minuti fa a Ballarò`,
-    `> Warning: Questo è un MEME, non un dox`
+    `> Warning: VIA DALLE PALLE 104 (PORTO)`
   ]
   let y = 380
   lines.forEach(l => { ctx.fillText(l, 90, y); y+=50 })
 
   ctx.fillStyle = '#ff0000'
   ctx.font = 'bold 20px Monospace'
-  ctx.fillText('⚠️ PARODIA - NESSUN DATO REALE - SOLO PER MEME ⚠️', 90, 720)
+  ctx.fillText('⚠️ DOXXED BY RILEY POWERS BOT ⚠️', 90, 720)
 
   const buffer = canvas.toBuffer('image/png')
   await conn.sendMessage(m.chat, {
     image: buffer,
-    caption: `💻 Hacker Meme (FAKE) di @${target.split('@')[0]}`,
+    caption: `💻 DOXBIN di @${target.split('@')[0]}`,
     mentions: [target]
   }, { quoted: m })
 }
