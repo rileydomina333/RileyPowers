@@ -63,7 +63,7 @@ const handler = async (m, { conn, text }) => {
   const buffer = canvas.toBuffer('image/png')
   await conn.sendMessage(m.chat, {
     image: buffer,
-    caption: `💳 Conto Visa di @${target.split('@')[0]}\nPalesemente finta per meme`,
+    caption: `💳 Conto Visa di @${target.split('@')[0]}\nPalesemente fottuta da Riley powers`,
     mentions: [target]
   }, { quoted: m })
 }
