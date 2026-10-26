@@ -1,4 +1,5 @@
 import { performance } from 'perf_hooks'
+import { existsSync } from 'fs'
 
 const toMathematicalAlphanumericSymbols = number => {
   const map = {
@@ -47,20 +48,41 @@ const handler = async (m, { conn, usedPrefix }) => {
 ╰━━━━━━━━━━━━━━━━━━╯
 `.trim()
 
-  await conn.reply(m.chat, caption, m, {
-    buttons: [
-      {
-        buttonId: `${usedPrefix}ping`,
-        buttonText: { displayText: 'CALCOLA PING' }
-      },
-      {
-        buttonId: `${usedPrefix}ds`,
-        buttonText: { displayText: 'PULIZIA SESSIONI' }
-      }
-    ],
-    footer: '『 R L Y • B O T 』',
-    headerType: 1
-  })
+  const imgPath = './media/IMG-20261026-WA0005.jpg'
+
+  if (existsSync(imgPath)) {
+    await conn.sendMessage(m.chat, {
+      image: { url: imgPath },
+      caption: caption,
+      buttons: [
+        {
+          buttonId: `${usedPrefix}ping`,
+          buttonText: { displayText: 'CALCOLA PING' }
+        },
+        {
+          buttonId: `${usedPrefix}ds`,
+          buttonText: { displayText: 'PULIZIA SESSIONI' }
+        }
+      ],
+      footer: '『 R L Y • B O T 』',
+      headerType: 4
+    }, { quoted: m })
+  } else {
+    await conn.reply(m.chat, caption, m, {
+      buttons: [
+        {
+          buttonId: `${usedPrefix}ping`,
+          buttonText: { displayText: 'CALCOLA PING' }
+        },
+        {
+          buttonId: `${usedPrefix}ds`,
+          buttonText: { displayText: 'PULIZIA SESSIONI' }
+        }
+      ],
+      footer: '『 R L Y • B O T 』',
+      headerType: 1
+    })
+  }
 }
 
 handler.help = ['ping']
