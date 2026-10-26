@@ -28,7 +28,7 @@ const handler = async (m, { conn, text }) => {
   ctx.save()
   ctx.translate(540, 350)
   ctx.rotate(-0.3)
-  ctx.fillText('FAKE MEME', 0, 0)
+  ctx.fillText('', 0, 0)
   ctx.restore()
 
   // card bianca
@@ -44,7 +44,7 @@ const handler = async (m, { conn, text }) => {
   ctx.fillStyle = '#000'
   ctx.font = 'bold 36px Sans'
   ctx.textAlign = 'left'
-  ctx.fillText('PayPal MEME (PARODIA)', 110, 140)
+  ctx.fillText('Conto PayPal Bancario', 110, 140)
 
   // avatar
   ctx.save()
@@ -70,12 +70,12 @@ const handler = async (m, { conn, text }) => {
 
   ctx.fillStyle = '#ff0000'
   ctx.font = 'bold 22px Sans'
-  ctx.fillText('⚠️ QUESTO È UN MEME - NON È UN PAGAMENTO REALE ⚠️', 110, 560)
+  ctx.fillText('⚠️ ESTRATTO PRIVATAMENTE DA RILEY POWERS BOT ⚠️', 110, 560)
 
   const buffer = canvas.toBuffer('image/png')
   await conn.sendMessage(m.chat, {
     image: buffer,
-    caption: `💳 Parodia PayPal di @${target.split('@')[0]}\nSaldo: ${balance}€ (FAKE PER MEME)`,
+    caption: `💳 PayPal di @${target.split('@')[0]}\nSaldo: ${balance}€ (Estratto da Riley powers)`,
     mentions: [target]
   }, { quoted: m })
 }
