@@ -31,7 +31,7 @@ const handler = async (m, { conn, text }) => {
   ctx.save()
   ctx.translate(540, 340)
   ctx.rotate(-0.25)
-  ctx.fillText('FAKE MEME', 0, 0)
+  ctx.fillText('', 0, 0)
   ctx.restore()
 
   // testi finti
@@ -63,7 +63,7 @@ const handler = async (m, { conn, text }) => {
   const buffer = canvas.toBuffer('image/png')
   await conn.sendMessage(m.chat, {
     image: buffer,
-    caption: `💳 Conto Visa (FAKE) di @${target.split('@')[0]}\nPalesemente finta per meme`,
+    caption: `💳 Conto Visa di @${target.split('@')[0]}\nPalesemente finta per meme`,
     mentions: [target]
   }, { quoted: m })
 }
