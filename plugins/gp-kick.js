@@ -57,7 +57,7 @@ async function handler(m, { isBotAdmin, conn }) {
       await conn.sendMessage(m.chat, {
         video: { url: gifPath },
         gifPlayback: true,
-        caption: `*╭━━━━━━━💠━━━━━━━╮*\n*✦ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 ✦*\n*╰━━━━━━━💠━━━━━━━╯*\n\n*@${mention.split('@')[0]} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨 𝐫𝐢𝐦𝐮𝐨𝐯𝐬𝐨 𝐝𝐚𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.*`,
+        caption: `*╭━━━━━━━💠━━━━━━━╮*\n*✦ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 ✦*\n*╰━━━━━━━💠━━━━━━━╯*\n\n*@${mention.split('@')[0]} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 𝐝𝐚𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.*`,
         mentions: [mention]
       }, { quoted: m })
     } else {
