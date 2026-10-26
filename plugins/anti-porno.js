@@ -1,157 +1,154 @@
-const ANTIPORNO_WINDOW = 5000
-const ANTIPORNO_CONFIDENCE = 0.75
-const ANTIPORNO_MAX_VIOLATIONS = 3
+import { downloadContentFromMessage } from '@realvare/based'
+import crypto from 'crypto'
+import fetch from 'node-fetch'
+import FormData from 'form-data'
 
-global.antipornoProcessed = global.antipornoProcessed || new Set()
+let handler = m => m
 
-function getMediaEmoji(mtype) {
-  return mtype === 'imageMessage' ? '🖼️' : mtype === 'stickerMessage' ? '🎭' : '📎'
-}
+handler.before = async function (m, { conn, isAdmin, isOwner }) {
+    if (m.isBaileys && m.fromMe) return true
+    if (!m.isGroup) return false
+    if (!m.message) return true
+    let chat = global.db.data.chats[m.chat]
+    if (!chat.antiporno) return true
+    if (isAdmin || isOwner) return true
 
-function getJidUser(jid) {
-  return typeof jid === 'string' ? jid.split('@')[0].split(':')[0] : ''
-}
+    let user = global.db.data.users[m.sender] || (global.db.data.users[m.sender] = { warn: 0 })
+    if (!global.db.data.nsfwCache) global.db.data.nsfwCache = {}
 
-function getComparableUser(value) {
-  return typeof value === 'string' ? getJidUser(value) : ''
-}
+    const isMedia = m.message.imageMessage ||
+                    m.message.videoMessage ||
+                    m.message.stickerMessage
 
-function getViolationState(chat, sender) {
-  if (!chat.antipornoViolations || typeof chat.antipornoViolations !== 'object') chat.antipornoViolations = {}
-  if (!chat.antipornoViolations[sender] || typeof chat.antipornoViolations[sender] !== 'object') {
-    chat.antipornoViolations[sender] = { count: 0, lastAt: 0 }
-  }
-
-  return chat.antipornoViolations[sender]
-}
-
-async function getGroupParticipant(conn, chatId, sender) {
-  const metadata = await conn.groupMetadata(chatId).catch(() => null)
-  const participants = metadata?.participants || []
-  const senderUser = getComparableUser(sender)
-
-  const participant = participants.find((entry) => {
-    const candidates = [entry?.id, entry?.jid, entry?.lid, entry?.phoneNumber, entry?.pn, entry?.participantPn]
-    return candidates.some((candidate) => getComparableUser(candidate) === senderUser)
-  }) || null
-
-  return { metadata, participant }
-}
-
-async function analyzeWithNyckel(buffer) {
-  const axios = await import('axios')
-  const cheerio = await import('cheerio')
-  const { Blob, FormData } = await import('formdata-node')
-  const { FormDataEncoder } = await import('form-data-encoder')
-  const { Readable } = await import('stream')
-
-  if (buffer.length < 1000 || buffer.length > 10 * 1024 * 1024) {
-    throw new Error(`Buffer invalido: ${buffer.length} bytes`)
-  }
-
-  const headers = {
-    authority: 'www.nyckel.com',
-    origin: 'https://www.nyckel.com',
-    referer: 'https://www.nyckel.com/pretrained-classifiers/nsfw-identifier',
-    'user-agent': 'Postify/1.0.0',
-    'x-requested-with': 'XMLHttpRequest',
-    'content-type': 'multipart/form-data'
-  }
-
-  const res = await axios.default.get('https://www.nyckel.com/pretrained-classifiers/nsfw-identifier', { headers })
-  const $ = cheerio.load(res.data)
-  const src = $('script[src*="embed-image.js"]').attr('src')
-  const fid = src?.match(/[?&]id=([^&]+)/)?.[1]
-  if (!fid) throw new Error('No Function ID')
-
-  const blob = new Blob([buffer], { type: 'image/jpeg' })
-  const form = new FormData()
-  form.append('file', blob, 'image.jpg')
-
-  const encoder = new FormDataEncoder(form)
-  const bodyStream = Readable.from(encoder.encode())
-  const resp = await axios.default.post(
-    `https://www.nyckel.com/v1/functions/${fid}/invoke`,
-    bodyStream,
-    { headers: { ...headers, ...encoder.headers, 'content-length': encoder.headers['content-length'] }, timeout: 30000 }
-  )
-
-  return { isPorn: resp.data.labelName === 'Porn', confidence: resp.data.confidence || 0 }
-}
-
-async function prepareAnalysisBuffer(m, buffer) {
-  if (m.mtype !== 'stickerMessage') return buffer
-
-  try {
-    const sharp = (await import('sharp')).default
-    return await sharp(buffer).jpeg({ quality: 90 }).resize(512, 512, { fit: 'inside' }).toBuffer()
-  } catch {
-    return buffer
-  }
-}
-
-let handler = function () {}
-
-handler.all = async function (m) {
-  if (!m?.isGroup || !m?.key?.id) return
-  if (m.mtype !== 'imageMessage' && m.mtype !== 'stickerMessage') return
-
-  const chat = global.db?.data?.chats?.[m.chat] || {}
-  if (!chat.antiporno) return
-
-  const marker = `ANTIPORNO_${m.key.id}`
-  if (global.antipornoProcessed.has(marker)) return
-  global.antipornoProcessed.add(marker)
-
-  try {
-    const buffer = await m.download()
-    if (!buffer?.length) return
-
-    const analysisBuffer = await prepareAnalysisBuffer(m, buffer)
-    if (analysisBuffer.length < 1000) return
-
-    const result = await analyzeWithNyckel(analysisBuffer)
-    if (!result.isPorn || result.confidence <= ANTIPORNO_CONFIDENCE) return
-
-    const violationState = getViolationState(chat, m.sender)
-    violationState.count += 1
-    violationState.lastAt = Date.now()
-    const detectionCount = violationState.count
-
-    const key = { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.sender }
-    let deleteSuccess = false
-    try {
-      await this.sendMessage(m.chat, { delete: key })
-      deleteSuccess = true
-    } catch {}
-
-    let removalText = `⚠️ Rilevamento *${detectionCount}/${ANTIPORNO_MAX_VIOLATIONS}*.`
-    if (detectionCount >= ANTIPORNO_MAX_VIOLATIONS) {
-      const { participant } = await getGroupParticipant(this, m.chat, m.sender)
-      const isAdminTarget = participant?.admin === 'admin' || participant?.admin === 'superadmin'
-
-      if (isAdminTarget) {
-        removalText = '⚠️ Limite raggiunto, ma l\'utente è admin e non posso rimuoverlo automaticamente.'
-      } else {
+    if (isMedia) {
         try {
-          await this.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
-          delete chat.antipornoViolations[m.sender]
-          removalText = '⛔ Utente rimosso dal gruppo dopo 3 rilevamenti.'
-        } catch {
-          removalText = '⚠️ Limite raggiunto, ma non sono riuscito a rimuovere l\'utente dal gruppo.'
+            let mediaBuffer, mimeType, fileName
+            const quoted = m.message.extendedTextMessage?.contextInfo?.quotedMessage
+            const msg = quoted ? (quoted.imageMessage || quoted.videoMessage || quoted.stickerMessage) :
+                               (m.message.imageMessage || m.message.videoMessage || m.message.stickerMessage)
+
+            if (!msg) return true
+
+            let type;
+            if (msg.mimetype?.includes('video')) type = 'video';
+            else if (msg.mimetype?.includes('sticker')) type = 'sticker';
+            else if (msg.mimetype?.includes('image')) type = 'image';
+            else return true;
+
+            const stream = await downloadContentFromMessage(msg, type);
+            mediaBuffer = Buffer.from([]);
+            for await (const chunk of stream) {
+                mediaBuffer = Buffer.concat([mediaBuffer, chunk]);
+            }
+
+            const fileHash = crypto.createHash('md5').update(mediaBuffer).digest('hex')
+            if (global.db.data.nsfwCache[fileHash] === true) {
+                return await punishUser(conn, m, user, "File blacklistato (NSFW)")
+            }
+            if (global.db.data.nsfwCache[fileHash] === false) {
+                return true 
+            }
+
+            if (type === 'video') {
+                mimeType = 'video/mp4'
+                fileName = 'media.mp4'
+                if (mediaBuffer.length > 10 * 1024 * 1024) return true 
+            } else {
+                mimeType = msg.mimetype || 'image/jpeg'
+                fileName = 'media.jpg'
+            }
+
+            const SIGHTENGINE_USER = global.APIKeys.sightengine_user
+            const SIGHTENGINE_SECRET = global.APIKeys.sightengine_secret
+
+            if (!SIGHTENGINE_USER || !SIGHTENGINE_SECRET) return true
+
+            const apiUrl = type === 'video' ? `https://api.sightengine.com/1.0/video/check-sync.json` : `https://api.sightengine.com/1.0/check.json`
+            const models = 'nudity-2.1'
+
+            const formData = new FormData()
+            formData.append('media', mediaBuffer, { filename: fileName, contentType: mimeType })
+            formData.append('models', models)
+            formData.append('api_user', SIGHTENGINE_USER)
+            formData.append('api_secret', SIGHTENGINE_SECRET)
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                body: formData
+            })
+
+            const result = await response.json()
+
+            if (result.status !== 'success') {
+                console.log('Errore API SightEngine:', result)
+                return true
+            }
+
+            let raw, partial, sexual, erotica
+
+            if (type === 'video') {
+                const frames = result.data?.frames || []
+                raw = Math.max(...frames.map(f => f.nudity?.raw || 0))
+                partial = Math.max(...frames.map(f => f.nudity?.partial || 0))
+                sexual = Math.max(...frames.map(f => (f.nudity?.sexual_activity || f.nudity?.sexual_display || 0)))
+                erotica = Math.max(...frames.map(f => f.nudity?.erotica || 0))
+            } else {
+                const nudity = result.nudity || {}
+                raw = nudity.raw || 0
+                partial = nudity.partial || 0
+                sexual = nudity.sexual_activity || nudity.sexual_display || 0
+                erotica = nudity.erotica || 0
+            }
+
+            const isHighRisk = 
+                raw > 0.40 ||
+                sexual > 0.50 ||
+                erotica > 0.60 ||
+                (partial > 0.70 && raw > 0.1)
+
+            global.db.data.nsfwCache[fileHash] = isHighRisk
+
+            if (isHighRisk) {
+                return await punishUser(conn, m, user, "Contenuto visuale NSFW rilevato")
+            }
+
+        } catch (e) {
+            console.error('Errore antiporno:', e)
+            return true
         }
-      }
     }
 
-    await this.sendMessage(m.chat, {
-      text: `🚫 *MATERIALE PORNOGRAFICO RILEVATO*\n\n📊 ${(result.confidence * 100).toFixed(1)}%\n👤 @${m.sender.split('@')[0]}\n📎 ${getMediaEmoji(m.mtype)}\n📌 ${removalText}\n\n${deleteSuccess ? '✅ ELIMINATO' : '❌ BOT NON ADMIN?\n\n> *RLY BOT SYSTEM*'}`,
-      mentions: [m.sender]
-    })
-  } catch (error) {
-    console.error('Antiporno:', error.message)
-  } finally {
-    setTimeout(() => global.antipornoProcessed.delete(marker), ANTIPORNO_WINDOW)
-  }
+    const txt = (m.text || m.caption || '').toLowerCase()
+    const nsfwKeywords = ['porn', 'xnxx', 'xvideos', 'xhamster', 'nude', 'pornhub']
+    if (txt.includes('http') && nsfwKeywords.some(keyword => txt.includes(keyword))) {
+         return await punishUser(conn, m, user, "Link NSFW rilevato")
+    }
+
+    return true
+}
+
+async function punishUser(conn, m, user, reason) {
+    user.warn += 1
+    const senderTag = m.sender.split('@')[0]
+    try { await conn.sendMessage(m.chat, { delete: m.key }) } catch (e) {}
+
+    const header = `⋆｡˚『 ╭ \`SISTEMA ANTIPORNO\` ╯ 』˚｡⋆`
+    const footer = `╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒`
+
+    if (user.warn < 3) {
+        await conn.sendMessage(m.chat, {
+            text: `${header}\n\n🚨 *ATTENZIONE* @${senderTag}\n\n┃ ⛔ \`Violazione:\` *${reason}*\n┃ ⚠️ \`Warn:\` *${user.warn}/3*\n┃ 🚫 \`Azione:\` Messaggio rimosso\n\n${footer}`,
+            mentions: [m.sender]
+        })
+    } else {
+        user.warn = 0
+        await conn.sendMessage(m.chat, {
+            text: `${header}\n\n🚨 *TERMINAZIONE* @${senderTag}\n\n┃ ⛔ \`Violazione:\` NSFW ripetuto\n┃ 💀 \`Sanzione:\` *ESPULSIONE*\n\n${footer}`,
+            mentions: [m.sender]
+        })
+        await conn.groupParticipantsUpdate(m.chat, [m.sender], 'remove')
+    }
+    return false
 }
 
 export default handler
