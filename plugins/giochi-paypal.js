@@ -64,7 +64,7 @@ const handler = async (m, { conn, text }) => {
   // saldo palesemente finto
   ctx.fillStyle = '#000'
   ctx.font = 'bold 28px Sans'
-  ctx.fillText('Saldo Monopoly:', 110, 420)
+  ctx.fillText('Saldo PayPal:', 110, 420)
   ctx.font = 'bold 56px Sans'
   ctx.fillText(`${balance},00 €`, 110, 485)
 
