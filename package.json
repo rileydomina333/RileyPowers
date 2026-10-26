@@ -70,8 +70,7 @@
     "ruhend-scraper": "^9.0.8",
     "yargs": "^18.0.0",
     "youtube-dl-exec": "latest",
-    "yt-search": "^2.13.1"
-    "aki-api": "^6.0.0",
+    "yt-search": "^2.13.1",
   },
   "engines": {
     "node": ">=20.2.0",
