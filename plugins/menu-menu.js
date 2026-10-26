@@ -94,7 +94,6 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     await conn.sendMessage(m.chat, {
       ...(imageBuffer ? { image: imageBuffer } : {}),
       caption: text.trim(),
-      footer: "⚡ RLY-BOT Core System",
       buttons: buttons,
       headerType: 4,
       viewOnce: true,
