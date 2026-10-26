@@ -23,7 +23,9 @@ const handler = async (msg, { conn, command, text, isAdmin }) => {
   const botNumber = conn.user.jid;
   const groupMetadata = await conn.groupMetadata(chatId);
   const groupOwner = groupMetadata.owner || chatId.split('-')[0] + '@s.whatsapp.net';
-  const imgPath = './media/IMG-20261026-WA0007.jpg'
+
+  const IMG_WARN = './media/IMG-20261026-WA0007.jpg'
+  const IMG_UNWARN = './media/IMG-20261026-WA0009.jpg'
 
   if (!isAdmin)
     throw '╭━━━❌━━━╮\n 𝐀𝐂𝐂𝐄𝐒𝐒𝐎 𝐍𝐄𝐆𝐀𝐓𝐎\n╰━━━❌━━━╯\n\n𝐒𝐨𝐥𝐨 𝐠𝐥𝐢 𝐚𝐝𝐦𝐢𝐧 𝐩𝐨𝐬𝐬𝐨𝐧𝐨 𝐮𝐬𝐚𝐫𝐞 𝐪𝐮𝐞𝐬𝐭𝐨 𝐜𝐨𝐦𝐚𝐧𝐝𝐨.';
@@ -44,7 +46,7 @@ const handler = async (msg, { conn, command, text, isAdmin }) => {
   const user = global.db.data.users[mentionedJid];
   const tag = '@' + mentionedJid.split('@')[0];
 
-  const sendWithImage = async (caption) => {
+  const sendWithImage = async (caption, imgPath) => {
     if (existsSync(imgPath)) {
       await conn.sendMessage(chatId, {
         image: { url: imgPath },
@@ -65,16 +67,16 @@ const handler = async (msg, { conn, command, text, isAdmin }) => {
     if (user.warn >= 3) {
       user.warn = 0;
       await conn.groupParticipantsUpdate(chatId, [mentionedJid], 'remove');
-      return sendWithImage(`╭━━━━━━━🚨━━━━━━━╮\n  ✦ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐄𝐒𝐏𝐔𝐋𝐒𝐎 ✦\n╰━━━━━━━🚨━━━━━━━╯\n\n👤 𝐔𝐭𝐞𝐧𝐭𝐞: ${tag}\n📉 𝐌𝐨𝐭𝐢𝐯𝐨: 𝐑𝐚𝐠𝐠𝐢𝐮𝐧𝐭𝐢 𝟑/𝟑 𝐰𝐚𝐫𝐧.`)
+      return sendWithImage(`╭━━━━━━━🚨━━━━━━━╮\n  ✦ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐄𝐒𝐏𝐔𝐋𝐒𝐎 ✦\n╰━━━━━━━🚨━━━━━━━╯\n\n👤 𝐔𝐭𝐞𝐧𝐭𝐞: ${tag}\n📉 𝐌𝐨𝐭𝐢𝐯𝐨: 𝐑𝐚𝐠𝐠𝐢𝐮𝐧𝐭𝐢 𝟑/𝟑 𝐰𝐚𝐫𝐧.`, IMG_WARN)
     }
 
-    return sendWithImage(`╭━━━━━━━⚠️━━━━━━━╮\n  ✦ 𝐖𝐀𝐑𝐍 𝐈𝐍𝐅𝐋𝐈𝐓𝐓𝐎 ✦\n╰━━━━━━━⚠️━━━━━━━╯\n\n👤 𝐔𝐭𝐞𝐧𝐭𝐞: ${tag}\n📊 𝐒𝐭𝐚𝐭𝐨: ${user.warn}/𝟑 𝐰𝐚𝐫𝐧\n\n⚠ *𝐀𝐭𝐭𝐞𝐧𝐳𝐢𝐨𝐧𝐞: 𝐚𝐥 𝐩𝐫𝐨𝐬𝐬𝐢𝐦𝐨 𝐰𝐚𝐫𝐧 𝐯𝐞𝐫𝐫𝐚𝐢 𝐞𝐬𝐩𝐮𝐥𝐬𝐨!*`)
+    return sendWithImage(`╭━━━━━━━⚠️━━━━━━━╮\n  ✦ 𝐖𝐀𝐑𝐍 𝐈𝐍𝐅𝐋𝐈𝐓𝐓𝐎 ✦\n╰━━━━━━━⚠️━━━━━━━╯\n\n👤 𝐔𝐭𝐞𝐧𝐭𝐞: ${tag}\n📊 𝐒𝐭𝐚𝐭𝐨: ${user.warn}/𝟑 𝐰𝐚𝐫𝐧\n\n⚠ *𝐀𝐭𝐭𝐞𝐧𝐳𝐢𝐨𝐧𝐞: 𝐚𝐥 𝐩𝐫𝐨𝐬𝐬𝐢𝐦𝐨 𝐰𝐚𝐫𝐧 𝐯𝐞𝐫𝐫𝐚𝐢 𝐞𝐬𝐩𝐮𝐥𝐬𝐨!*`, IMG_WARN)
   }
 
   if (command === 'unwarn') {
     if (!user.warn || user.warn <= 0) throw '⚠️ 𝐋’𝐮𝐭𝐞𝐧𝐭𝐞 𝐧𝐨𝐧 𝐡𝐚 𝐰𝐚𝐫𝐧 𝐝𝐚 𝐫𝐢𝐦𝐮𝐨𝐯𝐞𝐫𝐞.';
     user.warn -= 1;
-    return sendWithImage(`╭━━━━━━━✅━━━━━━━╮\n  ✦ 𝐖𝐀𝐑𝐍 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 ✦\n╰━━━━━━━✅━━━━━━━╯\n\n👤 𝐔𝐭𝐞𝐧𝐭𝐞: ${tag}\n📊 𝐒𝐭𝐚𝐭𝐨 𝐚𝐭𝐭𝐮𝐚𝐥𝐞: ${user.warn}/𝟑`)
+    return sendWithImage(`╭━━━━━━━✅━━━━━━━╮\n  ✦ 𝐖𝐀𝐑𝐍 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 ✦\n╰━━━━━━━✅━━━━━━━╯\n\n👤 𝐔𝐭𝐞𝐧𝐭𝐞: ${tag}\n📊 𝐒𝐭𝐚𝐭𝐨 𝐚𝐭𝐭𝐮𝐚𝐥𝐞: ${user.warn}/𝟑`, IMG_UNWARN)
   }
 };
 
