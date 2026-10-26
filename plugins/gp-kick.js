@@ -1,3 +1,5 @@
+import { existsSync } from 'fs'
+
 const S = v => String(v || '')
 
 async function handler(m, { isBotAdmin, conn }) {
@@ -49,14 +51,21 @@ async function handler(m, { isBotAdmin, conn }) {
   try {
     await conn.groupParticipantsUpdate(m.chat, [mention], 'remove')
 
-    await conn.sendMessage(m.chat, {
-      text: `*╭━━━━━━━💠━━━━━━━╮*
-*✦ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 ✦*
-*╰━━━━━━━💠━━━━━━━╯*
+    const gifPath = './media/Francesco-Benigno-Suca-GIF-con-Frase-Tipica-in-Dialetto-Siciliano-MEME-da-Usare-Come-Reazione-in-Risposta-nei-Commenti-ai-Post-di-Facebook-o-sui-Gruppi-WhatsApp-2624977331.gif'
 
-*@${mention.split('@')[0]} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 𝐝𝐚𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.*`,
-      mentions: [mention]
-    }, { quoted: m })
+    if (existsSync(gifPath)) {
+      await conn.sendMessage(m.chat, {
+        video: { url: gifPath },
+        gifPlayback: true,
+        caption: `*╭━━━━━━━💠━━━━━━━╮*\n*✦ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 ✦*\n*╰━━━━━━━💠━━━━━━━╯*\n\n*@${mention.split('@')[0]} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨 𝐫𝐢𝐦𝐮𝐨𝐯𝐬𝐨 𝐝𝐚𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.*`,
+        mentions: [mention]
+      }, { quoted: m })
+    } else {
+      await conn.sendMessage(m.chat, {
+        text: `*╭━━━━━━━💠━━━━━━━╮*\n*✦ 𝐔𝐓𝐄𝐍𝐓𝐄 𝐑𝐈𝐌𝐎𝐒𝐒𝐎 ✦*\n*╰━━━━━━━💠━━━━━━━╯*\n\n*@${mention.split('@')[0]} 𝐞̀ 𝐬𝐭𝐚𝐭𝐨 𝐫𝐢𝐦𝐨𝐬𝐬𝐨 𝐝𝐚𝐥 𝐠𝐫𝐮𝐩𝐩𝐨.*`,
+        mentions: [mention]
+      }, { quoted: m })
+    }
   } catch (e) {
     await conn.sendMessage(m.chat, {
       text: '*𝐄𝐫𝐫𝐨𝐫𝐞: 𝐧𝐨𝐧 𝐡𝐨 𝐢 𝐩𝐞𝐫𝐦𝐞𝐬𝐬𝐢 𝐧𝐞𝐜𝐞𝐬𝐬𝐚𝐫𝐢 𝐨 𝐥’𝐮𝐭𝐞𝐧𝐭𝐞 è 𝐠𝐢𝐚̀ 𝐮𝐬𝐜𝐢𝐭𝐨.*'
