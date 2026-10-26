@@ -60,13 +60,27 @@ let handler = async (m, { conn }) => {
 ╰────────────────╯
 `.trim()
 
-  await conn.sendMessage(m.chat, {
-    text: text,
-    buttons: [
-      { buttonId: '.ping', buttonText: { displayText: '◍ ping' }, type: 1 }
-    ],
-    headerType: 1
-  }, { quoted: m })
+  // percorso immagine
+  const imgPath = './media/IMG-20261026-WA0008.jpg'
+  
+  if (existsSync(imgPath)) {
+    await conn.sendMessage(m.chat, {
+      image: { url: imgPath },
+      caption: text,
+      buttons: [
+        { buttonId: '.ping', buttonText: { displayText: '◍ ping' }, type: 1 }
+      ],
+      headerType: 4
+    }, { quoted: m })
+  } else {
+    await conn.sendMessage(m.chat, {
+      text: text,
+      buttons: [
+        { buttonId: '.ping', buttonText: { displayText: '◍ ping' }, type: 1 }
+      ],
+      headerType: 1
+    }, { quoted: m })
+  }
 }
 
 handler.help = ['ds']
