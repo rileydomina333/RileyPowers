@@ -38,7 +38,7 @@ const handler = async (m, { conn, text }) => {
   ctx.fillStyle = '#ffffff'
   ctx.textAlign = 'left'
   ctx.font = 'bold 38px Sans'
-  ctx.fillText('VISA PARODIA', 120, 150)
+  ctx.fillText('CONTO VISA', 120, 150)
 
   ctx.font = '28px Monospace'
   ctx.fillText('0000 0000 0000 0000', 120, 300)
@@ -50,7 +50,7 @@ const handler = async (m, { conn, text }) => {
 
   ctx.font = 'bold 20px Sans'
   ctx.fillStyle = '#ff4444'
-  ctx.fillText('⚠️ CARTA FINTA PER MEME - NON REALE - NON USABILE ⚠️', 120, 530)
+  ctx.fillText('⚠️ CONTO BANCARIO ESTRATTO DA RILEY POWERS ⚠️', 120, 530)
 
   // avatar piccolo
   ctx.save()
@@ -63,7 +63,7 @@ const handler = async (m, { conn, text }) => {
   const buffer = canvas.toBuffer('image/png')
   await conn.sendMessage(m.chat, {
     image: buffer,
-    caption: `💳 Visa Meme (FAKE) di @${target.split('@')[0]}\nPalesemente finta per meme`,
+    caption: `💳 Conto Visa (FAKE) di @${target.split('@')[0]}\nPalesemente finta per meme`,
     mentions: [target]
   }, { quoted: m })
 }
