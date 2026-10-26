@@ -5,7 +5,7 @@ import moment from 'moment-timezone'
 import os from 'os'
 
 // --- PERCORSO IMMAGINE ---
-const localImg = join(process.cwd(), 'WA_1792617306300.jpeg');
+const localImg = join(process.cwd(), 'file_00000000e74081f4b08f65dfd8fe555e.png');
 
 const defaultMenu = {
   testoInizio: `
