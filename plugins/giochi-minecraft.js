@@ -27,7 +27,7 @@ let handler = async (m, { conn }) => {
 │ 💻 Gioca direttamente dal browser
 ╰───────────────⬣
 
-👑 _Buon divertimento dal Legam OS!_
+👑 _Buon divertimento da Riley Bot!_
 ✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦`.trim();
 
     try {
