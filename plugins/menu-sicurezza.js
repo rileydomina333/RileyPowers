@@ -1,127 +1,128 @@
-import fetch from 'node-fetch'
 import { join } from 'path'
+import { promises as fs } from 'fs'
 
 let handler = async (m, { conn, usedPrefix: _p, command, args, isOwner, isAdmin }) => {
-  const userName = m.pushName || 'Utente'
   const localImg = join(process.cwd(), 'file_00000000e74081f4b08f65dfd8fe555e.png')
-
+  
   global.db.data.chats[m.chat] = global.db.data.chats[m.chat] || {}
   global.db.data.settings[conn.user.jid] = global.db.data.settings[conn.user.jid] || {}
   let chat = global.db.data.chats[m.chat]
   let bot = global.db.data.settings[conn.user.jid]
+  let nomeDelBot = global.db.data.nomedelbot || `𝐑𝐋𝐘 𝐁𝐎𝐓`
 
+  // --- DATABASE KEYS ---
   const securityFeatures = [
-    { key: 'modoadmin', name: '🛡️ Soloadmin' },
-
-{ key: 'modoadmin', name: '🔞 antiporno' },
-
-{ key: 'modoadmin', name: '💉 Antigore' },
-
-{ key: 'modoadmin', name: '🚨 Antiraid', },
-
-    { key: 'antivoip', name: '📞 Antivoip' },
-
-    { key: 'antilink', name: '🔗 Antilink' },
-
-    { key: 'antilinksocial', name: '🌐 Antilinksocial' },
-
-    { key: 'antitrava', name: '🧱 Antitrava' },
-
-    { key: 'antinuke', name: '☢️ Antinuke', },
-
-    { key: 'antiviewonce', name: '👁️ Antiviewonce' },
-
-    { key: 'antispam', name: '🛑 Antispam' }
+    { key: 'modoadmin', db: 'modoadmin', name: 'SoloAdmin' },
+    { key: 'antiporno', db: 'antiporno', name: 'AntiPorn' },
+    { key: 'antigore', db: 'antigore', name: 'AntiGore' },
+    { key: 'antiraid', db: 'antiraid', name: 'AntiRaid' },
+    { key: 'antivoip', db: 'antivoip', name: 'AntiVoip' },
+    { key: 'antilink', db: 'antiLink', name: 'Anti-Link WA' },
+    { key: 'antilinksocial', db: 'antiLink2', name: 'Anti-Social' },
+    { key: 'antitrava', db: 'antitrava', name: 'Anti-Trava' },
+    { key: 'antinuke', db: 'antinuke', name: 'AntiNuke' },
+    { key: 'antiviewonce', db: 'antioneview', name: 'Anti-ViewOnce' },
+    { key: 'antispam', db: 'antispam', name: 'AntiSpam' }
   ]
 
   const automationFeatures = [
-    { key: 'ai', name: '🧠 IA' },
-    { key: 'vocali', name: '🎤 Siri' },
-    { key: 'reaction', name: '😎 Reazioni', },
-    { key: 'autolevelup', name: '⬆️ Autolivello' },
-    { key: 'welcome', name: '👋 Welcome' }
+    { key: 'ai', db: 'ai', name: 'Intelligenza Art.' },
+    { key: 'vocali', db: 'vocali', name: 'Risposte Vocali' },
+    { key: 'reaction', db: 'reaction', name: 'Auto-Reazioni' },
+    { key: 'autolevelup', db: 'autolevelup', name: 'Auto-LevelUp' },
+    { key: 'welcome', db: 'welcome', name: 'Benvenuto' }
   ]
 
   const ownerFeatures = [
-    { key: 'anticall', name: '📵 Antichiamate' },
-    { key: 'antiprivate', name: '🔒 Antiprivato' },
-    { key: 'solocreatore', name: '👑 Solo Creatore' }
+    { key: 'anticall', db: 'anticall', name: 'AntiChiamate' },
+    { key: 'antiprivate', db: 'antiPrivate', name: 'AntiPrivato' },
+    { key: 'solocreatore', db: 'soloCreatore', name: 'Solo Creatore' }
   ]
 
+  const categories = {
+    '🚨 𝐒𝐈𝐂𝐔𝐑𝐄𝐙𝐙𝐀 𝐄 𝐅𝐈𝐋𝐓𝐑𝐈': securityFeatures,
+    '🗣️ 𝐌𝐎𝐃𝐄𝐑𝐀𝐙𝐈𝐎𝐍𝐄 & 𝐈𝐀': automationFeatures,
+    '👑 𝐎𝐖𝐍𝐄𝐑 𝐒𝐘𝐒𝐓𝐄𝐌': ownerFeatures
+  }
+
+  // --- SE È SOLO MENU ---
   if (!args.length || /menu|help/i.test(args[0])) {
-    let text = `
-⚡  〔 𝐑 𝐋 𝐘  •  𝐒 𝐄 𝐂 𝐔 𝐑 𝐈 𝐓 𝐘 〕  ⚡
+    
+    let menuContent = '';
+    for (const [catName, features] of Object.entries(categories)) {
+      menuContent += `╭── ${catName} ──⬣\n`;
+      features.forEach(f => {
+        let isAttivo = (f.db.startsWith('anti') || f.key === 'anticall' ? bot[f.db] || chat[f.db] : chat[f.db]) ? '🟢' : '🔴';
+        // Per owner checkiamo bot, per il resto chat
+        if (ownerFeatures.some(o => o.key === f.key)) isAttivo = bot[f.db] ? '🟢' : '🔴';
+        else isAttivo = chat[f.db] ? '🟢' : '🔴';
+        
+        menuContent += `│ ${isAttivo} ✦ ${f.name} ➭ \`${f.key.toLowerCase()}\`\n`;
+      });
+      menuContent += `╰───────────────⬣\n\n`;
+    }
 
-┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
-┃ 📡 𝚂𝚝𝚊𝚝𝚞𝚜 ⭔ 𝙾𝚗𝚕𝚒𝚗𝚎
+    let menuText = `
+✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦
+· 🛡️ 𝐌𝐄𝐍𝐔 𝐒𝐈𝐂𝐔𝐑𝐄𝐙𝐙𝐀 🛡️ ·
+✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦
 
-〔 ⚙️ 𝙸𝚂𝚃𝚁𝚄𝚉𝙸𝙾𝙽𝙸 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝚅𝙴 〕
-┃ ⌲ Attiva: ${_p}attiva <nome>
-┃ ⌲ Disattiva: ${_p}disattiva <nome>
+╭﹕ℹ️ *𝐂𝐎𝐌𝐄 𝐒𝐈 𝐔𝐒𝐀:*
+│ 🟢 ${_p}attiva [comando]
+│ 🔴 ${_p}disattiva [comando]
+╰﹕₊˚ ★ ⁺˳ꕤ₊⁺・꒱
 
-〔 🛡️ ʀʟʏ 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 〕
-${securityFeatures.map(f => `┃ ⌲ ${f.name} ( comando: ${toTypewriter(f.key)} )`).join('\n')}
+${menuContent}╰♡꒷ ๑ ⋆˚₊⋆───ʚ˚ɞ───⋆˚₊⋆ ๑ ⪩
+ ୧・👑 *𝐒𝐲𝐬𝐭𝐞𝐦:* ${nomeDelBot}
+ ୧・💎 *𝐀𝐝𝐦𝐢𝐧:* @${m.sender.split('@')[0]}
+╰♡꒷ ๑ ⋆˚₊⋆───ʚ˚ɞ───⋆˚₊⋆ ๑ ⪩`.trim()
 
-〔 🤖 ʀʟʏ 𝙰𝚄𝚃𝙾𝙼𝙰𝚉𝙸𝙾𝙽𝙴 〕
-${automationFeatures.map(f => `┃ ⌲ ${f.name} ( comando: ${toTypewriter(f.key)} )`).join('\n')}
-
-_Powered by RLY-BOT Interface_`
-
-    let userJid = m.sender.split('@')[0]
-    let formattedText = text.replace(/%user/g, userJid)
-
-    await conn.sendMessage(m.chat, { 
-      image: { url: localImg }, 
-      caption: formattedText.trim(),
-      contextInfo: {
-        mentionedJid: [m.sender],
-        forwardedNewsletterMessageInfo: {
-          newsletterJid: '120363232743845068@newsletter',
-          newsletterName: "🛡️ 𝐒𝐘𝐒𝐓𝐄𝐌 𝐒𝐄𝐂𝐔𝐑𝐈𝐓𝐘 𝐂𝐎𝐍𝐓𝐑𝐎𝐋 🛡️"
-        }
+    let imageBuffer = null
+    try { imageBuffer = await fs.readFile(localImg) } catch {}
+    
+    let channelContext = {
+      mentionedJid: [m.sender],
+      isForwarded: true,
+      forwardingScore: 999,
+      forwardedNewsletterMessageInfo: {
+        newsletterJid: '120363232743845068@newsletter',
+        newsletterName: "🛡️ 𝐒𝐘𝐒𝐓𝐄𝐌 𝐒𝐄𝐂𝐔𝐑𝐈𝐓𝐘 𝐂𝐎𝐍𝐓𝐑𝐎𝐋 🛡️"
       }
+    }
+
+    await conn.sendMessage(m.chat, {
+      ...(imageBuffer ? { image: imageBuffer } : { image: { url: localImg } }),
+      caption: menuText,
+      contextInfo: channelContext
     }, { quoted: m })
     return
   }
 
+  // --- LOGICA ATTIVA / DISATTIVA ---
   let isEnable = !/disattiva|off|0/i.test(command)
   let type = args[0].toLowerCase()
-  let status = isEnable ? 'ATTIVATO ✅' : 'DISATTIVATO ❌'
+  
+  let allFeatures = [...securityFeatures, ...automationFeatures, ...ownerFeatures]
+  let found = allFeatures.find(f => f.key.toLowerCase() === type)
+  
+  if (!found) return m.reply('❓ Modulo non trovato.')
 
-  let dbKey = type
-  if (type === 'antilink') dbKey = 'antiLink'
-  if (type === 'antilinksocial') dbKey = 'antiLink2'
-  if (type === 'antiviewonce') dbKey = 'antioneview'
-  if (type === 'antiprivate') dbKey = 'antiPrivate'
-  if (type === 'solocreatore') dbKey = 'soloCreatore'
-
-  const isSecurity = securityFeatures.some(f => f.key.toLowerCase() === type)
-  const isAuto = automationFeatures.some(f => f.key.toLowerCase() === type)
   const isOwnerKey = ownerFeatures.some(f => f.key.toLowerCase() === type)
 
-  if (isSecurity || isAuto) {
+  if (!isOwnerKey) {
     if (!m.isGroup && !isOwner) return m.reply('❌ Solo nei gruppi')
     if (m.isGroup && !isAdmin && !isOwner) return m.reply('🛡️ Solo per Admin')
-    chat[dbKey] = isEnable
-  } else if (isOwnerKey) {
-    if (!isOwner) return m.reply('👑 Solo per l\'Owner')
-    bot[dbKey] = isEnable
+    chat[found.db] = isEnable
   } else {
-    return m.reply('❓ Modulo non trovato.')
+    if (!isOwner) return m.reply('👑 Solo per l\'Owner')
+    bot[found.db] = isEnable
   }
 
   await m.react(isEnable ? '✅' : '❌')
-  m.reply(`『 🛡️ 』 *SISTEMA AGGIORNATO*\n\nModulo: *${type.toUpperCase()}*\nStato: *${status}*`)
+  m.reply(`『 🛡️ 』 *SISTEMA AGGIORNATO*\n\nModulo: *${found.name.toUpperCase()}*\nStato: *${isEnable ? 'ATTIVATO ✅' : 'DISATTIVATO ❌'}*`)
 }
 
 handler.command = ['attiva', 'disattiva', 'on', 'off', 'enable', 'disable']
+handler.help = ['menusicurezza']
+handler.tags = ['admin']
 export default handler
-
-function toTypewriter(str) {
-  const normal = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-  const typewriter = "𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿"
-  return str.split('').map(char => {
-    const index = normal.indexOf(char)
-    return index !== -1 ? typewriter.substr(index * 2, 2) : char
-  }).join('')
-}
