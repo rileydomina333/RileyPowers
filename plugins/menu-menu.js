@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs'
-import { join } from 'path'
+
+const localImg = './file_00000000e74081f4b08f65dfd8fe555e.png'
 
 const emojicategoria = {
   info: '⚡',
@@ -11,22 +12,6 @@ let tags = {
   main: '⚡ ʀʟʏ 𝙼𝙰𝙸𝙽 𝚂𝚈𝚂𝚃𝙴𝙼 ⚡',
   info: '⚡ ʀʟʏ 𝙸𝙽𝙵𝙾 𝙱𝙰𝚂𝙴 ⚡'
 }
-
-const defaultMenu = {
-  testoInizio: `
-⚡  〔 𝐑 𝐋 𝐘 •  𝐁 𝐎 𝐓 〕  ⚡
-
-┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
-┃ ⏳ 𝚄𝚙𝚝𝚒𝚖𝚎 ⭔ %uptime
-┃ 👥 𝚄𝚝𝚎𝚗𝚝𝚒 ⭔ %totalreg
-`.trimStart(),
-
-  header: '\n〔 %category 〕',
-  body: '┃ ⌲ %emoji %cmd',
-  footer: '',
-}
-
-const localImg = './file_00000000e74081f4b08f65dfd8fe555e.png'
 
 const bldButtons = [
   { title: "🛡️ SICUREZZA", command: "attiva" },
@@ -43,9 +28,10 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
     await conn.sendPresenceUpdate('composing', m.chat)
 
-    let who = m.sender
+    let name = await conn.getName(m.sender) || 'Utente'
     let uptime = clockString(process.uptime() * 1000)
     let totalreg = Object.keys(global.db.data.users).length
+    let userJid = m.sender
 
     let help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
       help: Array.isArray(p.help) ? p.help : [p.help],
@@ -54,29 +40,48 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     }))
 
     let menuTags = Object.keys(tags)
+    
+    let dynamicMenu = menuTags.map(tag => {
+      let commands = help
+        .filter(menu => menu.tags.includes(tag))
+        .flatMap(menu => menu.help.map(h => {
+          let rawCmd = menu.prefix ? h : `${_p}${h}`
+          return `*│ ➤* ${emojicategoria[tag] || '⚡'} ${toTypewriter(rawCmd)}`
+        })).join('\n')
 
-    let _text = [
-      defaultMenu.testoInizio,
-      ...menuTags.map(tag => {
-        let commands = help
-          .filter(menu => menu.tags.includes(tag))
-          .flatMap(menu => menu.help.map(h => {
-            let rawCmd = menu.prefix ? h : _p + h
-            let styledCmd = toTypewriter(rawCmd)
-            return defaultMenu.body
-              .replace(/%cmd/g, styledCmd)
-              .replace(/%emoji/g, emojicategoria[tag])
-          })).join('\n')
+      if (!commands) return ''
+      return `╭⭒─ׄ─⊱ *${tags[tag]}* ⊰\n${commands}\n╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒`
+    }).filter(v => v).join('\n\n')
 
-        return defaultMenu.header.replace(/%category/g, tags[tag]) + '\n' + commands
-      }),
-      defaultMenu.testoFine
-    ].join('\n')
+    let text = `
+╭⭒─ׄ─⊱ *𝐌𝐄𝐍𝐔 - 𝐑𝐋𝐘 𝐁𝐎𝐓* ⊰
+✦ 👤 \`Utente:\` *${name}*
+✧ 🪐 \`Attivo da:\` *${uptime}*
+✦ 👥 \`Utenti:\` *${totalreg}*
+╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒
 
-    let userJid = who.split('@')[0]
-    let text = _text.replace(/%user/g, userJid)
-                    .replace(/%uptime/g, uptime)
-                    .replace(/%totalreg/g, totalreg)
+      ⋆｡˚『 𝐌𝐄𝐍𝐔 𝐃𝐈𝐒𝐏𝐎𝐍𝐈𝐁𝐈𝐋𝐈 』˚｡⋆
+
+${dynamicMenu}
+
+╭⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒
+*│ ➤* ⭐ ${_p}menupremium
+*│ ➤* 🛠️ ${_p}menustrumenti
+*│ ➤* 💰 ${_p}menueuro
+*│ ➤* 🎮 ${_p}menugiochi
+*│ ➤* 👥 ${_p}menugruppo
+*│ ➤* 📥 ${_p}menudownload
+*│ ➤* 🛡️ ${_p}menumod
+*│ ➤* 🚨 ${_p}menusicurezza
+╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
+
+           *IMPORTANTE PER IL GIUSTO*
+            *FUNZIONAMENTO DEL BOT.*
+
+➤✍️ ${_p}feedback
+
+✨ Scrivi il comando per aprire il menu desiderato.
+`.trim()
 
     const buttons = bldButtons.map(btn => ({
       buttonId: _p + btn.command,
@@ -88,16 +93,16 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     try {
       imageBuffer = await fs.readFile(localImg)
     } catch (e) {
-      console.log("⚠️ Immagine NON trovata")
+      console.log("⚠️ Immagine NON trovata:", localImg)
     }
 
     await conn.sendMessage(m.chat, {
       ...(imageBuffer ? { image: imageBuffer } : {}),
-      caption: text.trim(),
+      caption: text,
       buttons: buttons,
       headerType: 4,
       viewOnce: true,
-      mentions: [who]
+      mentions: [userJid]
     }, { quoted: m })
 
     await m.react('⚡')
@@ -109,7 +114,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
 }
 
 handler.help = ['menu']
-handler.command = ['menu', 'help']
+handler.command = ['menu', 'help', 'menuall', 'menucompleto']
 
 export default handler
 
@@ -125,6 +130,6 @@ function toTypewriter(str) {
   const typewriter = "𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿"
   return str.split('').map(char => {
     const index = normal.indexOf(char)
-    return index !== -1 ? typewriter.substr(index * 2, 2) : char
+    return index !== -1 ? [...typewriter][index] || char : char
   }).join('')
 }
