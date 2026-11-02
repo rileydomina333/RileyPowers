@@ -1,111 +1,82 @@
-import { promises } from 'fs'
 import { join } from 'path'
-import { xpRange } from '../lib/levelling.js'
-import moment from 'moment-timezone'
+import fs from 'fs'
 
-const localImg = join(process.cwd(), 'file_00000000e74081f4b08f65dfd8fe555e.png'); 
-
-const defaultMenu = {
-  before: `
-⚡  〔 𝐑 𝐋 𝐘  •  𝐆 𝐀 𝐌 𝐄 𝐒 〕  ⚡
-
-┃ 👤 𝚄𝚝𝚎𝚗𝚝𝚎 ⭔ @%user
-┃ 🏆 𝙻𝚒𝚟𝚎𝚕𝚕𝚘 ⭔ %level
-┃ 💰 𝙴𝚛𝚒𝚜 ⭔ %eris
-┃ 🎖️ 𝚁𝚊𝚗𝚐𝚘 ⭔ %role
-`.trimStart(),
-
-  header: '\n〔 %category 〕',
-  body: '┃ ⌲ %emoji %cmd %islimit%isPremium',
-  footer: '',
-  after: `\n_Usa %p [comando] per giocare_`,
-}
-
-let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
-  let tags = { 'giochi': '⚡ ʀʟʏ 𝙶𝙰𝙼𝙴 𝙲𝙴𝙽𝚃𝙴𝚁 ⚡' }
-
+let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
-    await conn.sendPresenceUpdate('composing', m.chat)
-    
-    let user = global.db.data.users[m.sender] || {}
-    let { exp = 0, level = 1, role = 'Utente', eris = 0, limit = 10 } = user
-    let uptime = clockString(process.uptime() * 1000)
+    const localImg = join(process.cwd(), 'file_00000000e74081f4b08f65dfd8fe555e.png')
+    await conn.sendMessage(m.chat, { react: { text: '🎮', key: m.key } });
 
-    let help = Object.values(global.plugins)
-      .filter(p => !p.disabled)
+    const giochiList = Object.values(global.plugins)
+      .filter(p => !p.disabled && p.tags && p.tags.includes('giochi'))
       .map(p => ({
         help: Array.isArray(p.help) ? p.help : [p.help],
-        tags: Array.isArray(p.tags) ? p.tags : [p.tags],
-        prefix: 'customPrefix' in p,
-        limit: p.limit,
-        premium: p.premium
-      }))
+        prefix: 'customPrefix' in p
+      }));
 
-    let groups = {}
-    for (let tag in tags) {
-      groups[tag] = help.filter(menu => menu.tags && menu.tags.includes(tag) && menu.help[0])
+    let textMenu = `
+✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦
+· 𝐑 𝐈 𝐋 𝐄 𝐘  𝐀 𝐑 𝐂 𝐀 𝐃 𝐄 ·
+✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦
+
+『 🎮 』 𝐋 𝐈 𝐒 𝐓 𝐀  𝐆 𝐈 𝐎 𝐂 𝐇 𝐈
+
+`;
+
+    giochiList.forEach(menu => {
+      menu.help.forEach(cmd => {
+        if (cmd) {
+          let rawCmd = menu.prefix ? cmd : _p + cmd
+          textMenu += `· ${rawCmd}\n`;
+        }
+      });
+    });
+
+    textMenu += `
+👑 𝐎𝐖𝐍𝐄𝐑
+➤ 𝐑𝐢𝐥𝐞𝐲
+
+🤖 𝐁𝐎𝐓
+➤ 𝐑𝐢𝐥𝐞𝐲 𝐁𝐨𝐭
+
+✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦ ⁺ . ⁺ ✦`.trim()
+
+    if (fs.existsSync(localImg)) {
+      await conn.sendMessage(m.chat, {
+        image: fs.readFileSync(localImg),
+        caption: textMenu,
+        mentions: [m.sender],
+        contextInfo: {
+          isForwarded: true,
+          forwardedNewsletterMessageInfo: {
+            newsletterJid: "",
+            newsletterName: "✨.✦★彡 𝐑𝐢𝐥𝐞𝐲 𝐁𝐨𝐭 𝐀𝐫𝐜𝐚𝐝𝐞 Ξ★✦.•",
+            serverMessageId: 100
+          }
+        }
+      }, { quoted: m });
+    } else {
+      await conn.sendMessage(m.chat, {
+        text: textMenu,
+        mentions: [m.sender],
+        contextInfo: {
+          isForwarded: true,
+          forwardedNewsletterMessageInfo: {
+            newsletterJid: "",
+            newsletterName: "✨.✦★彡 𝐑𝐢𝐥𝐞𝐲 𝐁𝐨𝐭 𝐀𝐫𝐜𝐚𝐝𝐞 Ξ★✦.•",
+            serverMessageId: 100
+          }
+        }
+      }, { quoted: m });
     }
-
-    let _text = [
-      defaultMenu.before,
-      ...Object.keys(tags).map(tag => {
-        let commands = groups[tag].flatMap(menu =>
-          menu.help.map(cmd => {
-            let rawCmd = menu.prefix ? cmd : _p + cmd
-            let styledCmd = toTypewriter(rawCmd)
-            return defaultMenu.body
-              .replace(/%cmd/g, styledCmd)
-              .replace(/%emoji/g, '🎮')
-              .replace(/%islimit/g, menu.limit ? ' ⚠️' : '')
-              .replace(/%isPremium/g, menu.premium ? ' 💎' : '')
-              .trimEnd()
-          })
-        ).join('\n')
-
-        return defaultMenu.header.replace(/%category/g, tags[tag]) + '\n' + commands
-      }),
-      defaultMenu.after
-    ].join('\n')
-
-    let userJid = m.sender.split('@')[0]
-    let replace = {
-      '%': '%', p: _p, eris, user: userJid, level, limit, role, uptime
-    }
-
-    let text = _text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join('|')})`, 'g'), (_, name) => '' + replace[name])
-
-    await conn.sendMessage(m.chat, {
-      image: { url: localImg },
-      caption: text.trim(),
-      mentions: [m.sender]
-    }, { quoted: m })
-
-    await m.react('🎮')
 
   } catch (e) {
-    console.error(e)
-    conn.reply(m.chat, `❌ Errore: Il file 'WA_1791285295586.jpeg' non è stato trovato nella cartella principale.`, m)
+    console.error('Errore nel menu giochi:', e);
+    m.reply(`❌ Errore: ${e.message}`);
   }
-}
+};
 
-handler.help = ['menugiochi']
-handler.tags = ['menu']
-handler.command = ['menugiochi', 'menugame']
+handler.help = ['menugiochi'];
+handler.tags = ['menu'];
+handler.command = /^(menugiochi|menugame|giochi|games)$/i;
 
-export default handler
-
-function clockString(ms) {
-  let h = Math.floor(ms / 3600000)
-  let m = Math.floor(ms / 60000) % 60
-  let s = Math.floor(ms / 1000) % 60
-  return [h, 'h ', m, 'm ', s, 's'].map(v => v.toString().padStart(2, '0')).join('')
-}
-
-function toTypewriter(str) {
-  const normal = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-  const typewriter = "𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿"
-  return str.split('').map(char => {
-    const index = normal.indexOf(char)
-    return index !== -1 ? typewriter.substr(index * 2, 2) : char
-  }).join('')
-}
+export default handler;
