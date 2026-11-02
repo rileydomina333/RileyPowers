@@ -74,13 +74,6 @@ ${dynamicMenu}
 *│ ➤* 🛡️ ${_p}menumod
 *│ ➤* 🚨 ${_p}menusicurezza
 ╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
-
-           *IMPORTANTE PER IL GIUSTO*
-            *FUNZIONAMENTO DEL BOT.*
-
-➤✍️ ${_p}feedback
-
-✨ Scrivi il comando per aprire il menu desiderato.
 `.trim()
 
     const buttons = bldButtons.map(btn => ({
