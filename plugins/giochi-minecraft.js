@@ -6,7 +6,7 @@ let handler = async (m, { conn }) => {
         isForwarded: true,
         forwardingScore: 999,
         forwardedNewsletterMessageInfo: {
-            newsletterJid: '120363259442839354@newsletter', 
+            newsletterJid: '', 
             serverMessageId: 100,
             newsletterName: `🎮 Minecraft Web`
         }
