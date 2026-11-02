@@ -11,6 +11,20 @@ global.ignoredUsersGlobal = new Set()
 global.ignoredUsersGroup = {}
 global.groupSpam = {}
 
+global.fkontak = { 
+  key: { 
+    participants: "0@s.whatsapp.net", 
+    remoteJid: "status@broadcast", 
+    fromMe: false, 
+    id: "Halo" 
+  }, 
+  message: { 
+    contactMessage: { 
+      vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Riley;Bot;;;\nFN:Riley Bot\nitem1.TEL;waid=0:0\nitem1.X-ABLabel:Riley Bot\nEND:VCARD` 
+    } 
+  } 
+}
+
 if (!global.groupCache) {
     global.groupCache = new NodeCache({ stdTTL: 5 * 60, useClones: false })
 }
