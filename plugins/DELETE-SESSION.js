@@ -35,7 +35,7 @@ let handler = async (m, { conn }) => {
   const pingFix = ping > 0 && ping < 5000 ? `${ping} ms` : `${time}s`
 
   const text = count === 0 && fail === 0 ? `
-╭─ pulizia sessioni ─╮
+╭─ ├┴┬┴ 𝐑𝐢𝐥𝐞𝐲 𝐂𝐥𝐞𝐚𝐫 ┬┴┬┤ ─╮
 │
 │  ○ stato : già pulito
 │  ○ creds : protetto
@@ -44,9 +44,9 @@ let handler = async (m, { conn }) => {
 │  ○ ping : ${pingFix}
 │  ○ time : ${time}s
 │
-╰────────────────╯
+╰────────────────────╯
 `.trim() : `
-╭─ pulizia sessioni ─╮
+╭─ ├┴┬┴ 𝐑𝐢𝐥𝐞𝐲 𝐂𝐥𝐞𝐚𝐫 ┬┴┬┤ ─╮
 │
 │  ○ eliminati : ${count}
 │  ○ spazio    : ${fmt(size)}
@@ -57,7 +57,7 @@ let handler = async (m, { conn }) => {
 │  ──────────────
 │  ○ ${fail === 0 ? 'clean' : 'completato con avvisi'}
 │
-╰────────────────╯
+╰───────────────────╯
 `.trim()
 
   // percorso immagine
