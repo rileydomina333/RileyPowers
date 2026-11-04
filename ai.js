@@ -4,7 +4,7 @@ import fetch from 'node-fetch'
 
 console.log('>>> [GEMINI] Plugin caricato correttamente <<<')
 
-const API_KEY = 'INCOLLA_QUI_LA_CHIAVE'
+const API_KEY = 'Ab8RN6J_W75LFt0hWKoLrJM1Wmex1u9eAXlj5TD5HWCTAxx6kg'
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
   console.log('>>> [GEMINI] Comando ricevuto da:', m.sender, 'Testo:', text)
