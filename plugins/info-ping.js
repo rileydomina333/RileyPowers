@@ -45,7 +45,7 @@ const handler = async (m, { conn, usedPrefix }) => {
 ┃  ◈ 𝗦𝗧𝗔𝗧𝗢 𝗗𝗘𝗟 𝗕𝗢𝗧
 ┃  └─ 🟢 Online
 ┃
-╰━━━━━━━━━━━━━━━━━━━━━━━━╯
+╰━━━━━━━━━━━━━━━━━━━━━━━╯
 `.trim()
 
   const imgPath = './media/IMG-20261026-WA0005.jpg'
