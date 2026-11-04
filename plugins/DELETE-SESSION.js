@@ -57,7 +57,7 @@ let handler = async (m, { conn }) => {
 │  ──────────────
 │  ○ ${fail === 0 ? 'clean' : 'completato con avvisi'}
 │
-╰───────────────────╯
+╰──────────────────╯
 `.trim()
 
   // percorso immagine
