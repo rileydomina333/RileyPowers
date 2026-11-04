@@ -31,7 +31,7 @@ const handler = async (m, { conn, usedPrefix }) => {
   const ram = `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`
 
   const caption = `
-╭━━━〔 ├┬┴┬┴ 𝐑𝐢𝐥𝐞𝐲 𝐏𝐢𝐧𝐠 ┬┴┬┴┤ 〕━━━╮
+╭━━〔 ├┬┴┴ 𝐑𝐢𝐥𝐞𝐲 𝐏𝐢𝐧𝐠 ┬┴┴┤ 〕━━╮
 ┃
 ┃  ◈ 𝗩𝗘𝗟𝗢𝗖𝗜𝗧𝗔̀ 𝗗𝗜 𝗥𝗜𝗦𝗣𝗢𝗦𝗧𝗔
 ┃  └─ ${toMathematicalAlphanumericSymbols(velocita)} ms
